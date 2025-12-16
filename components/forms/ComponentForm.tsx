@@ -1,0 +1,193 @@
+import React, { useState, useEffect } from 'react';
+import { PESComponent, ComponentType } from '../../types';
+import { Save, AlertCircle, CalendarDays } from 'lucide-react';
+
+interface ComponentFormProps {
+    type: ComponentType;
+    parentId: string | null;
+    units: string[];
+    baseYear: number;
+    initialData?: PESComponent;
+    onSave: (data: Partial<PESComponent>) => void;
+    onCancel: () => void;
+}
+
+const inputClass = "w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all";
+const labelClass = "block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5";
+
+const formatCurrency = (value: string) => {
+    const numericValue = value.replace(/\D/g, "");
+    if (!numericValue) return "";
+    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(parseFloat(numericValue) / 100);
+};
+
+const formatDateMask = (value: string) => {
+    let v = value.replace(/\D/g, "").slice(0, 8);
+    if (v.length >= 5) return `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+    else if (v.length >= 3) return `${v.slice(0, 2)}/${v.slice(2)}`;
+    return v;
+};
+
+export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, units, baseYear, initialData, onSave, onCancel }) => {
+    // State for all potential fields
+    const [code, setCode] = useState(initialData?.code || '');
+    const [content, setContent] = useState(initialData?.content || '');
+
+    // Meta/Ação fields
+    const [indicator, setIndicator] = useState(initialData?.indicator || '');
+    const [measurementUnit, setMeasurementUnit] = useState(initialData?.measurementUnit || '');
+    const [calculationMethod, setCalculationMethod] = useState(initialData?.calculationMethod || '');
+    const [responsible, setResponsible] = useState(initialData?.responsible || '');
+
+    // Meta specific
+    const [baseline, setBaseline] = useState(initialData?.baseline || '');
+    const [targetValue, setTargetValue] = useState(initialData?.targetValue || '');
+    const [deadline, setDeadline] = useState(initialData?.deadline || '');
+    const [year1, setYear1] = useState(initialData?.targetYear1 || '');
+    const [year2, setYear2] = useState(initialData?.targetYear2 || '');
+    const [year3, setYear3] = useState(initialData?.targetYear3 || '');
+    const [year4, setYear4] = useState(initialData?.targetYear4 || '');
+
+    // Ação specific
+    const [resource, setResource] = useState(initialData?.resourceSource || '');
+    const [budget, setBudget] = useState(initialData?.budget || '');
+    const [subAction, setSubAction] = useState(initialData?.subAction || '');
+    const [expenseElement, setExpenseElement] = useState(initialData?.expenseElement || '');
+    const [technicalObs, setTechnicalObs] = useState(initialData?.technicalObservations || '');
+
+    const handleSubmit = () => {
+        if (!content.trim()) {
+            alert("A descrição é obrigatória.");
+            return;
+        }
+
+        const data: Partial<PESComponent> = {
+            content,
+            code,
+            type, // Ensure type is preserved
+            indicator: (type === 'Meta' || type === 'Ação') ? indicator : undefined,
+            measurementUnit: (type === 'Meta' || type === 'Ação') ? measurementUnit : undefined,
+            calculationMethod: (type === 'Meta' || type === 'Ação') ? calculationMethod : undefined,
+            responsible: (type === 'Meta' || type === 'Ação') ? responsible : undefined,
+
+            // Meta
+            baseline: type === 'Meta' ? baseline : undefined,
+            targetValue: type === 'Meta' ? targetValue : undefined,
+            deadline: (type === 'Meta' || type === 'Ação') ? deadline : undefined, // Ação sometimes uses deadline too? Legacy code implies yes for 'Meta' only or both. Let's allowing for both if needed, but UI shows for Meta. Actually legacy renderEditForm allows for both sometimes? Let's check logic.
+            // Logic in ComponentManager: deadline: (currentViewType === 'Meta' || currentViewType === 'Ação') ? newItemMetaDeadline : undefined
+            // So yes, Ação can have deadline.
+
+            targetYear1: type === 'Meta' ? year1 : undefined,
+            targetYear2: type === 'Meta' ? year2 : undefined,
+            targetYear3: type === 'Meta' ? year3 : undefined,
+            targetYear4: type === 'Meta' ? year4 : undefined,
+
+            // Ação
+            resourceSource: type === 'Ação' ? resource : undefined,
+            budget: type === 'Ação' ? budget : undefined,
+            subAction: type === 'Ação' ? subAction : undefined,
+            expenseElement: type === 'Ação' ? expenseElement : undefined,
+            technicalObservations: type === 'Ação' ? technicalObs : undefined,
+        };
+
+        onSave(data);
+    };
+
+    const handleBudget = (e: React.ChangeEvent<HTMLInputElement>) => setBudget(formatCurrency(e.target.value));
+    const handleDate = (e: React.ChangeEvent<HTMLInputElement>) => setDeadline(formatDateMask(e.target.value));
+
+    const borderClass = type === 'Meta' ? 'border-l-4 border-l-teal-500' : type === 'Ação' ? 'border-l-4 border-l-brand-purple' : 'border-l-4 border-l-gray-500';
+    const isAdding = !initialData;
+
+    return (
+        <div className={`bg-white rounded-lg shadow-md border border-gray-200 p-6 animate-in zoom-in-95 duration-200 mb-6 ${borderClass}`}>
+            <div className="flex justify-between items-center mb-6 pb-2 border-b border-gray-100">
+                <h3 className="font-bold text-gray-800 text-base">{isAdding ? `Novo Registro (${type})` : `Editar ${type}`}</h3>
+            </div>
+
+            <div className="space-y-5">
+                {isAdding && (
+                    <div className="bg-blue-50/50 p-4 rounded-lg mb-4 text-sm text-blue-800 border border-blue-100">
+                        <h4 className="font-bold flex items-center gap-2 mb-1"><AlertCircle className="w-4 h-4" /> Adicionando {type}</h4>
+                        <p>Este item será adicionado {parentId ? `como filho do item selecionado` : 'na raiz do plano'}.</p>
+                    </div>
+                )}
+
+                <div className="flex gap-4">
+                    <div className="w-24">
+                        <label className={labelClass}>Código</label>
+                        <input type="text" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Ex: 1.1" className={inputClass} />
+                    </div>
+                    <div className="flex-1">
+                        <label className={labelClass}>Descrição</label>
+                        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Descreva o conteúdo..." className={inputClass} rows={2} />
+                    </div>
+                </div>
+
+                {type === 'Meta' && (
+                    <div className="bg-teal-50/30 p-5 rounded-xl border border-teal-100/50 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="col-span-2">
+                                <label className={labelClass}>Responsável / Coordenação</label>
+                                <select value={responsible} onChange={(e) => setResponsible(e.target.value)} className={inputClass}>
+                                    <option value="">Selecione...</option>
+                                    {units.map(u => <option key={u} value={u}>{u}</option>)}
+                                </select>
+                            </div>
+                            <div><label className={labelClass}>Indicador</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} /></div>
+                            <div><label className={labelClass}>Unidade de Medida</label><input type="text" value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass} /></div>
+                            <div className="md:col-span-2"><label className={labelClass}>Método de Cálculo</label><input type="text" value={calculationMethod} onChange={(e) => setCalculationMethod(e.target.value)} className={inputClass} /></div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div><label className={labelClass}>Linha de Base</label><input type="text" value={baseline} onChange={(e) => setBaseline(e.target.value)} className={inputClass} /></div>
+                            <div><label className={labelClass}>Meta Final</label><input type="text" value={targetValue} onChange={(e) => setTargetValue(e.target.value)} className={inputClass} /></div>
+                            <div>
+                                <label className={labelClass}>Prazo / Vigência</label>
+                                <input type="text" value={deadline} onChange={handleDate} placeholder="DD/MM/AAAA" className={inputClass} />
+                            </div>
+                        </div>
+                        <div className="mt-4 bg-white p-4 rounded-xl border border-teal-100 shadow-sm">
+                            <div className="flex items-center gap-2 mb-3"><CalendarDays className="w-4 h-4 text-teal-600" /><label className="text-xs font-bold text-teal-800 uppercase tracking-wide">Programação Anual de Metas</label></div>
+                            <div className="grid grid-cols-4 gap-4">
+                                <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 1 ({baseYear})</label><input type="text" value={year1} onChange={(e) => setYear1(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
+                                <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 2 ({baseYear + 1})</label><input type="text" value={year2} onChange={(e) => setYear2(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
+                                <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 3 ({baseYear + 2})</label><input type="text" value={year3} onChange={(e) => setYear3(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
+                                <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 4 ({baseYear + 3})</label><input type="text" value={year4} onChange={(e) => setYear4(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {type === 'Ação' && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 bg-brand-purple/5 p-5 rounded-xl border border-brand-purple/20">
+                        <div className="md:col-span-3">
+                            <label className={labelClass}>Responsável / Coordenação</label>
+                            <select value={responsible} onChange={(e) => setResponsible(e.target.value)} className={inputClass}>
+                                <option value="">Selecione...</option>
+                                {units.map(u => <option key={u} value={u}>{u}</option>)}
+                            </select>
+                        </div>
+                        <div><label className={labelClass}>Indicador (AE)</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} /></div>
+                        <div><label className={labelClass}>Unidade de Medida</label><input type="text" value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass} /></div>
+                        <div className="md:col-span-2"><label className={labelClass}>Fonte de Recurso</label><input type="text" value={resource} onChange={(e) => setResource(e.target.value)} className={inputClass} /></div>
+                        <div><label className={labelClass}>Subação</label><input type="text" value={subAction} onChange={(e) => setSubAction(e.target.value)} className={inputClass} /></div>
+                        <div><label className={labelClass}>Elemento de Despesa</label><input type="text" value={expenseElement} onChange={(e) => setExpenseElement(e.target.value)} className={inputClass} /></div>
+                        <div>
+                            <label className={labelClass}>Valor Proposto (R$)</label>
+                            <input type="text" value={budget} onChange={handleBudget} placeholder="R$ 0,00" className={inputClass} />
+                        </div>
+                        <div><label className={labelClass}>Método de Cálculo</label><input type="text" value={calculationMethod} onChange={(e) => setCalculationMethod(e.target.value)} className={inputClass} /></div>
+                        <div className="md:col-span-3"><label className={labelClass}>Observações Técnicas</label><textarea value={technicalObs} onChange={(e) => setTechnicalObs(e.target.value)} rows={2} className={inputClass} /></div>
+                    </div>
+                )}
+            </div>
+
+            <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
+                <button onClick={onCancel} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg font-medium transition-colors">Cancelar</button>
+                <button onClick={handleSubmit} className="px-6 py-2 text-sm text-white bg-brand-purple rounded-lg hover:bg-brand-purple/90 flex items-center font-medium shadow-sm transition-all active:scale-95">
+                    <Save className="w-4 h-4 mr-2" /> Salvar Registro
+                </button>
+            </div>
+        </div>
+    );
+};

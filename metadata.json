@@ -1,0 +1,5 @@
+{
+  "name": "SIPLAN",
+  "description": "Sistema de gestão do Plano Estadual de Saúde (PES) com suporte a criação, monitoramento e gestão de diretrizes.",
+  "requestFramePermissions": []
+}
