@@ -1,20 +1,44 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# SIPLAN - Sistema de Planejamento em Saúde
 
-# Run and deploy your AI Studio app
+## Sobre o Projeto
+O SIPLAN é uma aplicação web desenvolvida para auxiliar na gestão e monitoramento do Planejamento Estratégico em Saúde (PES). O sistema permite a criação, estruturação e acompanhamento de planos de saúde estaduais, organizando-os em uma hierarquia de Diretrizes, Objetivos, Metas e Ações.
 
-This contains everything you need to run your app locally.
+## Funcionalidades Principais
+- **Gestão de Planos (PES)**: Criação e edição de planos com estrutura hierárquica completa.
+- **Hierarquia Visual**: Visualização clara de Diretrizes, Objetivos, Metas e Ações.
+- **Monitoramento**: Acompanhamento periódico do progresso e resultados.
+- **Controle de Acesso**: Perfis diferenciados para Administradores, Gestores e Técnicos.
+- **Interface Intuitiva**: Design moderno e responsivo para facilitar a navegação.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1AfQBUIKBkDRU6k-RRVjhosN-v5AOz_3M
+## Tecnologias Utilizadas
+- **Frontend**: React 19
+- **Linguagem**: TypeScript
+- **Build Tool**: Vite
+- **Roteamento**: React Router
+- **Ícones**: Lucide React
 
-## Run Locally
+## Como Executar
 
-**Prerequisites:**  Node.js
+### Pré-requisitos
+Certifique-se de ter o [Node.js](https://nodejs.org/) instalado em sua máquina.
 
+### Instalação
+Clone o repositório e instale as dependências:
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```bash
+npm install
+```
+
+### Desenvolvimento
+Para iniciar o servidor de desenvolvimento local:
+
+```bash
+npm run dev
+```
+
+### Build
+Para gerar a versão otimizada para produção:
+
+```bash
+npm run build
+```
