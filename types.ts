@@ -16,13 +16,13 @@ export interface PESComponent {
   planId: string;
   parentId?: string | null; // Null se for Diretriz (raiz), ID da Diretriz se for Objetivo, etc.
   type: ComponentType;
-  
+
   // Campos Comuns
   code?: string; // Código hierárquico (ex: 1.1.1)
   content: string; // Descrição principal
   description?: string; // Detalhes adicionais
   status: PESStatus;
-  
+
   // Campos Compartilhados (Meta e Ação)
   indicator?: string; // Indicador (Meta ou Ação)
   measurementUnit?: string; // Unidade de Medida (Meta ou Ação)
@@ -32,17 +32,18 @@ export interface PESComponent {
   baseline?: string; // Linha de base (Valor atual)
   targetValue?: string; // Meta final (Valor alvo acumulado ou final)
   deadline?: string; // Prazo / Vigência
-  
+
   // Anualização (Novo)
   targetYear1?: string; // 2024
   targetYear2?: string; // 2025
   targetYear3?: string; // 2026
   targetYear4?: string; // 2027
-  
+
   // Campos Específicos de AÇÃO
   responsible?: string; // Responsável pela execução (Setor/Pessoa)
   resourceSource?: string; // Fonte de Recurso
   budget?: string; // Valor Proposto / Orçamento estimado
+  subFunction?: string; // Subfunção
   subAction?: string; // Subação (ex: 124201...)
   expenseElement?: string; // Elemento de Despesa (ex: 44.90.52...)
   technicalObservations?: string; // Observações Técnicas

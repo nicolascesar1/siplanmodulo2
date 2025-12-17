@@ -40,6 +40,12 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (form.endYear < form.startYear) {
+      alert("O Ano Fim deve ser maior ou igual ao Ano Início.");
+      return;
+    }
+
     onSubmit(form);
   };
 
@@ -56,7 +62,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto flex-1 space-y-6">
-          
+
           {/* Section: Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="col-span-2">
@@ -108,7 +114,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
                 onChange={handleChange}
                 className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-md focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm"
                 required
-                disabled={!!initialValues} 
+                disabled={!!initialValues}
               >
                 {models.map(m => (
                   <option key={m.id} value={m.id}>{m.name}</option>

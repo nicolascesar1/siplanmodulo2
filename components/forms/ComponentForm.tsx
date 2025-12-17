@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PESComponent, ComponentType } from '../../types';
 import { Save, AlertCircle, CalendarDays } from 'lucide-react';
+import { RESOURCE_SOURCES, SUB_FUNCTIONS, SUB_ACTIONS, EXPENSE_ELEMENTS } from '../../data/budgetData';
 
 interface ComponentFormProps {
     type: ComponentType;
@@ -51,6 +52,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
     // Ação specific
     const [resource, setResource] = useState(initialData?.resourceSource || '');
     const [budget, setBudget] = useState(initialData?.budget || '');
+    const [subFunction, setSubFunction] = useState(initialData?.subFunction || '');
     const [subAction, setSubAction] = useState(initialData?.subAction || '');
     const [expenseElement, setExpenseElement] = useState(initialData?.expenseElement || '');
     const [technicalObs, setTechnicalObs] = useState(initialData?.technicalObservations || '');
@@ -85,6 +87,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
             // Ação
             resourceSource: type === 'Ação' ? resource : undefined,
             budget: type === 'Ação' ? budget : undefined,
+            subFunction: type === 'Ação' ? subFunction : undefined,
             subAction: type === 'Ação' ? subAction : undefined,
             expenseElement: type === 'Ação' ? expenseElement : undefined,
             technicalObservations: type === 'Ação' ? technicalObs : undefined,
@@ -169,9 +172,34 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                         </div>
                         <div><label className={labelClass}>Indicador (AE)</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} /></div>
                         <div><label className={labelClass}>Unidade de Medida</label><input type="text" value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass} /></div>
-                        <div className="md:col-span-2"><label className={labelClass}>Fonte de Recurso</label><input type="text" value={resource} onChange={(e) => setResource(e.target.value)} className={inputClass} /></div>
-                        <div><label className={labelClass}>Subação</label><input type="text" value={subAction} onChange={(e) => setSubAction(e.target.value)} className={inputClass} /></div>
-                        <div><label className={labelClass}>Elemento de Despesa</label><input type="text" value={expenseElement} onChange={(e) => setExpenseElement(e.target.value)} className={inputClass} /></div>
+                        <div className="md:col-span-3">
+                            <label className={labelClass}>Fonte de Recurso</label>
+                            <select value={resource} onChange={(e) => setResource(e.target.value)} className={inputClass}>
+                                <option value="">Selecione...</option>
+                                {RESOURCE_SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        </div>
+                        <div className="md:col-span-3">
+                            <label className={labelClass}>Subfunção</label>
+                            <select value={subFunction} onChange={(e) => setSubFunction(e.target.value)} className={inputClass}>
+                                <option value="">Selecione...</option>
+                                {SUB_FUNCTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        </div>
+                        <div className="md:col-span-3">
+                            <label className={labelClass}>Subação</label>
+                            <select value={subAction} onChange={(e) => setSubAction(e.target.value)} className={inputClass}>
+                                <option value="">Selecione...</option>
+                                {SUB_ACTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        </div>
+                        <div className="md:col-span-3">
+                            <label className={labelClass}>Elemento de Despesa</label>
+                            <select value={expenseElement} onChange={(e) => setExpenseElement(e.target.value)} className={inputClass}>
+                                <option value="">Selecione...</option>
+                                {EXPENSE_ELEMENTS.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        </div>
                         <div>
                             <label className={labelClass}>Valor Proposto (R$)</label>
                             <input type="text" value={budget} onChange={handleBudget} placeholder="R$ 0,00" className={inputClass} />
