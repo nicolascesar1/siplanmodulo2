@@ -2,21 +2,25 @@
   "name": "siplan",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://nicolascesar1.github.io/siplanmodulo2/",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.6",
+    "lucide-react": "^0.554.0",
     "react": "^19.2.0",
-    "lucide-react": "^0.554.0"
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.6"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^4.0.0",
+    "gh-pages": "^6.3.0",
     "typescript": "~5.8.2",
     "vite": "^4.5.0"
   }
