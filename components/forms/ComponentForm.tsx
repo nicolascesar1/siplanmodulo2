@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { PESComponent, ComponentType } from '../../types';
-import { Save, AlertCircle, CalendarDays } from 'lucide-react';
+import { Save, AlertCircle, CalendarDays, AlertTriangle, TrendingUp } from 'lucide-react';
 import { RESOURCE_SOURCES, SUB_FUNCTIONS, SUB_ACTIONS, EXPENSE_ELEMENTS } from '../../data/budgetData';
+import { MEASUREMENT_UNITS, isPatamarMeta } from '../../utils/metaTypeConfig';
 
 interface ComponentFormProps {
     type: ComponentType;
@@ -11,6 +12,7 @@ interface ComponentFormProps {
     initialData?: PESComponent;
     onSave: (data: Partial<PESComponent>) => void;
     onCancel: () => void;
+    customLabel?: string;
 }
 
 const inputClass = "w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all";
@@ -29,7 +31,7 @@ const formatDateMask = (value: string) => {
     return v;
 };
 
-export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, units, baseYear, initialData, onSave, onCancel }) => {
+export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, units, baseYear, initialData, onSave, onCancel, customLabel }) => {
     // State for all potential fields
     const [code, setCode] = useState(initialData?.code || '');
     const [content, setContent] = useState(initialData?.content || '');
@@ -85,6 +87,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
             targetYear4: type === 'Meta' ? year4 : undefined,
 
             // Ação
+            actionYear: type === 'Ação' ? (initialData?.actionYear || undefined) : undefined,
             resourceSource: type === 'Ação' ? resource : undefined,
             budget: type === 'Ação' ? budget : undefined,
             subFunction: type === 'Ação' ? subFunction : undefined,
@@ -105,13 +108,13 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
     return (
         <div className={`bg-white rounded-lg shadow-md border border-gray-200 p-6 animate-in zoom-in-95 duration-200 mb-6 ${borderClass}`}>
             <div className="flex justify-between items-center mb-6 pb-2 border-b border-gray-100">
-                <h3 className="font-bold text-gray-800 text-base">{isAdding ? `Novo Registro (${type})` : `Editar ${type}`}</h3>
+                <h3 className="font-bold text-gray-800 text-base">{isAdding ? `Novo Registro (${customLabel || type})` : `Editar ${customLabel || type}`}</h3>
             </div>
 
             <div className="space-y-5">
                 {isAdding && (
                     <div className="bg-blue-50/50 p-4 rounded-lg mb-4 text-sm text-blue-800 border border-blue-100">
-                        <h4 className="font-bold flex items-center gap-2 mb-1"><AlertCircle className="w-4 h-4" /> Adicionando {type}</h4>
+                        <h4 className="font-bold flex items-center gap-2 mb-1"><AlertCircle className="w-4 h-4" /> Adicionando {customLabel || type}</h4>
                         <p>Este item será adicionado {parentId ? `como filho do item selecionado` : 'na raiz do plano'}.</p>
                     </div>
                 )}
@@ -138,7 +141,18 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                                 </select>
                             </div>
                             <div><label className={labelClass}>Indicador</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} /></div>
-                            <div><label className={labelClass}>Unidade de Medida</label><input type="text" value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass} /></div>
+                            <div>
+                                <label className={labelClass}>Unidade de Medida</label>
+                                <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass}>
+                                    <option value="">Selecione...</option>
+                                    <optgroup label="Patamar (nível por ano)">
+                                        {MEASUREMENT_UNITS.filter(u => u.type === 'patamar').map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+                                    </optgroup>
+                                    <optgroup label="Acumulativa (soma dos anos)">
+                                        {MEASUREMENT_UNITS.filter(u => u.type === 'acumulativa').map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+                                    </optgroup>
+                                </select>
+                            </div>
                             <div className="md:col-span-2"><label className={labelClass}>Método de Cálculo</label><input type="text" value={calculationMethod} onChange={(e) => setCalculationMethod(e.target.value)} className={inputClass} /></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -157,6 +171,35 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                                 <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 3 ({baseYear + 2})</label><input type="text" value={year3} onChange={(e) => setYear3(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
                                 <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 4 ({baseYear + 3})</label><input type="text" value={year4} onChange={(e) => setYear4(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
                             </div>
+                            {/* Totalizador para metas acumulativas */}
+                            {!isPatamarMeta(measurementUnit) && measurementUnit && (() => {
+                                const parseNum = (v: string) => { const n = parseFloat(v.replace(',', '.')); return isNaN(n) ? 0 : n; };
+                                const sum = parseNum(year1) + parseNum(year2) + parseNum(year3) + parseNum(year4);
+                                const target = parseNum(targetValue);
+                                const diff = target - sum;
+                                return (
+                                    <div className="mt-3 flex items-center justify-between bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200">
+                                        <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                                            <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
+                                            <span>Soma dos anos: <span className="text-teal-700 text-sm">{sum.toLocaleString('pt-BR')}</span></span>
+                                        </div>
+                                        {target > 0 && sum > target && (
+                                            <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                                                <AlertTriangle className="w-3.5 h-3.5" />
+                                                Soma ({sum.toLocaleString('pt-BR')}) supera a meta final ({target.toLocaleString('pt-BR')})
+                                            </div>
+                                        )}
+                                        {target > 0 && sum <= target && diff > 0 && (
+                                            <div className="text-[11px] font-medium text-gray-500">
+                                                Faltam <span className="font-bold text-teal-700">{diff.toLocaleString('pt-BR')}</span> para atingir a meta final
+                                            </div>
+                                        )}
+                                        {target > 0 && sum === target && (
+                                            <div className="text-[11px] font-bold text-emerald-600">✓ Programação completa</div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 )}

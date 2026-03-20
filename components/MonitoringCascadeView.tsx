@@ -27,6 +27,23 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
     // Helpers
     const belongsToUnit = (component: PESComponent) => component.responsible === monitoring.unitName;
 
+    // Calcula qual targetYearN usar baseado no período do monitoramento
+    const getYearlyTarget = (component: PESComponent): string | undefined => {
+        // Extrair o ano do período (ex: "Q2 2025" -> 2025, "T3 2026" -> 2026)
+        const periodMatch = monitoring.period.match(/[QT]\d\s+(\d{4})/);
+        if (!periodMatch) return component.targetValue;
+        const monitoringYear = parseInt(periodMatch[1]);
+        const yearIndex = monitoringYear - plan.startYear; // 0-based
+
+        switch (yearIndex) {
+            case 0: return component.targetYear1 || component.targetValue;
+            case 1: return component.targetYear2 || component.targetValue;
+            case 2: return component.targetYear3 || component.targetValue;
+            case 3: return component.targetYear4 || component.targetValue;
+            default: return component.targetValue;
+        }
+    };
+
     const getStatusOptions = () => [
         "NÃO INICIADA", "AÇÕES PREPARATÓRIAS", "EM ANDAMENTO", "CONCLUÍDA", "PARALISADA", "SUSPENSA"
     ];
@@ -78,7 +95,8 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
         const entry = entries.get(component.id) || { result: '', status: 'NÃO INICIADA', analysis: '', componentId: component.id, updatedAt: '' };
         const fieldErrors = errors[component.id];
         const isMeta = component.type === 'Meta';
-        const performance = isMeta ? getPerformanceStatus(entry.result, component.targetValue) : null;
+        const yearlyTarget = isMeta ? getYearlyTarget(component) : undefined;
+        const performance = isMeta ? getPerformanceStatus(entry.result, yearlyTarget) : null;
         const isResultRequired = ['EM ANDAMENTO', 'CONCLUÍDA', 'REALIZADA'].includes(entry.status);
         const isAnalysisRequired = true;
 
@@ -105,11 +123,11 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                                 <select
                                     value={entry.status}
                                     onChange={(e) => onEntryChange(component.id, 'status', e.target.value)}
-                                    className={`w-full py-1.5 pl-2 pr-6 border rounded text-xs font-semibold appearance-none focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all cursor-pointer ${getStatusStyle(entry.status)}`}
+                                    className={`w-full py-1.5 pl-2 pr-6 border rounded text-xs font-semibold appearance-none focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all cursor-pointer ${getStatusStyle(entry.status)} print:border-none print:bg-transparent print:shadow-none print:px-0`}
                                 >
                                     {getStatusOptions().map(opt => <option key={opt} value={opt} className="bg-white text-gray-700">{opt}</option>)}
                                 </select>
-                                <ChevronDown className="absolute right-2 top-2 w-3 h-3 pointer-events-none opacity-50" />
+                                <ChevronDown className="absolute right-2 top-2 w-3 h-3 pointer-events-none opacity-50 print:hidden" />
                             </div>
                         </div>
                         <div>
@@ -122,7 +140,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                                     value={entry.result}
                                     onChange={(e) => onEntryChange(component.id, 'result', e.target.value)}
                                     placeholder={isMeta ? "Ex: 45%" : "Ex: 100"}
-                                    className={`w-full py-1.5 px-2 bg-white border rounded text-xs focus:ring-2 transition-all outline-none text-gray-900 ${fieldErrors?.result ? 'border-red-400 focus:ring-red-100' : 'border-gray-200 focus:ring-brand-purple/20 focus:border-brand-purple'}`}
+                                    className={`w-full py-1.5 px-2 bg-white border rounded text-xs focus:ring-2 transition-all outline-none text-gray-900 ${fieldErrors?.result ? 'border-red-400 focus:ring-red-100' : 'border-gray-200 focus:ring-brand-purple/20 focus:border-brand-purple'} print:border-none print:px-0 print:bg-transparent print:placeholder-transparent`}
                                 />
                                 {performance && (
                                     <div className={`absolute right-1 top-1 px-1 py-0.5 rounded text-[9px] font-bold flex items-center gap-0.5 ${performance.type === 'success' ? 'bg-brand-teal/10 text-brand-teal' : 'bg-red-50 text-red-700'}`}>
@@ -139,7 +157,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                             value={entry.analysis}
                             onChange={(e) => onEntryChange(component.id, 'analysis', e.target.value)}
                             placeholder={isResultRequired ? "Evidências e justificativas..." : "Explique o status..."}
-                            className={`w-full flex-1 min-h-[85px] p-2 bg-white border rounded text-xs focus:ring-2 transition-all outline-none resize-y leading-relaxed text-gray-900 ${fieldErrors?.analysis ? 'border-red-400 focus:ring-red-100' : 'border-gray-200 focus:ring-brand-purple/20 focus:border-brand-purple'}`}
+                            className={`w-full flex-1 min-h-[85px] p-2 bg-white border rounded text-xs focus:ring-2 transition-all outline-none resize-y leading-relaxed text-gray-900 ${fieldErrors?.analysis ? 'border-red-400 focus:ring-red-100' : 'border-gray-200 focus:ring-brand-purple/20 focus:border-brand-purple'} print:border-none print:resize-none print:px-0 print:bg-transparent print:placeholder-transparent`}
                         />
                     </div>
                 </div>
@@ -228,10 +246,19 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                         <p className="text-sm text-gray-700 leading-relaxed font-medium"><HighlightedText text={component.content} /></p>
 
                         <div className="flex flex-wrap gap-2 mt-2.5">
+                            {(() => {
+                                const yearlyTarget = getYearlyTarget(component);
+                                return yearlyTarget && (
+                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-gray-600 bg-gray-50 px-2.5 py-1 rounded-full border border-gray-200">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-brand-purple" />
+                                        Meta do Ano: <span className="text-gray-900 font-bold">{yearlyTarget}</span>
+                                        {component.measurementUnit && <span className="text-gray-400">({component.measurementUnit})</span>}
+                                    </span>
+                                );
+                            })()}
                             {component.targetValue && (
-                                <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-gray-600 bg-gray-50 px-2.5 py-1 rounded-full border border-gray-200">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-brand-purple" />
-                                    Alvo: <span className="text-gray-900 font-bold">{component.targetValue}</span>
+                                <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-gray-400 bg-gray-50/50 px-2.5 py-1 rounded-full border border-gray-100">
+                                    Meta Final: <span className="font-bold">{component.targetValue}</span>
                                 </span>
                             )}
                             {component.deadline && (

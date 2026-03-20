@@ -59,7 +59,42 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
   const [isDeadlinesModalOpen, setIsDeadlinesModalOpen] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
-  const [selectedPeriod, setSelectedPeriod] = useState('Q1 2025');
+  const [selectedPeriod, setSelectedPeriod] = useState('');
+  const [submissionStart, setSubmissionStart] = useState('');
+  const [submissionEnd, setSubmissionEnd] = useState('');
+
+  // Generate periods based on plan frequency
+  const availablePeriods = useMemo(() => {
+    if (!selectedPlanId) return [];
+    const plan = plans.find(p => p.id === selectedPlanId);
+    if (!plan) return [];
+
+    const isTrimestral = plan.monitoringFrequency === 'Trimestral';
+    const startObj = plan.startYear || new Date().getFullYear();
+    const endObj = plan.endYear || startObj + 3;
+    const periods = [];
+
+    for (let y = startObj; y <= endObj; y++) {
+      if (isTrimestral) {
+        periods.push({ value: `T1 ${y}`, label: `T1 ${y} (Jan-Mar)` });
+        periods.push({ value: `T2 ${y}`, label: `T2 ${y} (Abr-Jun)` });
+        periods.push({ value: `T3 ${y}`, label: `T3 ${y} (Jul-Set)` });
+        periods.push({ value: `T4 ${y}`, label: `T4 ${y} (Out-Dez)` });
+      } else {
+        periods.push({ value: `Q1 ${y}`, label: `Q1 ${y} (Jan-Abr)` });
+        periods.push({ value: `Q2 ${y}`, label: `Q2 ${y} (Mai-Ago)` });
+        periods.push({ value: `Q3 ${y}`, label: `Q3 ${y} (Set-Dez)` });
+      }
+    }
+    return periods;
+  }, [selectedPlanId, plans]);
+
+  // Auto-select first period when plan changes
+  React.useEffect(() => {
+    if (availablePeriods.length > 0 && !availablePeriods.find(p => p.value === selectedPeriod)) {
+      setSelectedPeriod(availablePeriods[0].value);
+    }
+  }, [availablePeriods, selectedPeriod]);
 
   const handleSaveDeadlines = (updatedMonitorings: MonitoringInstance[]) => {
     updatedMonitorings.forEach(m => onUpdateMonitoring(m));
@@ -102,37 +137,7 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
   }, [monitorings, plans, filterText, filterPlan, filterUnit, filterPeriod, filterStatus, userRole]);
 
   const handleCreate = () => {
-    if (!selectedPlanId || !selectedUnit) return;
-
-    // Calculate SUBMISSION WINDOW based on period.
-    // Regra: Prazo de envio é o mês seguinte ao trimestre.
-    // Q1 (Jan-Mar) -> Envio: Abril
-    // Q2 (Abr-Jun) -> Envio: Julho
-    // Q3 (Jul-Set) -> Envio: Outubro
-    // Q4 (Out-Dez) -> Envio: Janeiro (do ano seguinte)
-
-    let subStart = '';
-    let subEnd = '';
-    let year = parseInt(selectedPeriod.split(' ')[1]);
-
-    if (selectedPeriod.startsWith('Q1')) {
-      // Q1 ends Mar 31. Submission: Apr 01 - Apr 30
-      subStart = `${year}-04-01`;
-      subEnd = `${year}-04-30`;
-    } else if (selectedPeriod.startsWith('Q2')) {
-      // Q2 ends Jun 30. Submission: Jul 01 - Jul 31
-      subStart = `${year}-07-01`;
-      subEnd = `${year}-07-31`;
-    } else if (selectedPeriod.startsWith('Q3')) {
-      // Q3 ends Sep 30. Submission: Oct 01 - Oct 31
-      subStart = `${year}-10-01`;
-      subEnd = `${year}-10-31`;
-    } else if (selectedPeriod.startsWith('Q4')) {
-      // Q4 ends Dec 31. Submission: Jan 01 - Jan 31 (Next Year)
-      year += 1;
-      subStart = `${year}-01-01`;
-      subEnd = `${year}-01-31`;
-    }
+    if (!selectedPlanId || !selectedUnit || !selectedPeriod) return;
 
     const newMonitoring: MonitoringInstance = {
       id: Date.now().toString(),
@@ -142,8 +147,8 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
       period: selectedPeriod,
       status: 'Não Preenchido',
       progress: 0,
-      submissionStart: subStart,
-      submissionEnd: subEnd,
+      submissionStart: submissionStart || undefined,
+      submissionEnd: submissionEnd || undefined,
       createdAt: new Date().toISOString()
     };
 
@@ -151,6 +156,9 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
     setIsModalOpen(false);
     setSelectedPlanId('');
     setSelectedUnit('');
+    setSelectedPeriod('');
+    setSubmissionStart('');
+    setSubmissionEnd('');
   };
 
   const clearFilters = () => {
@@ -355,10 +363,17 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
                 className="w-full appearance-none px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none pr-8 cursor-pointer hover:border-gray-300 transition-colors"
               >
                 <option value="">Todos os Períodos</option>
-                <option value="Q1">Q1 (1º Quad)</option>
-                <option value="Q2">Q2 (2º Quad)</option>
-                <option value="Q3">Q3 (3º Quad)</option>
-                <option value="Q4">Q4 (4º Quad)</option>
+                <optgroup label="Quadrimestral (PAS)">
+                  <option value="Q1">Q1 (1º Quad)</option>
+                  <option value="Q2">Q2 (2º Quad)</option>
+                  <option value="Q3">Q3 (3º Quad)</option>
+                </optgroup>
+                <optgroup label="Trimestral (PPA)">
+                  <option value="T1">T1 (1º Trim)</option>
+                  <option value="T2">T2 (2º Trim)</option>
+                  <option value="T3">T3 (3º Trim)</option>
+                  <option value="T4">T4 (4º Trim)</option>
+                </optgroup>
               </select>
               <ChevronDown className="absolute right-3 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -567,21 +582,45 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
                       onChange={(e) => setSelectedPeriod(e.target.value)}
                       className="w-full p-2 bg-white text-gray-900 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none"
                     >
-                      <option value="Q1 2024">Q1 2024 (Jan-Abr)</option>
-                      <option value="Q2 2024">Q2 2024 (Mai-Ago)</option>
-                      <option value="Q3 2024">Q3 2024 (Set-Dez)</option>
-                      <option value="Q1 2025">Q1 2025</option>
+                      <option value="">Selecione...</option>
+                      {availablePeriods.map(p => (
+                        <option key={p.value} value={p.value}>{p.label}</option>
+                      ))}
                     </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-900 uppercase tracking-wide mb-1">Início do Prazo</label>
+                      <input
+                        type="date"
+                        value={submissionStart}
+                        onChange={(e) => setSubmissionStart(e.target.value)}
+                        className="w-full p-2 bg-white text-gray-900 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-900 uppercase tracking-wide mb-1">Fim do Prazo</label>
+                      <input
+                        type="date"
+                        value={submissionEnd}
+                        onChange={(e) => setSubmissionEnd(e.target.value)}
+                        className="w-full p-2 bg-white text-gray-900 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none"
+                      />
+                    </div>
                   </div>
 
                   {selectedPlanId && selectedUnit && (
                     <div className="bg-brand-purple/5 p-3 rounded-lg border border-brand-purple/20 text-brand-purple text-xs">
                       <p className="font-bold mb-1">Resumo da Geração:</p>
-                      <p>Este monitoramento incluirá automaticamente:</p>
                       <ul className="list-disc ml-4 mt-1 mb-2">
                         <li><span className="font-bold">{matchingItemsCount}</span> Metas/Ações vinculadas à unidade <span className="font-semibold">{selectedUnit}</span>.</li>
                       </ul>
-                      <p className="italic border-t border-brand-purple/20 pt-1 mt-1">O prazo de envio será definido automaticamente para o mês subsequente ao trimestre selecionado.</p>
+                      {submissionStart && submissionEnd ? (
+                        <p className="italic border-t border-brand-purple/20 pt-1 mt-1">O monitoramento ficará disponível para a unidade de {new Date(submissionStart + 'T12:00:00').toLocaleDateString('pt-BR')} a {new Date(submissionEnd + 'T12:00:00').toLocaleDateString('pt-BR')}.</p>
+                      ) : (
+                        <p className="italic border-t border-brand-purple/20 pt-1 mt-1 text-amber-600">Sem prazo definido — o monitoramento não ficará acessível para a unidade até que as datas sejam configuradas.</p>
+                      )}
                     </div>
                   )}
 

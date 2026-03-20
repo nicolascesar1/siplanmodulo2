@@ -29,7 +29,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                         <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     </button>
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900">Modelos de Plano ou Projeto</h2>
+                        <h2 className="text-xl font-bold text-gray-900">Planos e Instrumentos</h2>
                         <p className="text-sm text-gray-500 mt-1">Gerencie os planos cadastrados no sistema</p>
                     </div>
                 </div>

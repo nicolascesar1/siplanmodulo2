@@ -119,6 +119,39 @@ export const PlanTree: React.FC<PlanTreeProps> = ({
         const items = getChildren(parentId, type);
         if (items.length === 0) return null;
 
+        if (type === 'Ação') {
+            // Agrupar por ano
+            const itemsByYear = items.reduce((acc, item) => {
+                const year = item.actionYear || 'Geral/Anterior';
+                if (!acc[year]) acc[year] = [];
+                acc[year].push(item);
+                return acc;
+            }, {} as Record<string | number, PESComponent[]>);
+
+            const sortedYears = Object.keys(itemsByYear).sort().reverse(); // Mais recentes primeiro
+
+            return (
+                <div className="space-y-4 mt-2 mb-2">
+                    {sortedYears.map(year => (
+                        <div key={year} className="bg-white rounded-lg p-2.5 border border-sky-100 shadow-sm relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-sky-200" />
+                            <h4 className="text-[10px] font-bold text-sky-700 uppercase tracking-widest mb-2 flex items-center gap-1.5 ml-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                                {year === 'Geral/Anterior' ? 'Ações Gerais / Sem Ano' : `Ações Planejadas para ${year}`}
+                            </h4>
+                            <div className="space-y-1 ml-1">
+                                {itemsByYear[year].map(item => (
+                                    <div key={item.id}>
+                                        {renderRow(item, depth, false, () => toggle(item.id), false)}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
         return (
             <div>
                 {items.map(item => {
@@ -152,7 +185,7 @@ export const PlanTree: React.FC<PlanTreeProps> = ({
             <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50/50">
                 <div className="flex items-center gap-2">
                     <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Estrutura do Plano</h3>
-                    <span className="text-xs text-gray-400 font-normal">({plan.components?.filter(c => c.type === 'Diretriz').length || 0} Diretrizes)</span>
+                    <span className="text-xs text-gray-400 font-normal">({plan.components?.filter(c => c.type === 'Diretriz').length || 0} {plan.customNomenclature?.level1 ? plan.customNomenclature.level1 + 's' : 'Diretrizes'})</span>
                 </div>
                 <div className="flex gap-2">
                     <button onClick={expandAll} className="flex items-center text-xs font-medium text-gray-600 hover:text-brand-purple bg-white border border-gray-200 hover:border-brand-purple/30 px-3 py-1.5 rounded-lg transition-colors shadow-sm">

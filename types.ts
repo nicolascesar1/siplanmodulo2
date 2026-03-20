@@ -1,6 +1,6 @@
 
 
-export type PESStatus = 'Realizada' | 'Em andamento' | 'Não realizada';
+export type PESStatus = 'Realizada' | 'Em andamento' | 'Não realizada' | 'Concluído' | 'Não iniciado';
 
 export interface PESModel {
   id: string;
@@ -40,6 +40,7 @@ export interface PESComponent {
   targetYear4?: string; // 2027
 
   // Campos Específicos de AÇÃO
+  actionYear?: number; // Ano de criação/execução no monitoramento
   responsible?: string; // Responsável pela execução (Setor/Pessoa)
   resourceSource?: string; // Fonte de Recurso
   budget?: string; // Valor Proposto / Orçamento estimado
@@ -58,6 +59,12 @@ export interface PESInstance {
   modelId: string;
   status: PESStatus;
   components: PESComponent[]; // Array contendo todos os itens da hierarquia
+  customNomenclature?: {
+    level1: string;
+    level2: string;
+    level3: string;
+  };
+  monitoringFrequency?: 'Trimestral' | 'Quadrimestral';
   createdAt: string;
   updatedAt: string;
 }
@@ -69,6 +76,12 @@ export interface PESFormValues {
   description: string;
   modelId: string;
   status: PESStatus;
+  customNomenclature?: {
+    level1: string;
+    level2: string;
+    level3: string;
+  };
+  monitoringFrequency?: 'Trimestral' | 'Quadrimestral';
 }
 
 // Estrutura para os dados preenchidos no monitoramento (inspirado na planilha)

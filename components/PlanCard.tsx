@@ -54,9 +54,16 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, modelName, onClick, cu
         {plan.name}
       </h3>
 
-      <div className="flex items-center text-xs font-medium text-gray-500 mb-4 bg-gray-50 w-fit px-2.5 py-1 rounded-md border border-gray-100">
-        <Calendar className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
-        <span>Vigência: {plan.startYear} - {plan.endYear}</span>
+      <div className="flex items-center gap-2 text-xs font-medium text-gray-500 mb-4">
+        <span className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-md border border-gray-100">
+          <Calendar className="w-3.5 h-3.5 text-gray-400" />
+          <span>Vigência: {plan.startYear} - {plan.endYear}</span>
+        </span>
+        {plan.monitoringFrequency && (
+          <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border ${plan.monitoringFrequency === 'Trimestral' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-teal-50 text-teal-600 border-teal-100'}`}>
+            {plan.monitoringFrequency}
+          </span>
+        )}
       </div>
 
       <p className="text-sm text-gray-600 line-clamp-3 mb-6 flex-1 leading-relaxed">
@@ -64,11 +71,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, modelName, onClick, cu
       </p>
 
       <div className="border-t border-gray-100 pt-4 mt-auto">
-        <div className="flex items-center justify-between text-xs text-gray-400">
-          <div className="flex items-center">
-            <FileText className="w-3.5 h-3.5 mr-1.5 text-brand-purple/60" />
-            <span className="truncate max-w-[140px] font-medium text-gray-600">{modelName || 'Padrão'}</span>
-          </div>
+        <div className="flex items-center justify-end text-xs text-gray-400">
           <div className="flex items-center">
             <Clock className="w-3.5 h-3.5 mr-1.5" />
             <span>Atualizado hoje</span>

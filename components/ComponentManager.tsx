@@ -90,27 +90,39 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
         onUpdatePlan({ ...plan, components: (plan.components || []).filter(c => !idsToDelete.has(c.id)) });
     };
 
-    // Calculate Initial Data for Add Form (e.g. inheriting responsible)
     const getInitialAddData = () => {
-        if (addingContext.type === 'Ação' && addingContext.parentId) {
-            const parentMeta = getComponentById(addingContext.parentId);
-            if (parentMeta?.responsible) return { responsible: parentMeta.responsible } as any;
+        const data: Partial<PESComponent> = {};
+        if (addingContext.type === 'Ação') {
+            // Pegar o ano armazenado pelo CascadeView
+            const storedYear = sessionStorage.getItem('newActionYear');
+            if (storedYear) {
+                data.actionYear = parseInt(storedYear);
+                sessionStorage.removeItem('newActionYear');
+            }
+            if (addingContext.parentId) {
+                const parentMeta = getComponentById(addingContext.parentId);
+                if (parentMeta?.responsible) data.responsible = parentMeta.responsible;
+            }
         }
-        return undefined;
+        return Object.keys(data).length > 0 ? data as any : undefined;
     };
 
     // Render Helpers
-    const renderEditForm = (item: PESComponent) => (
-        <ComponentForm
-            type={item.type}
-            parentId={item.parentId || null}
-            units={units}
-            baseYear={baseYear}
-            initialData={item}
-            onSave={handleUpdateItem}
-            onCancel={() => setEditingItemId(null)}
-        />
-    );
+    const renderEditForm = (item: PESComponent) => {
+        const customLabel = item.type === 'Diretriz' ? plan.customNomenclature?.level1 : item.type === 'Objetivo' ? plan.customNomenclature?.level2 : item.type === 'Meta' ? plan.customNomenclature?.level3 : undefined;
+        return (
+            <ComponentForm
+                type={item.type}
+                parentId={item.parentId || null}
+                units={units}
+                baseYear={baseYear}
+                initialData={item}
+                onSave={handleUpdateItem}
+                onCancel={() => setEditingItemId(null)}
+                customLabel={customLabel}
+            />
+        );
+    };
 
     return (
         <div className="p-6 bg-gray-50/30 min-h-full">
@@ -123,7 +135,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                 <div className="flex gap-4">
                     {!isAdding && !editingItemId && (
                         <button onClick={handleAddRoot} className="flex items-center px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-all shadow-md shadow-brand-purple/30 text-sm font-medium">
-                            <Plus className="w-4 h-4 mr-2" />Adicionar Item (Diretriz)
+                            <Plus className="w-4 h-4 mr-2" />Adicionar Item ({plan.customNomenclature?.level1 || 'Diretriz'})
                         </button>
                     )}
                     <div className="relative">
@@ -149,6 +161,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                     initialData={getInitialAddData()}
                     onSave={handleSaveNewItem}
                     onCancel={() => setIsAdding(false)}
+                    customLabel={addingContext.type === 'Diretriz' ? plan.customNomenclature?.level1 : addingContext.type === 'Objetivo' ? plan.customNomenclature?.level2 : addingContext.type === 'Meta' ? plan.customNomenclature?.level3 : undefined}
                 />
             )}
 

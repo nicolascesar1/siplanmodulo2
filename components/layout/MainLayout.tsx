@@ -16,8 +16,8 @@ export const MainLayout: React.FC<LayoutProps> = ({ children, userRole, setUserR
 
     const getBreadcrumbs = () => {
         if (location.pathname === '/admin') return ['Início', 'Painel Administrativo'];
-        if (location.pathname === '/plans') return ['Início', 'Painel Administrativo', 'Modelos de Plano'];
-        if (location.pathname.includes('/plan/')) return ['Início', 'Modelos de Plano', 'Detalhes'];
+        if (location.pathname === '/plans') return ['Início', 'Planos'];
+        if (location.pathname.includes('/plan/')) return ['Início', 'Planos', 'Detalhes'];
         if (location.pathname === '/dashboard') return ['Início', 'Dashboard'];
         if (location.pathname === '/monitorings') return ['Início', 'Monitoramentos'];
         if (location.pathname.includes('/monitoring/')) return ['Início', 'Monitoramentos', 'Preenchimento'];

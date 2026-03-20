@@ -11,7 +11,7 @@ interface ExecutionStatusModalProps {
 }
 
 export const ExecutionStatusModal: React.FC<ExecutionStatusModalProps> = ({ component, monitorings, onClose, plan, isPlanMode }) => {
-    const periods = ['1º Quadrimestre', '2º Quadrimestre', '3º Quadrimestre', '4º Quadrimestre'];
+    const periods = ['1º Quadrimestre', '2º Quadrimestre', '3º Quadrimestre'];
     const [selectedTab, setSelectedTab] = useState<string>(periods[0]);
 
     // Recursive helper to get all descendant IDs

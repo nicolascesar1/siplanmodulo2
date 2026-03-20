@@ -83,7 +83,7 @@ export const AdminPanel: React.FC = () => {
   // Mantive apenas o que tem navegação real ou função crítica (Backup)
   const cards = [
     {
-      title: "Modelos de Plano ou Projeto",
+      title: "Planos e Instrumentos",
       description: "Configurar modelos, vigências e estruturas dos planos.",
       icon: Network, 
       colorClass: "bg-indigo-50 text-indigo-600",

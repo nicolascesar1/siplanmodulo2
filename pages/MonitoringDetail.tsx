@@ -123,11 +123,11 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
 
     // --- LOGICA DE IMPORTAÇÃO DE DADOS ANTERIORES ---
     const getPreviousMonitoring = () => {
-        // Helper para transformar "Q1 2025" em valor numérico comparável (20251)
+        // Helper para transformar "Q1 2025" ou "T1 2025" em valor numérico comparável (20251)
         const parsePeriod = (p: string) => {
-            const match = p.match(/Q(\d)\s+(\d{4})/);
+            const match = p.match(/([QT])(\d)\s+(\d{4})/);
             if (!match) return 0;
-            return parseInt(match[2]) * 10 + parseInt(match[1]);
+            return parseInt(match[3]) * 10 + parseInt(match[2]);
         };
 
         const currentVal = parsePeriod(monitoring.period);
@@ -222,12 +222,24 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
     };
 
     const calculateProgress = () => {
+        // Extrair o ano do período do monitoramento para filtrar ações
+        const periodMatch = monitoring.period.match(/[QT]\d\s+(\d{4})/);
+        const monitoringYear = periodMatch ? parseInt(periodMatch[1]) : null;
+
         const relevantItems = plan.components.filter(c => {
             if (c.type !== 'Meta' && c.type !== 'Ação') return false;
+            // Filtrar ações pelo ano do monitoramento
+            if (c.type === 'Ação' && monitoringYear) {
+                if (c.actionYear && c.actionYear !== monitoringYear) return false;
+            }
             return c.responsible ? c.responsible === monitoring.unitName : true;
         });
 
-        const itemsToCount = relevantItems.length > 0 ? relevantItems : plan.components.filter(c => c.type === 'Meta' || c.type === 'Ação');
+        const itemsToCount = relevantItems.length > 0 ? relevantItems : plan.components.filter(c => {
+            if (c.type !== 'Meta' && c.type !== 'Ação') return false;
+            if (c.type === 'Ação' && monitoringYear && c.actionYear && c.actionYear !== monitoringYear) return false;
+            return true;
+        });
 
         const filledCount = itemsToCount.filter(item => {
             const entry = entries.get(item.id) as MonitoringEntry | undefined;
@@ -321,17 +333,17 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
     const previousMonitoring = useMemo(() => getPreviousMonitoring(), [monitoring, initialMonitorings]);
 
     return (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300 pb-20">
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300 pb-20 print:pb-0">
 
-            {/* Sticky Header Modernizado - REMOVED STICKY */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            {/* Header */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 print:border-none print:shadow-none print:p-0">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 print:flex-row">
                     <div className="flex items-center gap-4 w-full md:w-auto">
-                        <button onClick={() => navigate('/monitorings')} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 group">
+                        <button onClick={() => navigate('/monitorings')} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 group print:hidden">
                             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         </button>
                         <div>
-                            <h1 className="text-lg font-bold text-gray-900 leading-tight">{monitoring.title}</h1>
+                            <h1 className="text-lg font-bold text-gray-900 leading-tight print:text-xl">{monitoring.title}</h1>
                             <div className="flex items-center text-xs text-gray-500 mt-1 gap-3">
                                 <span className="flex items-center bg-gray-100 px-2 py-0.5 rounded"><Clock className="w-3 h-3 mr-1" /> {monitoring.period}</span>
                                 <span className="flex items-center font-medium"><Target className="w-3 h-3 mr-1 text-brand-purple" /> {monitoring.unitName}</span>
@@ -342,7 +354,7 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                     <div className="flex items-center gap-6 w-full md:w-auto justify-end">
                         <div className="text-right hidden sm:block">
                             <div className="flex items-center gap-2 justify-end mb-1">
-                                <span className="text-xs font-medium text-gray-500">Progresso Geral</span>
+                                <span className="text-xs font-medium text-gray-500">Preenchimento</span>
                                 <span className="text-sm font-bold text-brand-purple">{calculateProgress()}%</span>
                             </div>
                             <div className="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -351,7 +363,15 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                         </div>
 
                         {/* ACTION BUTTONS BASED ON ROLE */}
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 print:hidden">
+                            <button
+                                onClick={() => window.print()}
+                                className="flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:border-brand-purple/30 hover:text-brand-purple transition-colors text-sm font-medium shadow-sm"
+                                title="Exportar Relatório para PDF"
+                            >
+                                <FileText className="w-4 h-4 mr-2" />
+                                Exportar PDF
+                            </button>
                             {/* Botão de Importar Anterior */}
                             {!isLocked && previousMonitoring && (
                                 <button
@@ -401,8 +421,8 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                 </div>
             </div>
 
-            <div className="max-w-5xl mx-auto w-full">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div className="max-w-5xl mx-auto w-full print:max-w-none">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 print:hidden">
                     <div className="flex items-start gap-3 p-4 bg-blue-50/50 text-blue-900 rounded-xl border border-blue-100 text-sm shadow-sm flex-1">
                         <AlertCircle className="w-5 h-5 flex-shrink-0 text-blue-500 mt-0.5" />
                         <div>
@@ -427,7 +447,23 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                 </div>
 
                 <MonitoringCascadeView
-                    plan={plan}
+                    plan={(() => {
+                        // Filtrar ações pelo ano do período do monitoramento
+                        const periodMatch = monitoring.period.match(/[QT]\d\s+(\d{4})/);
+                        if (!periodMatch) return plan;
+                        const monitoringYear = parseInt(periodMatch[1]);
+                        return {
+                            ...plan,
+                            components: plan.components.filter(c => {
+                                // Manter tudo que não é Ação
+                                if (c.type !== 'Ação') return true;
+                                // Ações sem ano definido: manter (legado)
+                                if (!c.actionYear) return true;
+                                // Ações com ano: só mostra se for do ano do monitoramento
+                                return c.actionYear === monitoringYear;
+                            })
+                        };
+                    })()}
                     monitoring={monitoring}
                     entries={entries}
                     errors={errors}

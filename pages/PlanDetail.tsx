@@ -68,7 +68,11 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                         </div>
                         <div className="text-gray-500 text-sm font-medium flex gap-4 ml-10 mt-2">
                             <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded text-xs border border-gray-100"><BarChart3 className="w-3.5 h-3.5 text-brand-purple" /> {plan.startYear} - {plan.endYear}</span>
-                            <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded text-xs border border-gray-100"><Network className="w-3.5 h-3.5 text-brand-purple" /> Modelo: {model?.name}</span>
+                            {plan.monitoringFrequency && (
+                                <span className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs border font-bold ${plan.monitoringFrequency === 'Trimestral' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-teal-50 text-teal-600 border-teal-100'}`}>
+                                    {plan.monitoringFrequency}
+                                </span>
+                            )}
                         </div>
                         {plan.description && (
                             <p className="mt-4 ml-10 text-gray-600 text-sm max-w-4xl leading-relaxed bg-gray-50/80 p-4 rounded-lg border border-gray-100">
@@ -87,9 +91,20 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                                     className="bg-white border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-brand-purple focus:border-brand-purple block p-2 w-full shadow-sm"
                                 >
                                     <option value="Todos">Todos os Períodos</option>
-                                    <option value="1º Quadrimestre">1º Quadrimestre</option>
-                                    <option value="2º Quadrimestre">2º Quadrimestre</option>
-                                    <option value="3º Quadrimestre">3º Quadrimestre</option>
+                                    {plan.monitoringFrequency === 'Trimestral' ? (
+                                        <>
+                                            <option value="1º Trimestre">1º Trimestre</option>
+                                            <option value="2º Trimestre">2º Trimestre</option>
+                                            <option value="3º Trimestre">3º Trimestre</option>
+                                            <option value="4º Trimestre">4º Trimestre</option>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <option value="1º Quadrimestre">1º Quadrimestre</option>
+                                            <option value="2º Quadrimestre">2º Quadrimestre</option>
+                                            <option value="3º Quadrimestre">3º Quadrimestre</option>
+                                        </>
+                                    )}
                                 </select>
                             </div>
                         </div>

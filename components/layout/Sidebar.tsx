@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ClipboardCheck, Settings, Database } from 'lucide-react';
+import { LayoutDashboard, ClipboardCheck, Settings, Database, FileStack } from 'lucide-react';
 import { UserRole } from '../../types';
 import { SiplanLogo } from '../ui/Logo';
 

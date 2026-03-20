@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { PESFormValues, PESModel } from '../types';
-import { Save, X } from 'lucide-react';
+import { Save, X, ToggleLeft, ToggleRight, Settings } from 'lucide-react';
 
 interface PlanFormProps {
   initialValues?: PESFormValues;
@@ -17,11 +17,16 @@ const defaultValues: PESFormValues = {
   endYear: new Date().getFullYear() + 4,
   description: '',
   modelId: '',
-  status: 'Em andamento'
+  status: 'Em andamento',
+  monitoringFrequency: 'Quadrimestral'
 };
 
 export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSubmit, onCancel, title }) => {
   const [form, setForm] = useState<PESFormValues>(initialValues || defaultValues);
+  const [useCustomNomenclature, setUseCustomNomenclature] = useState<boolean>(!!initialValues?.customNomenclature);
+  const [customNomenclature, setCustomNomenclature] = useState(
+    initialValues?.customNomenclature || { level1: 'Diretriz', level2: 'Objetivo', level3: 'Meta' }
+  );
 
   // Set default model if creating new and models exist
   useEffect(() => {
@@ -46,7 +51,17 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
       return;
     }
 
-    onSubmit(form);
+    const finalForm = {
+      ...form,
+      customNomenclature: useCustomNomenclature ? customNomenclature : undefined
+    };
+
+    onSubmit(finalForm);
+  };
+
+  const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCustomNomenclature(prev => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -107,34 +122,89 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
           {/* Section: Configuration */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Modelo de Plano</label>
-              <select
-                name="modelId"
-                value={form.modelId}
-                onChange={handleChange}
-                className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-md focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm"
-                required
-                disabled={!!initialValues}
-              >
-                {models.map(m => (
-                  <option key={m.id} value={m.id}>{m.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Status</label>
               <select
                 name="status"
                 value={form.status}
                 onChange={handleChange}
                 className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-md focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm"
+                required
               >
-                <option value="Não realizada">Não realizada</option>
+                <option value="Não iniciado">Não iniciado</option>
                 <option value="Em andamento">Em andamento</option>
-                <option value="Realizada">Realizada</option>
+                <option value="Concluído">Concluído</option>
               </select>
             </div>
+            
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Frequência de Monitoramento</label>
+              <select
+                name="monitoringFrequency"
+                value={form.monitoringFrequency || 'Quadrimestral'}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-md focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm"
+              >
+                <option value="Quadrimestral">Quadrimestral (3x ao ano - Padrão PAS)</option>
+                <option value="Trimestral">Trimestral (4x ao ano - Padrão PPA)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Section: Custom Nomenclature */}
+          <div className="bg-indigo-50/50 p-5 rounded-lg border border-indigo-100/50">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Settings className="w-4 h-4 text-indigo-500" />
+                <label className="text-sm font-bold text-gray-800 cursor-pointer select-none" onClick={() => setUseCustomNomenclature(!useCustomNomenclature)}>
+                  Personalizar Nomenclatura Hierárquica (PPA)
+                </label>
+              </div>
+              <button
+                type="button"
+                onClick={() => setUseCustomNomenclature(!useCustomNomenclature)}
+                className={`flex items-center transition-colors ${useCustomNomenclature ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                {useCustomNomenclature ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
+              </button>
+            </div>
+
+            {useCustomNomenclature && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-indigo-100">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 1 (Ex: Eixo)</label>
+                  <input
+                    type="text"
+                    name="level1"
+                    value={customNomenclature.level1}
+                    onChange={handleCustomChange}
+                    className="w-full px-3 py-1.5 bg-white text-gray-900 border border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm"
+                    required={useCustomNomenclature}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 2 (Ex: Programa)</label>
+                  <input
+                    type="text"
+                    name="level2"
+                    value={customNomenclature.level2}
+                    onChange={handleCustomChange}
+                    className="w-full px-3 py-1.5 bg-white text-gray-900 border border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm"
+                    required={useCustomNomenclature}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 3 (Ex: Iniciativa)</label>
+                  <input
+                    type="text"
+                    name="level3"
+                    value={customNomenclature.level3}
+                    onChange={handleCustomChange}
+                    className="w-full px-3 py-1.5 bg-white text-gray-900 border border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm"
+                    required={useCustomNomenclature}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Section: Description */}
