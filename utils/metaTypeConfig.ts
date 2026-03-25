@@ -44,3 +44,55 @@ export const isPatamarMeta = (measurementUnit?: string): boolean => {
   if (!measurementUnit) return false;
   return PATAMAR_VALUES.includes(measurementUnit.toLowerCase());
 };
+
+// --- Configuração de campos por tipo de plano ---
+
+/**
+ * Grupos de campos que podem ser habilitados/desabilitados por nível hierárquico.
+ * - indicator: Indicador + Unidade de Medida + Método de Cálculo
+ * - annualization: Anualização (valores por ano)
+ * - baseline: Linha de Base + Meta Final + Prazo
+ * - responsible: Responsável / Coordenação
+ * - budget: Fonte de Recurso, Orçamento, Subfunção, Subação, Elemento de Despesa, Obs. Técnicas
+ */
+export type FieldGroup = 'indicator' | 'annualization' | 'baseline' | 'responsible' | 'budget';
+
+export interface LevelFieldConfig {
+  fields: FieldGroup[];
+}
+
+/**
+ * Configuração de campos por tipo de plano.
+ * Cada array representa os níveis hierárquicos (índice 0 = nível 1, etc.)
+ * 
+ * PAS: Diretriz (simples) → Objetivo (simples) → Meta (completa) → Ação (orçamento)
+ * PPA: Obj. Geral (indicador) → Obj. Específico (indicador) → Entrega (indicador)
+ */
+export const MODEL_FIELD_CONFIG: Record<string, LevelFieldConfig[]> = {
+  // PAS — comportamento atual
+  'pas': [
+    { fields: [] },                                                         // Nível 1: Diretriz
+    { fields: [] },                                                         // Nível 2: Objetivo
+    { fields: ['indicator', 'annualization', 'baseline', 'responsible'] },   // Nível 3: Meta
+    { fields: ['indicator', 'responsible', 'budget'] },                     // Nível 4: Ação
+  ],
+  // PPA — todos os níveis têm indicador + anualização
+  'ppa': [
+    { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 1: Objetivo Geral
+    { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 2: Objetivo Específico
+    { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 3: Entrega
+  ],
+};
+
+/**
+ * Retorna a configuração de campos para um nível hierárquico específico.
+ * @param planType - 'pas' ou 'ppa' (default: 'pas')
+ * @param levelIndex - índice do nível (0 = raiz, 1 = segundo nível, etc.)
+ */
+export const getFieldConfig = (planType?: string, levelIndex?: number): LevelFieldConfig => {
+  const type = planType || 'pas';
+  const config = MODEL_FIELD_CONFIG[type] || MODEL_FIELD_CONFIG['pas'];
+  const idx = levelIndex ?? 0;
+  return config[idx] || { fields: [] };
+};
+

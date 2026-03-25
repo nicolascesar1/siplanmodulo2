@@ -11,7 +11,9 @@ interface ExecutionStatusModalProps {
 }
 
 export const ExecutionStatusModal: React.FC<ExecutionStatusModalProps> = ({ component, monitorings, onClose, plan, isPlanMode }) => {
-    const periods = ['1º Quadrimestre', '2º Quadrimestre', '3º Quadrimestre'];
+    const defaultPeriods = ['1º Quadrimestre', '2º Quadrimestre', '3º Quadrimestre'];
+    const trimestralPeriods = ['1º Trimestre', '2º Trimestre', '3º Trimestre', '4º Trimestre'];
+    const periods = plan?.monitoringFrequency === 'Trimestral' ? trimestralPeriods : defaultPeriods;
     const [selectedTab, setSelectedTab] = useState<string>(periods[0]);
 
     // Recursive helper to get all descendant IDs
@@ -114,13 +116,31 @@ export const ExecutionStatusModal: React.FC<ExecutionStatusModalProps> = ({ comp
                     ) : (
                         <div className="space-y-6">
                             {currentEntries.map((entry, idx) => (
-                                <div key={idx} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                                    <div className="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-                                        <div className="flex items-center gap-2 font-bold text-gray-700 text-sm">
-                                            <Building2 className="w-4 h-4 text-indigo-500" />
+                                <div key={idx} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-4">
+                                    {entry.componentName && (
+                                        <div className="px-5 py-3 border-b border-gray-100 bg-white flex flex-col gap-1.5">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${entry.componentType === 'Ação' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+                                                    {entry.componentType}
+                                                </span>
+                                                {entry.componentCode && (
+                                                    <span className="text-xs font-bold text-gray-500 bg-gray-100 px-1.5 rounded border border-gray-200">
+                                                        {entry.componentCode}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <h4 className="text-sm font-bold text-gray-800 leading-snug">
+                                                {entry.componentName}
+                                            </h4>
+                                        </div>
+                                    )}
+
+                                    <div className="bg-gray-50 px-5 py-3 border-b border-gray-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                        <div className="flex items-center gap-2 font-semibold text-gray-600 text-sm">
+                                            <Building2 className="w-4 h-4 text-indigo-400" />
                                             {entry.unitName}
                                         </div>
-                                        <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded border ${entry.status_monitoring === 'Finalizado'
+                                        <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded border self-start sm:self-auto ${entry.status_monitoring === 'Finalizado'
                                             ? 'bg-green-50 text-green-700 border-green-200'
                                             : 'bg-amber-50 text-amber-700 border-amber-200'
                                             }`}>

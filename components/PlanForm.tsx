@@ -25,7 +25,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
   const [form, setForm] = useState<PESFormValues>(initialValues || defaultValues);
   const [useCustomNomenclature, setUseCustomNomenclature] = useState<boolean>(!!initialValues?.customNomenclature);
   const [customNomenclature, setCustomNomenclature] = useState(
-    initialValues?.customNomenclature || { level1: 'Diretriz', level2: 'Objetivo', level3: 'Meta' }
+    initialValues?.customNomenclature || { level1: 'Objetivo Geral', level2: 'Objetivo Específico', level3: 'Entrega' }
   );
 
   // Set default model if creating new and models exist
@@ -53,6 +53,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
 
     const finalForm = {
       ...form,
+      planType: useCustomNomenclature ? 'ppa' as const : 'pas' as const,
       customNomenclature: useCustomNomenclature ? customNomenclature : undefined
     };
 
@@ -161,7 +162,17 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
               </div>
               <button
                 type="button"
-                onClick={() => setUseCustomNomenclature(!useCustomNomenclature)}
+                onClick={() => {
+                  const newValue = !useCustomNomenclature;
+                  setUseCustomNomenclature(newValue);
+                  // Auto-ajustar frequência e nomenclatura padrão
+                  if (newValue) {
+                    setForm(prev => ({ ...prev, monitoringFrequency: 'Trimestral' }));
+                    setCustomNomenclature({ level1: 'Objetivo Geral', level2: 'Objetivo Específico', level3: 'Entrega' });
+                  } else {
+                    setForm(prev => ({ ...prev, monitoringFrequency: 'Quadrimestral' }));
+                  }
+                }}
                 className={`flex items-center transition-colors ${useCustomNomenclature ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
               >
                 {useCustomNomenclature ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
@@ -171,7 +182,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
             {useCustomNomenclature && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-indigo-100">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 1 (Ex: Eixo)</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 1 (Ex: Objetivo Geral)</label>
                   <input
                     type="text"
                     name="level1"
@@ -182,7 +193,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 2 (Ex: Programa)</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 2 (Ex: Objetivo Específico)</label>
                   <input
                     type="text"
                     name="level2"
@@ -193,7 +204,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, onSub
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 3 (Ex: Iniciativa)</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 3 (Ex: Entrega)</label>
                   <input
                     type="text"
                     name="level3"

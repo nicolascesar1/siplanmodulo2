@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PESComponent, ComponentType } from '../../types';
 import { Save, AlertCircle, CalendarDays, AlertTriangle, TrendingUp } from 'lucide-react';
 import { RESOURCE_SOURCES, SUB_FUNCTIONS, SUB_ACTIONS, EXPENSE_ELEMENTS } from '../../data/budgetData';
-import { MEASUREMENT_UNITS, isPatamarMeta } from '../../utils/metaTypeConfig';
+import { MEASUREMENT_UNITS, isPatamarMeta, LevelFieldConfig } from '../../utils/metaTypeConfig';
 
 interface ComponentFormProps {
     type: ComponentType;
@@ -13,6 +13,7 @@ interface ComponentFormProps {
     onSave: (data: Partial<PESComponent>) => void;
     onCancel: () => void;
     customLabel?: string;
+    fieldConfig?: LevelFieldConfig; // NEW: configuração de campos dinâmicos
 }
 
 const inputClass = "w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all";
@@ -31,7 +32,29 @@ const formatDateMask = (value: string) => {
     return v;
 };
 
-export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, units, baseYear, initialData, onSave, onCancel, customLabel }) => {
+export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, units, baseYear, initialData, onSave, onCancel, customLabel, fieldConfig }) => {
+    // Determinar quais campos mostrar via config (fallback para comportamento legado)
+    const has = useMemo(() => {
+        if (fieldConfig) {
+            const f = fieldConfig.fields;
+            return {
+                indicator: f.includes('indicator'),
+                annualization: f.includes('annualization'),
+                baseline: f.includes('baseline'),
+                responsible: f.includes('responsible'),
+                budget: f.includes('budget'),
+            };
+        }
+        // Fallback legado (caso fieldConfig não seja passado)
+        return {
+            indicator: type === 'Meta' || type === 'Ação',
+            annualization: type === 'Meta',
+            baseline: type === 'Meta',
+            responsible: type === 'Meta' || type === 'Ação',
+            budget: type === 'Ação',
+        };
+    }, [fieldConfig, type]);
+
     // State for all potential fields
     const [code, setCode] = useState(initialData?.code || '');
     const [content, setContent] = useState(initialData?.content || '');
@@ -68,32 +91,32 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
         const data: Partial<PESComponent> = {
             content,
             code,
-            type, // Ensure type is preserved
-            indicator: (type === 'Meta' || type === 'Ação') ? indicator : undefined,
-            measurementUnit: (type === 'Meta' || type === 'Ação') ? measurementUnit : undefined,
-            calculationMethod: (type === 'Meta' || type === 'Ação') ? calculationMethod : undefined,
-            responsible: (type === 'Meta' || type === 'Ação') ? responsible : undefined,
+            type,
+            // Campos condicionais baseados na config
+            indicator: has.indicator ? indicator : undefined,
+            measurementUnit: has.indicator ? measurementUnit : undefined,
+            calculationMethod: has.indicator ? calculationMethod : undefined,
+            responsible: has.responsible ? responsible : undefined,
 
-            // Meta
-            baseline: type === 'Meta' ? baseline : undefined,
-            targetValue: type === 'Meta' ? targetValue : undefined,
-            deadline: (type === 'Meta' || type === 'Ação') ? deadline : undefined, // Ação sometimes uses deadline too? Legacy code implies yes for 'Meta' only or both. Let's allowing for both if needed, but UI shows for Meta. Actually legacy renderEditForm allows for both sometimes? Let's check logic.
-            // Logic in ComponentManager: deadline: (currentViewType === 'Meta' || currentViewType === 'Ação') ? newItemMetaDeadline : undefined
-            // So yes, Ação can have deadline.
+            // Baseline / Meta Final (apenas se habilitado)
+            baseline: has.baseline ? baseline : undefined,
+            targetValue: has.baseline ? targetValue : undefined,
+            deadline: (has.baseline || has.budget) ? deadline : undefined,
 
-            targetYear1: type === 'Meta' ? year1 : undefined,
-            targetYear2: type === 'Meta' ? year2 : undefined,
-            targetYear3: type === 'Meta' ? year3 : undefined,
-            targetYear4: type === 'Meta' ? year4 : undefined,
+            // Anualização (apenas se habilitado)
+            targetYear1: has.annualization ? year1 : undefined,
+            targetYear2: has.annualization ? year2 : undefined,
+            targetYear3: has.annualization ? year3 : undefined,
+            targetYear4: has.annualization ? year4 : undefined,
 
-            // Ação
-            actionYear: type === 'Ação' ? (initialData?.actionYear || undefined) : undefined,
-            resourceSource: type === 'Ação' ? resource : undefined,
-            budget: type === 'Ação' ? budget : undefined,
-            subFunction: type === 'Ação' ? subFunction : undefined,
-            subAction: type === 'Ação' ? subAction : undefined,
-            expenseElement: type === 'Ação' ? expenseElement : undefined,
-            technicalObservations: type === 'Ação' ? technicalObs : undefined,
+            // Campos de orçamento (apenas se habilitado)
+            actionYear: has.budget ? (initialData?.actionYear || undefined) : undefined,
+            resourceSource: has.budget ? resource : undefined,
+            budget: has.budget ? budget : undefined,
+            subFunction: has.budget ? subFunction : undefined,
+            subAction: has.budget ? subAction : undefined,
+            expenseElement: has.budget ? expenseElement : undefined,
+            technicalObservations: has.budget ? technicalObs : undefined,
         };
 
         onSave(data);
@@ -102,8 +125,13 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
     const handleBudget = (e: React.ChangeEvent<HTMLInputElement>) => setBudget(formatCurrency(e.target.value));
     const handleDate = (e: React.ChangeEvent<HTMLInputElement>) => setDeadline(formatDateMask(e.target.value));
 
-    const borderClass = type === 'Meta' ? 'border-l-4 border-l-teal-500' : type === 'Ação' ? 'border-l-4 border-l-brand-purple' : 'border-l-4 border-l-gray-500';
+    const borderClass = has.budget ? 'border-l-4 border-l-brand-purple' : (has.indicator || has.annualization) ? 'border-l-4 border-l-teal-500' : 'border-l-4 border-l-gray-500';
     const isAdding = !initialData;
+
+    // Verifica se tem campo de indicador E anualização (bloco "Meta-like")
+    const showIndicatorBlock = has.indicator && !has.budget;
+    // Verifica se tem campo de orçamento (bloco "Ação-like")
+    const showBudgetBlock = has.budget;
 
     return (
         <div className={`bg-white rounded-lg shadow-md border border-gray-200 p-6 animate-in zoom-in-95 duration-200 mb-6 ${borderClass}`}>
@@ -130,16 +158,19 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                     </div>
                 </div>
 
-                {type === 'Meta' && (
+                {/* Bloco Indicador + Anualização (sem orçamento) — usado por Meta (PAS) e todos os níveis do PPA */}
+                {showIndicatorBlock && (
                     <div className="bg-teal-50/30 p-5 rounded-xl border border-teal-100/50 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div className="col-span-2">
-                                <label className={labelClass}>Responsável / Coordenação</label>
-                                <select value={responsible} onChange={(e) => setResponsible(e.target.value)} className={inputClass}>
-                                    <option value="">Selecione...</option>
-                                    {units.map(u => <option key={u} value={u}>{u}</option>)}
-                                </select>
-                            </div>
+                            {has.responsible && (
+                                <div className="col-span-2">
+                                    <label className={labelClass}>Responsável / Coordenação</label>
+                                    <select value={responsible} onChange={(e) => setResponsible(e.target.value)} className={inputClass}>
+                                        <option value="">Selecione...</option>
+                                        {units.map(u => <option key={u} value={u}>{u}</option>)}
+                                    </select>
+                                </div>
+                            )}
                             <div><label className={labelClass}>Indicador</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} /></div>
                             <div>
                                 <label className={labelClass}>Unidade de Medida</label>
@@ -155,66 +186,81 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                             </div>
                             <div className="md:col-span-2"><label className={labelClass}>Método de Cálculo</label><input type="text" value={calculationMethod} onChange={(e) => setCalculationMethod(e.target.value)} className={inputClass} /></div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            <div><label className={labelClass}>Linha de Base</label><input type="text" value={baseline} onChange={(e) => setBaseline(e.target.value)} className={inputClass} /></div>
-                            <div><label className={labelClass}>Meta Final</label><input type="text" value={targetValue} onChange={(e) => setTargetValue(e.target.value)} className={inputClass} /></div>
-                            <div>
-                                <label className={labelClass}>Prazo / Vigência</label>
-                                <input type="text" value={deadline} onChange={handleDate} placeholder="DD/MM/AAAA" className={inputClass} />
+
+                        {/* Linha de Base + Meta Final (apenas se habilitado — PAS Meta) */}
+                        {has.baseline && (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div><label className={labelClass}>Linha de Base</label><input type="text" value={baseline} onChange={(e) => setBaseline(e.target.value)} className={inputClass} /></div>
+                                <div><label className={labelClass}>Meta Final</label><input type="text" value={targetValue} onChange={(e) => setTargetValue(e.target.value)} className={inputClass} /></div>
+                                <div>
+                                    <label className={labelClass}>Prazo / Vigência</label>
+                                    <input type="text" value={deadline} onChange={handleDate} placeholder="DD/MM/AAAA" className={inputClass} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="mt-4 bg-white p-4 rounded-xl border border-teal-100 shadow-sm">
-                            <div className="flex items-center gap-2 mb-3"><CalendarDays className="w-4 h-4 text-teal-600" /><label className="text-xs font-bold text-teal-800 uppercase tracking-wide">Programação Anual de Metas</label></div>
-                            <div className="grid grid-cols-4 gap-4">
-                                <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 1 ({baseYear})</label><input type="text" value={year1} onChange={(e) => setYear1(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
-                                <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 2 ({baseYear + 1})</label><input type="text" value={year2} onChange={(e) => setYear2(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
-                                <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 3 ({baseYear + 2})</label><input type="text" value={year3} onChange={(e) => setYear3(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
-                                <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 4 ({baseYear + 3})</label><input type="text" value={year4} onChange={(e) => setYear4(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
-                            </div>
-                            {/* Totalizador para metas acumulativas */}
-                            {!isPatamarMeta(measurementUnit) && measurementUnit && (() => {
-                                const parseNum = (v: string) => { const n = parseFloat(v.replace(',', '.')); return isNaN(n) ? 0 : n; };
-                                const sum = parseNum(year1) + parseNum(year2) + parseNum(year3) + parseNum(year4);
-                                const target = parseNum(targetValue);
-                                const diff = target - sum;
-                                return (
-                                    <div className="mt-3 flex items-center justify-between bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200">
-                                        <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
-                                            <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
-                                            <span>Soma dos anos: <span className="text-teal-700 text-sm">{sum.toLocaleString('pt-BR')}</span></span>
+                        )}
+
+                        {/* Anualização (se habilitado) */}
+                        {has.annualization && (
+                            <div className="mt-4 bg-white p-4 rounded-xl border border-teal-100 shadow-sm">
+                                <div className="flex items-center gap-2 mb-3"><CalendarDays className="w-4 h-4 text-teal-600" /><label className="text-xs font-bold text-teal-800 uppercase tracking-wide">Programação Anual</label></div>
+                                <div className="grid grid-cols-4 gap-4">
+                                    <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 1 ({baseYear})</label><input type="text" value={year1} onChange={(e) => setYear1(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
+                                    <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 2 ({baseYear + 1})</label><input type="text" value={year2} onChange={(e) => setYear2(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
+                                    <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 3 ({baseYear + 2})</label><input type="text" value={year3} onChange={(e) => setYear3(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
+                                    <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 4 ({baseYear + 3})</label><input type="text" value={year4} onChange={(e) => setYear4(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
+                                </div>
+                                {/* Totalizador para metas acumulativas */}
+                                {!isPatamarMeta(measurementUnit) && measurementUnit && has.baseline && (() => {
+                                    const parseNum = (v: string) => { const n = parseFloat(v.replace(',', '.')); return isNaN(n) ? 0 : n; };
+                                    const sum = parseNum(year1) + parseNum(year2) + parseNum(year3) + parseNum(year4);
+                                    const target = parseNum(targetValue);
+                                    const diff = target - sum;
+                                    return (
+                                        <div className="mt-3 flex items-center justify-between bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200">
+                                            <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                                                <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
+                                                <span>Soma dos anos: <span className="text-teal-700 text-sm">{sum.toLocaleString('pt-BR')}</span></span>
+                                            </div>
+                                            {target > 0 && sum > target && (
+                                                <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                                                    <AlertTriangle className="w-3.5 h-3.5" />
+                                                    Soma ({sum.toLocaleString('pt-BR')}) supera a meta final ({target.toLocaleString('pt-BR')})
+                                                </div>
+                                            )}
+                                            {target > 0 && sum <= target && diff > 0 && (
+                                                <div className="text-[11px] font-medium text-gray-500">
+                                                    Faltam <span className="font-bold text-teal-700">{diff.toLocaleString('pt-BR')}</span> para atingir a meta final
+                                                </div>
+                                            )}
+                                            {target > 0 && sum === target && (
+                                                <div className="text-[11px] font-bold text-emerald-600">✓ Programação completa</div>
+                                            )}
                                         </div>
-                                        {target > 0 && sum > target && (
-                                            <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                                                <AlertTriangle className="w-3.5 h-3.5" />
-                                                Soma ({sum.toLocaleString('pt-BR')}) supera a meta final ({target.toLocaleString('pt-BR')})
-                                            </div>
-                                        )}
-                                        {target > 0 && sum <= target && diff > 0 && (
-                                            <div className="text-[11px] font-medium text-gray-500">
-                                                Faltam <span className="font-bold text-teal-700">{diff.toLocaleString('pt-BR')}</span> para atingir a meta final
-                                            </div>
-                                        )}
-                                        {target > 0 && sum === target && (
-                                            <div className="text-[11px] font-bold text-emerald-600">✓ Programação completa</div>
-                                        )}
-                                    </div>
-                                );
-                            })()}
-                        </div>
+                                    );
+                                })()}
+                            </div>
+                        )}
                     </div>
                 )}
 
-                {type === 'Ação' && (
+                {/* Bloco Orçamento (Ação) */}
+                {showBudgetBlock && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 bg-brand-purple/5 p-5 rounded-xl border border-brand-purple/20">
-                        <div className="md:col-span-3">
-                            <label className={labelClass}>Responsável / Coordenação</label>
-                            <select value={responsible} onChange={(e) => setResponsible(e.target.value)} className={inputClass}>
-                                <option value="">Selecione...</option>
-                                {units.map(u => <option key={u} value={u}>{u}</option>)}
-                            </select>
-                        </div>
-                        <div><label className={labelClass}>Indicador (AE)</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} /></div>
-                        <div><label className={labelClass}>Unidade de Medida</label><input type="text" value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass} /></div>
+                        {has.responsible && (
+                            <div className="md:col-span-3">
+                                <label className={labelClass}>Responsável / Coordenação</label>
+                                <select value={responsible} onChange={(e) => setResponsible(e.target.value)} className={inputClass}>
+                                    <option value="">Selecione...</option>
+                                    {units.map(u => <option key={u} value={u}>{u}</option>)}
+                                </select>
+                            </div>
+                        )}
+                        {has.indicator && (
+                            <>
+                                <div><label className={labelClass}>Indicador (AE)</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} /></div>
+                                <div><label className={labelClass}>Unidade de Medida</label><input type="text" value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass} /></div>
+                            </>
+                        )}
                         <div className="md:col-span-3">
                             <label className={labelClass}>Fonte de Recurso</label>
                             <select value={resource} onChange={(e) => setResource(e.target.value)} className={inputClass}>

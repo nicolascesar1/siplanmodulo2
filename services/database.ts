@@ -186,7 +186,7 @@ const SEED_MONITORING: MonitoringInstance = {
   planId: 'plan-pas-2025',
   unitName: 'Unidade de Gestão de Tecnologia e Sistemas de Informação',
   title: 'Monitoramento 1º Quadrimestre (Janeiro/Abril)',
-  period: 'Q1 2025',
+  period: '1º Quadrimestre',
   status: 'Em Preenchimento',
   progress: 65,
   submissionStart: '2025-04-01',
@@ -259,15 +259,126 @@ const setTable = (key: string, data: any[]) => {
   localStorage.setItem(key, JSON.stringify(data));
 };
 
+// --- DADOS DO PPA (SEED) ---
+const SEED_PPA: PESInstance = {
+  id: 'plan-ppa-2024-2027',
+  name: 'Plano Plurianual (PPA) 2024-2027',
+  startYear: 2024,
+  endYear: 2027,
+  description: 'PPA focado na implantação da saúde digital e telessaúde na rede estadual do SUS.',
+  modelId: 'm1',
+  status: 'Em andamento',
+  planType: 'ppa',
+  monitoringFrequency: 'Trimestral',
+  customNomenclature: { level1: 'Objetivo Geral', level2: 'Objetivo Específico', level3: 'Entrega' },
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  components: [
+    // NÍVEL 1: OBJETIVO GERAL
+    { 
+      id: 'ppa-og-1', planId: 'plan-ppa-2024-2027', type: 'Diretriz', 
+      content: 'Promover a implantação da saúde digital e telessaúde na rede estadual do SUS, por meio da modernização da rede e do fortalecimento e integração dos principais sistemas de informação, incluindo o monitoramento de processos e resultados relacionados às prioridades de saúde', 
+      indicator: 'Número de sistemas integrados', measurementUnit: 'Número absoluto', targetValue: '20',
+      targetYear1: '5', targetYear2: '5', targetYear3: '5', targetYear4: '5',
+      status: 'Em andamento' 
+    },
+
+    // NÍVEL 2: OBJETIVO ESPECÍFICO 728
+    { 
+      id: 'ppa-oe-728', planId: 'plan-ppa-2024-2027', parentId: 'ppa-og-1', type: 'Objetivo', code: '728',
+      content: 'Promover a modernização do parque tecnológico para o funcionamento da saúde digital e telessaúde, por meio de aquisições e manutenções de estações de trabalho', 
+      indicator: 'Número de estações adquiridas', measurementUnit: 'Número absoluto', targetValue: '1200',
+      targetYear1: '300', targetYear2: '300', targetYear3: '300', targetYear4: '300',
+      status: 'Em andamento' 
+    },
+    // NÍVEL 3: ENTREGAS DO OE 728
+    {
+      id: 'ppa-ent-1447', planId: 'plan-ppa-2024-2027', parentId: 'ppa-oe-728', type: 'Meta', code: '1447',
+      content: 'Modernização dos serviços de saúde da rede estadual do SUS',
+      indicator: 'Número de serviços modernizados', measurementUnit: 'Número absoluto', targetValue: '4',
+      targetYear1: '1', targetYear2: '1', targetYear3: '1', targetYear4: '1',
+      status: 'Não iniciado'
+    },
+
+    // NÍVEL 2: OBJETIVO ESPECÍFICO 729
+    { 
+      id: 'ppa-oe-729', planId: 'plan-ppa-2024-2027', parentId: 'ppa-og-1', type: 'Objetivo', code: '729',
+      content: 'Promover a estruturação da rede lógica para a implantação da internet de alta velocidade, por meio de aquisições e manutenções de equipamentos de TIC', 
+      indicator: 'Número de equipamentos adquiridos', measurementUnit: 'Número absoluto', targetValue: '520',
+      targetYear1: '130', targetYear2: '130', targetYear3: '130', targetYear4: '130',
+      status: 'Em andamento' 
+    },
+    // NÍVEL 3: ENTREGAS DO OE 729
+    {
+      id: 'ppa-ent-1448', planId: 'plan-ppa-2024-2027', parentId: 'ppa-oe-729', type: 'Meta', code: '1448',
+      content: 'Unidades estruturadas com rede lógica e internet de alta velocidade',
+      indicator: 'Número de unidades com internet de alta velocidade', measurementUnit: 'Número absoluto', targetValue: '8',
+      targetYear1: '2', targetYear2: '2', targetYear3: '2', targetYear4: '2',
+      status: 'Em andamento'
+    },
+
+    // NÍVEL 2: OBJETIVO ESPECÍFICO 730
+    { 
+      id: 'ppa-oe-730', planId: 'plan-ppa-2024-2027', parentId: 'ppa-og-1', type: 'Objetivo', code: '730',
+      content: 'Desenvolver sistemas que garantam a celeridade e transparência nos processos e projetos de bens e serviços da saúde, incluindo o desenvolvimento de sistemas para a implantação da saúde digital e telessaúde', 
+      indicator: 'Sistemas desenvolvidos', measurementUnit: 'Número absoluto', targetValue: '12',
+      targetYear1: '3', targetYear2: '3', targetYear3: '3', targetYear4: '3',
+      status: 'Em andamento' 
+    },
+    // NÍVEL 3: ENTREGAS DO OE 730
+    {
+      id: 'ppa-ent-1449', planId: 'plan-ppa-2024-2027', parentId: 'ppa-oe-730', type: 'Meta', code: '1449',
+      content: 'Implementação do Datacenter',
+      indicator: 'Número de sistemas implementados no Datacenter', measurementUnit: 'Número absoluto', targetValue: '4',
+      targetYear1: '1', targetYear2: '1', targetYear3: '1', targetYear4: '1',
+      status: 'Não iniciado'
+    },
+
+    // NÍVEL 2: OBJETIVO ESPECÍFICO 731
+    { 
+      id: 'ppa-oe-731', planId: 'plan-ppa-2024-2027', parentId: 'ppa-og-1', type: 'Objetivo', code: '731',
+      content: 'Implementar o Plano de Segurança da Informação (PSI) para garantir a segurança das informações e dados', 
+      indicator: '% de implantação das metas do plano (PSI)', measurementUnit: 'Percentual', targetValue: '100',
+      targetYear1: '25', targetYear2: '25', targetYear3: '25', targetYear4: '25',
+      status: 'Não iniciado' 
+    },
+    // NÍVEL 3: ENTREGAS DO OE 731
+    {
+      id: 'ppa-ent-1450', planId: 'plan-ppa-2024-2027', parentId: 'ppa-oe-731', type: 'Meta', code: '1450',
+      content: 'Dados e informações de usuários da rede estadual do SUS armazenados de forma segura',
+      indicator: 'Número de unidade com dados e informações armazenados de forma segura', measurementUnit: 'Número absoluto', targetValue: '4',
+      targetYear1: '1', targetYear2: '1', targetYear3: '1', targetYear4: '1',
+      status: 'Não iniciado'
+    }
+  ]
+};
+
+// --- API MOCKS ---
 export const db = {
   plans: {
     getAll: async (): Promise<PESInstance[]> => {
-      const data = getTable<PESInstance>(TABLES.PLANS);
-      // Ensure seed data is persisted if it was just loaded from default
-      if (localStorage.getItem(TABLES.PLANS) === null) {
-        setTable(TABLES.PLANS, data);
+      const storedPlans = localStorage.getItem(TABLES.PLANS);
+      if (!storedPlans) {
+        const seedData = [SEED_PLAN, SEED_PPA];
+        localStorage.setItem(TABLES.PLANS, JSON.stringify(seedData));
+        return SIMULATE_NETWORK(seedData) as Promise<PESInstance[]>;
+      } else {
+        const data = JSON.parse(storedPlans) as PESInstance[];
+        // Auto-injetar o PPA se o usuário já tiver o PAS cacheado sem ele,
+        // OU forçar a atualização se ele tiver a versão antiga com o 'ppa-oe-829'
+        const existingPpaIndex = data.findIndex(p => p.id === SEED_PPA.id);
+        
+        if (existingPpaIndex === -1) {
+          data.push(SEED_PPA);
+          localStorage.setItem(TABLES.PLANS, JSON.stringify(data));
+        } else if (data[existingPpaIndex].components.some(c => c.id === 'ppa-oe-829')) {
+          // Substitui a versão "quebrada" pela versão atual do SEED_PPA
+          data[existingPpaIndex] = SEED_PPA;
+          localStorage.setItem(TABLES.PLANS, JSON.stringify(data));
+        }
+
+        return SIMULATE_NETWORK(data) as Promise<PESInstance[]>;
       }
-      return SIMULATE_NETWORK(data) as Promise<PESInstance[]>;
     },
     create: async (item: PESInstance): Promise<PESInstance> => {
       const items = getTable<PESInstance>(TABLES.PLANS);
@@ -291,11 +402,24 @@ export const db = {
 
   monitorings: {
     getAll: async (): Promise<MonitoringInstance[]> => {
-      const data = getTable<MonitoringInstance>(TABLES.MONITORINGS);
-      if (localStorage.getItem(TABLES.MONITORINGS) === null) {
-        setTable(TABLES.MONITORINGS, data);
+      const storedMonitorings = localStorage.getItem(TABLES.MONITORINGS);
+      if (!storedMonitorings) {
+        const seedData = [SEED_MONITORING];
+        localStorage.setItem(TABLES.MONITORINGS, JSON.stringify(seedData));
+        return SIMULATE_NETWORK(seedData) as Promise<MonitoringInstance[]>;
+      } else {
+        const data = JSON.parse(storedMonitorings) as MonitoringInstance[];
+        const existingIdx = data.findIndex(m => m.id === SEED_MONITORING.id);
+        if (existingIdx === -1) {
+          data.push(SEED_MONITORING);
+          localStorage.setItem(TABLES.MONITORINGS, JSON.stringify(data));
+        } else if (data[existingIdx].period === 'Q1 2025') {
+          // Fix the period string if the user has the old cache
+          data[existingIdx] = SEED_MONITORING;
+          localStorage.setItem(TABLES.MONITORINGS, JSON.stringify(data));
+        }
+        return SIMULATE_NETWORK(data) as Promise<MonitoringInstance[]>;
       }
-      return SIMULATE_NETWORK(data) as Promise<MonitoringInstance[]>;
     },
     create: async (item: MonitoringInstance): Promise<MonitoringInstance> => {
       const items = getTable<MonitoringInstance>(TABLES.MONITORINGS);

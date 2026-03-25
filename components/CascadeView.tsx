@@ -25,16 +25,6 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
     const baseYear = plan.startYear || new Date().getFullYear();
     const planYears = Array.from({ length: (plan.endYear || baseYear + 3) - baseYear + 1 }, (_, i) => baseYear + i);
 
-    const StatusAction = ({ component }: { component: PESComponent }) => (
-        <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShowStatus && onShowStatus(component); }}
-            className="p-1.5 text-gray-400 hover:text-brand-purple hover:bg-brand-purple/10 rounded-md transition-colors"
-            title="Ver Status de Execução"
-        >
-            <PieChart className="w-3.5 h-3.5" />
-        </button>
-    );
-
     const HighlightedText = ({ text }: { text: string }) => {
         if (!searchTerm) return <>{text}</>;
         const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
@@ -79,7 +69,6 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white px-3 py-1.5 rounded-xl border border-gray-100 shadow-md transform translate-x-2 group-hover:translate-x-0 z-20">
-                        <StatusAction component={component} />
                         {onAddChild && <button onClick={(e) => { e.stopPropagation(); onAddChild(component.id, 'Objetivo'); }} className="p-2 text-gray-400 hover:text-brand-purple hover:bg-brand-purple/10 rounded-lg transition-colors" title={`Adicionar ${nomenclature.level2}`}><Plus className="w-4 h-4" /></button>}
                         {onEdit && <button onClick={(e) => { e.stopPropagation(); onEdit(component); }} className="p-2 text-gray-400 hover:text-brand-teal hover:bg-brand-teal/10 rounded-lg transition-colors"><Pencil className="w-4 h-4" /></button>}
                         {onDelete && <button onClick={(e) => { e.stopPropagation(); onDelete(component.id); }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>}
@@ -113,7 +102,6 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1 opacity-0 group-hover/obj:opacity-100 transition-opacity bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm z-20">
-                        <StatusAction component={component} />
                         {onAddChild && <button onClick={(e) => { e.stopPropagation(); onAddChild(component.id, 'Meta'); }} className="p-1.5 text-gray-400 hover:text-brand-blue hover:bg-brand-blue/10 rounded-md" title={`Adicionar ${nomenclature.level3}`}><Plus className="w-3.5 h-3.5" /></button>}
                         {onEdit && <button onClick={(e) => { e.stopPropagation(); onEdit(component); }} className="p-1.5 text-gray-400 hover:text-brand-purple rounded-md"><Pencil className="w-3.5 h-3.5" /></button>}
                         {onDelete && <button onClick={(e) => { e.stopPropagation(); onDelete(component.id); }} className="p-1.5 text-gray-400 hover:text-red-600 rounded-md"><Trash2 className="w-3.5 h-3.5" /></button>}
@@ -164,8 +152,8 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1 opacity-0 group-hover/meta:opacity-100 transition-opacity bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm z-20">
-                        <StatusAction component={component} />
-                        {onAddChild && (
+
+                        {onAddChild && plan.planType !== 'ppa' && (
                             <div className="relative">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setActionYearMenuId(actionYearMenuId === component.id ? null : component.id); }}
@@ -227,7 +215,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                         <p className="text-sm text-gray-600 leading-relaxed"><HighlightedText text={component.content} /></p>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover/acao:opacity-100 transition-opacity bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm z-20">
-                        <StatusAction component={component} />
+
                         {onEdit && <button onClick={(e) => { e.stopPropagation(); onEdit(component); }} className="p-1.5 text-gray-400 hover:text-brand-purple rounded-md"><Pencil className="w-3.5 h-3.5" /></button>}
                         {onDelete && <button onClick={(e) => { e.stopPropagation(); onDelete(component.id); }} className="p-1.5 text-gray-400 hover:text-red-600 rounded-md"><Trash2 className="w-3.5 h-3.5" /></button>}
                     </div>

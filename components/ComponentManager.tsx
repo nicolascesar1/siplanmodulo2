@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { PESInstance, PESComponent, ComponentType, MonitoringInstance } from '../types';
 import { Plus, Search, ChevronRight } from 'lucide-react';
 import { CascadeView } from './CascadeView';
 import { ExecutionStatusModal } from './ExecutionStatusModal';
 import { ComponentForm } from './forms/ComponentForm';
+import { getFieldConfig } from '../utils/metaTypeConfig';
 
 interface ComponentManagerProps {
     plan: PESInstance;
@@ -28,6 +29,19 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
     // Helpers
     const getComponentById = (id: string | null) => id ? plan.components?.find(c => c.id === id) : null;
     const baseYear = plan.startYear ? Number(plan.startYear) : new Date().getFullYear();
+
+    // Calcula o nível hierárquico (0=raiz, 1=filho, 2=neto, 3=bisneto)
+    const getLevelIndex = useCallback((componentType: ComponentType, parentId: string | null): number => {
+        if (!parentId) return 0;
+        let depth = 0;
+        let currentParentId: string | null | undefined = parentId;
+        while (currentParentId) {
+            depth++;
+            const parent = plan.components?.find(c => c.id === currentParentId);
+            currentParentId = parent?.parentId;
+        }
+        return depth;
+    }, [plan.components]);
 
     // Handlers
     const handleAddRoot = () => {
@@ -110,6 +124,8 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
     // Render Helpers
     const renderEditForm = (item: PESComponent) => {
         const customLabel = item.type === 'Diretriz' ? plan.customNomenclature?.level1 : item.type === 'Objetivo' ? plan.customNomenclature?.level2 : item.type === 'Meta' ? plan.customNomenclature?.level3 : undefined;
+        const levelIdx = getLevelIndex(item.type, item.parentId || null);
+        const fieldCfg = getFieldConfig(plan.planType, levelIdx);
         return (
             <ComponentForm
                 type={item.type}
@@ -120,6 +136,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                 onSave={handleUpdateItem}
                 onCancel={() => setEditingItemId(null)}
                 customLabel={customLabel}
+                fieldConfig={fieldCfg}
             />
         );
     };
@@ -162,6 +179,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                     onSave={handleSaveNewItem}
                     onCancel={() => setIsAdding(false)}
                     customLabel={addingContext.type === 'Diretriz' ? plan.customNomenclature?.level1 : addingContext.type === 'Objetivo' ? plan.customNomenclature?.level2 : addingContext.type === 'Meta' ? plan.customNomenclature?.level3 : undefined}
+                    fieldConfig={getFieldConfig(plan.planType, getLevelIndex(addingContext.type, addingContext.parentId))}
                 />
             )}
 
