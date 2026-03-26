@@ -16,7 +16,7 @@ interface ComponentFormProps {
     fieldConfig?: LevelFieldConfig; // NEW: configuração de campos dinâmicos
 }
 
-const inputClass = "w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all";
+const inputClass = "w-full p-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all";
 const labelClass = "block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5";
 
 const formatCurrency = (value: string) => {
@@ -60,6 +60,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
     const [content, setContent] = useState(initialData?.content || '');
 
     // Meta/Ação fields
+    const [indicatorCode, setIndicatorCode] = useState(initialData?.indicatorCode || '');
     const [indicator, setIndicator] = useState(initialData?.indicator || '');
     const [measurementUnit, setMeasurementUnit] = useState(initialData?.measurementUnit || '');
     const [calculationMethod, setCalculationMethod] = useState(initialData?.calculationMethod || '');
@@ -75,6 +76,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
     const [year4, setYear4] = useState(initialData?.targetYear4 || '');
 
     // Ação specific
+    const [actionYear, setActionYear] = useState(initialData?.actionYear?.toString() || '');
     const [resource, setResource] = useState(initialData?.resourceSource || '');
     const [budget, setBudget] = useState(initialData?.budget || '');
     const [subFunction, setSubFunction] = useState(initialData?.subFunction || '');
@@ -88,19 +90,25 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
             return;
         }
 
+        if (has.budget && !actionYear) {
+            alert("O Ano de Execução é obrigatório para as Ações.");
+            return;
+        }
+
         const data: Partial<PESComponent> = {
             content,
             code,
             type,
             // Campos condicionais baseados na config
+            indicatorCode: has.indicator ? indicatorCode : undefined,
             indicator: has.indicator ? indicator : undefined,
             measurementUnit: has.indicator ? measurementUnit : undefined,
             calculationMethod: has.indicator ? calculationMethod : undefined,
             responsible: has.responsible ? responsible : undefined,
 
-            // Baseline / Meta Final (apenas se habilitado)
+            // Baseline / Meta Final (Baseline condicional. Em PPA, Total 4 anos vai para targetValue, mesmo sem baseline)
             baseline: has.baseline ? baseline : undefined,
-            targetValue: has.baseline ? targetValue : undefined,
+            targetValue: (has.baseline || has.annualization) ? targetValue : undefined,
             deadline: (has.baseline || has.budget) ? deadline : undefined,
 
             // Anualização (apenas se habilitado)
@@ -110,7 +118,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
             targetYear4: has.annualization ? year4 : undefined,
 
             // Campos de orçamento (apenas se habilitado)
-            actionYear: has.budget ? (initialData?.actionYear || undefined) : undefined,
+            actionYear: has.budget && actionYear ? parseInt(actionYear) : undefined,
             resourceSource: has.budget ? resource : undefined,
             budget: has.budget ? budget : undefined,
             subFunction: has.budget ? subFunction : undefined,
@@ -125,18 +133,28 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
     const handleBudget = (e: React.ChangeEvent<HTMLInputElement>) => setBudget(formatCurrency(e.target.value));
     const handleDate = (e: React.ChangeEvent<HTMLInputElement>) => setDeadline(formatDateMask(e.target.value));
 
-    const borderClass = has.budget ? 'border-l-4 border-l-brand-purple' : (has.indicator || has.annualization) ? 'border-l-4 border-l-teal-500' : 'border-l-4 border-l-gray-500';
     const isAdding = !initialData;
 
-    // Verifica se tem campo de indicador E anualização (bloco "Meta-like")
+    // Checks
     const showIndicatorBlock = has.indicator && !has.budget;
-    // Verifica se tem campo de orçamento (bloco "Ação-like")
     const showBudgetBlock = has.budget;
 
+    const getThemeClass = () => {
+        switch (type) {
+            case 'Diretriz': return 'bg-brand-teal/5 border-l-brand-teal';
+            case 'Objetivo': return 'bg-brand-purple/5 border-l-brand-purple';
+            case 'Meta': return 'bg-brand-blue/5 border-l-brand-blue';
+            case 'Ação': return 'bg-sky-50 border-l-sky-400';
+            default: return 'bg-white border-l-gray-400';
+        }
+    };
+
     return (
-        <div className={`bg-white rounded-lg shadow-md border border-gray-200 p-6 animate-in zoom-in-95 duration-200 mb-6 ${borderClass}`}>
-            <div className="flex justify-between items-center mb-6 pb-2 border-b border-gray-100">
-                <h3 className="font-bold text-gray-800 text-base">{isAdding ? `Novo Registro (${customLabel || type})` : `Editar ${customLabel || type}`}</h3>
+        <div className={`rounded-lg shadow-sm border border-gray-200/60 p-6 animate-in zoom-in-95 duration-200 mb-6 border-l-[6px] ${getThemeClass()}`}>
+            <div className={`flex justify-between items-center mb-6 pb-2 border-b border-gray-200/50`}>
+                <h3 className={`font-bold text-base ${type === 'Diretriz' ? 'text-brand-teal' : type === 'Objetivo' ? 'text-brand-purple' : type === 'Meta' ? 'text-brand-blue' : type === 'Ação' ? 'text-sky-700' : 'text-gray-800'}`}>
+                    {isAdding ? `Novo Registro (${customLabel || type})` : `Editar ${customLabel || type}`}
+                </h3>
             </div>
 
             <div className="space-y-5">
@@ -148,8 +166,8 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                 )}
 
                 <div className="flex gap-4">
-                    <div className="w-24">
-                        <label className={labelClass}>Código</label>
+                    <div className="w-40 flex-shrink-0">
+                        <label className={labelClass}>Código ({customLabel ? customLabel.split(' ').map(w => w[0]).join('').toUpperCase() : type.toUpperCase()})</label>
                         <input type="text" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Ex: 1.1" className={inputClass} />
                     </div>
                     <div className="flex-1">
@@ -171,7 +189,8 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                                     </select>
                                 </div>
                             )}
-                            <div><label className={labelClass}>Indicador</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} /></div>
+                            <div><label className={labelClass}>Cód. Ind</label><input type="text" value={indicatorCode} onChange={(e) => setIndicatorCode(e.target.value)} className={inputClass} placeholder="Código do Indicador" /></div>
+                            <div><label className={labelClass}>Indicador</label><input type="text" value={indicator} onChange={(e) => setIndicator(e.target.value)} className={inputClass} placeholder="Nome do Indicador" /></div>
                             <div>
                                 <label className={labelClass}>Unidade de Medida</label>
                                 <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass}>
@@ -238,6 +257,18 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                                         </div>
                                     );
                                 })()}
+
+                                {/* Input explícito para consolidado dos 4 anos no PPA (onde has.baseline é false mas tem anualização) */}
+                                {!has.baseline && has.annualization && (
+                                    <div className="mt-4 pt-4 border-t border-teal-100 border-dashed">
+                                        <div className="w-full sm:w-1/2">
+                                            <label className="block text-[10px] font-bold text-teal-800 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+                                                TOTAL ({baseYear}/{baseYear + 3}) <span className="text-gray-400 font-normal lowercase">(conforme método de cálculo)</span>
+                                            </label>
+                                            <input type="text" value={targetValue} onChange={(e) => setTargetValue(e.target.value)} className={`${inputClass} border-teal-200 bg-teal-50/30 text-teal-900 focus:border-teal-400 focus:ring-teal-400/20`} placeholder="Ex: 20" />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -246,6 +277,16 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                 {/* Bloco Orçamento (Ação) */}
                 {showBudgetBlock && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 bg-brand-purple/5 p-5 rounded-xl border border-brand-purple/20">
+                        <div className="md:col-span-3">
+                            <label className={labelClass}>Ano de Execução (Vinculação) <span className="text-red-500">*</span></label>
+                            <select value={actionYear} onChange={(e) => setActionYear(e.target.value)} className={inputClass} required>
+                                <option value="">Selecione o Ano de Execução...</option>
+                                <option value={baseYear}>{baseYear}</option>
+                                <option value={baseYear + 1}>{baseYear + 1}</option>
+                                <option value={baseYear + 2}>{baseYear + 2}</option>
+                                <option value={baseYear + 3}>{baseYear + 3}</option>
+                            </select>
+                        </div>
                         {has.responsible && (
                             <div className="md:col-span-3">
                                 <label className={labelClass}>Responsável / Coordenação</label>

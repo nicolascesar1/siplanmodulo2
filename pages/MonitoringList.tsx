@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { PESInstance, MonitoringInstance, UserRole } from '../types';
 import { DeadlinesModal } from '../components/deadlines/DeadlinesModal';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 
 interface MonitoringListProps {
   plans: PESInstance[];
@@ -57,6 +58,7 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeadlinesModalOpen, setIsDeadlinesModalOpen] = useState(false);
+  const [monitoringToDelete, setMonitoringToDelete] = useState<string | null>(null);
   const [selectedPlanId, setSelectedPlanId] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
   const [selectedPeriod, setSelectedPeriod] = useState('');
@@ -487,7 +489,7 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
                   <td className="px-6 py-4 text-right flex justify-end gap-2">
                     {onDeleteMonitoring && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); onDeleteMonitoring(row.id); }}
+                        onClick={(e) => { e.stopPropagation(); setMonitoringToDelete(row.id); }}
                         className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition-colors"
                         title="Excluir Monitoramento"
                       >
@@ -645,6 +647,15 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
           onSave={handleSaveDeadlines}
         />
       )}
+
+      <ConfirmDialog 
+        isOpen={!!monitoringToDelete}
+        title="Excluir Monitoramento"
+        message="Tem certeza que deseja excluir este período de monitoramento? Todos os preenchimentos feitos pelas áreas técnicas serão perdidos permanentemente."
+        confirmText="Sim, Excluir"
+        onConfirm={() => { if (monitoringToDelete && onDeleteMonitoring) onDeleteMonitoring(monitoringToDelete); setMonitoringToDelete(null); }}
+        onCancel={() => setMonitoringToDelete(null)}
+      />
     </div>
   );
 };

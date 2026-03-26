@@ -209,6 +209,8 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                 result: '',
                 status: 'EM ANDAMENTO',
                 analysis: '',
+                location: '',
+                impact: '',
                 updatedAt: new Date().toISOString()
             };
 
@@ -251,18 +253,34 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
     };
 
     const validate = () => {
-        const newErrors: Record<string, { result?: string; analysis?: string }> = {};
+        const newErrors: Record<string, { result?: string; analysis?: string; location?: string; impact?: string }> = {};
         let isValid = true;
+        const isPPA = plan?.planType === 'ppa';
 
         entries.forEach((entry) => {
-            const componentErrors: { result?: string; analysis?: string } = {};
+            const componentErrors: { result?: string; analysis?: string; location?: string; impact?: string } = {};
 
-            if (!entry.analysis || !entry.analysis.trim()) {
-                componentErrors.analysis = 'A análise crítica é obrigatória para justificar a situação atual.';
-            }
+            if (isPPA) {
+                if (!entry.analysis || !entry.analysis.trim()) {
+                    componentErrors.analysis = 'A breve descrição é obrigatória.';
+                }
+                if (!entry.location || !entry.location.trim()) {
+                    componentErrors.location = 'A localização/período é obrigatória.';
+                }
+                if (!entry.impact || !entry.impact.trim()) {
+                    componentErrors.impact = 'O comentário sobre o impacto é obrigatório.';
+                }
+                if (['EM ANDAMENTO', 'CONCLUÍDA', 'REALIZADA'].includes(entry.status) && (!entry.result || !entry.result.trim() || isNaN(Number(entry.result.replace(',', '.'))))) {
+                    componentErrors.result = 'O resultado alcançado deve ser apenas um número.';
+                }
+            } else {
+                if (!entry.analysis || !entry.analysis.trim()) {
+                    componentErrors.analysis = 'A análise crítica é obrigatória para justificar a situação atual.';
+                }
 
-            if (['EM ANDAMENTO', 'CONCLUÍDA', 'REALIZADA'].includes(entry.status) && (!entry.result || !entry.result.trim())) {
-                componentErrors.result = 'Informe o resultado alcançado (número ou produto) para itens iniciados.';
+                if (['EM ANDAMENTO', 'CONCLUÍDA', 'REALIZADA'].includes(entry.status) && (!entry.result || !entry.result.trim())) {
+                    componentErrors.result = 'Informe o resultado alcançado (número ou produto) para itens iniciados.';
+                }
             }
 
             if (Object.keys(componentErrors).length > 0) {

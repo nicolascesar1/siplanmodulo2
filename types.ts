@@ -24,6 +24,7 @@ export interface PESComponent {
   status: PESStatus;
 
   // Campos Compartilhados (Meta e Ação)
+  indicatorCode?: string; // Código do Indicador (CÓD IND)
   indicator?: string; // Indicador (Meta ou Ação)
   measurementUnit?: string; // Unidade de Medida (Meta ou Ação)
   calculationMethod?: string; // Método de Cálculo (Meta ou Ação)
@@ -92,6 +93,8 @@ export interface MonitoringEntry {
   result: string; // "RESULTADO ALCANÇADO DA AÇÃO/META" (Numérico ou texto curto)
   status: string; // "STATUS (AE/ME)" (Ex: EM ANDAMENTO, CONCLUÍDA)
   analysis: string; // "ANÁLISE CRÍTICA DO RESULTADO"
+  location?: string; // "QUANDO E EM QUAL MUNICÍPIO..." (PPA)
+  impact?: string; // "QUAL O IMPACTO..." (PPA)
   updatedAt: string;
 }
 

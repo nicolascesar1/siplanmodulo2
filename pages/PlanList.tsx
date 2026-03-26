@@ -4,6 +4,7 @@ import { Plus, Search, X, FileText, ChevronRight, BarChart2 as BarChart2Icon } f
 import { PESInstance, PESModel, MonitoringInstance } from '../types';
 import { PlanCard } from '../components/PlanCard';
 import { ExecutionStatusModal } from '../components/ExecutionStatusModal';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 
 // Temporary ArrowLeftIcon until we update PlanCard or use lucide everywhere
 const ArrowLeftIcon = ({ className }: { className?: string }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7 7-7" /></svg>;
@@ -20,6 +21,7 @@ interface PlanListProps {
 export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, onCreateClick, onDeletePlan }) => {
     const navigate = useNavigate();
     const [selectedPlanForStatus, setSelectedPlanForStatus] = useState<PESInstance | null>(null);
+    const [planToDelete, setPlanToDelete] = useState<string | null>(null);
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -80,7 +82,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                                 modelName={models.find(m => m.id === plan.modelId)?.name}
                                 onClick={() => navigate(`/plan/${plan.id}`)}
                                 onStatusClick={(p) => setSelectedPlanForStatus(p)}
-                                onDelete={onDeletePlan ? () => onDeletePlan(plan.id) : undefined}
+                                onDelete={onDeletePlan ? () => setPlanToDelete(plan.id) : undefined}
                             />
                         ))}
                     </div>
@@ -97,6 +99,15 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                     onClose={() => setSelectedPlanForStatus(null)}
                 />
             )}
+
+            <ConfirmDialog 
+                isOpen={!!planToDelete}
+                title="Excluir Plano e Instrumento"
+                message="Tem certeza que deseja excluir este plano? Todos os dados, metas e ações serão perdidos."
+                confirmText="Sim, Excluir"
+                onConfirm={() => { if (planToDelete && onDeletePlan) onDeletePlan(planToDelete); setPlanToDelete(null); }}
+                onCancel={() => setPlanToDelete(null)}
+            />
         </div>
     );
 };

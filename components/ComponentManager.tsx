@@ -5,6 +5,7 @@ import { CascadeView } from './CascadeView';
 import { ExecutionStatusModal } from './ExecutionStatusModal';
 import { ComponentForm } from './forms/ComponentForm';
 import { getFieldConfig } from '../utils/metaTypeConfig';
+import { ConfirmDialog } from './ui/ConfirmDialog';
 
 interface ComponentManagerProps {
     plan: PESInstance;
@@ -20,6 +21,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
 
     // Modal State
     const [selectedComponentForStatus, setSelectedComponentForStatus] = useState<PESComponent | null>(null);
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
     // Form State
     const [isAdding, setIsAdding] = useState(false);
@@ -79,17 +81,25 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
             return c;
         });
 
-        // Propagate responsible changes
+        // Propagate responsible changes recursively to all descendants
         if (data.responsible) {
-            const originalItem = plan.components?.find(c => c.id === editingItemId);
-            if (originalItem?.type === 'Meta') {
-                updatedComponents = updatedComponents.map(c => {
-                    if (c.parentId === editingItemId && c.type === 'Ação') {
-                        return { ...c, responsible: data.responsible };
+            const childrenToUpdate = new Set<string>();
+            const findChildren = (pid: string) => {
+                plan.components?.forEach(c => {
+                    if (c.parentId === pid) {
+                        childrenToUpdate.add(c.id);
+                        findChildren(c.id);
                     }
-                    return c;
                 });
-            }
+            };
+            findChildren(editingItemId);
+
+            updatedComponents = updatedComponents.map(c => {
+                if (childrenToUpdate.has(c.id)) {
+                    return { ...c, responsible: data.responsible };
+                }
+                return c;
+            });
         }
 
         onUpdatePlan({ ...plan, components: updatedComponents });
@@ -97,11 +107,16 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
     };
 
     const handleDeleteItem = (id: string) => {
-        if (!confirm("Tem certeza? Isso excluirá também todos os itens filhos (cascata).")) return;
+        setItemToDelete(id);
+    };
+
+    const confirmDelete = () => {
+        if (!itemToDelete) return;
         const idsToDelete = new Set<string>();
         const findChildren = (pid: string) => { idsToDelete.add(pid); plan.components?.forEach(c => { if (c.parentId === pid) findChildren(c.id); }); };
-        findChildren(id);
+        findChildren(itemToDelete);
         onUpdatePlan({ ...plan, components: (plan.components || []).filter(c => !idsToDelete.has(c.id)) });
+        setItemToDelete(null);
     };
 
     const getInitialAddData = () => {
@@ -113,9 +128,25 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                 data.actionYear = parseInt(storedYear);
                 sessionStorage.removeItem('newActionYear');
             }
-            if (addingContext.parentId) {
-                const parentMeta = getComponentById(addingContext.parentId);
-                if (parentMeta?.responsible) data.responsible = parentMeta.responsible;
+        }
+        
+        // Inherit responsible from parent recursively
+        if (addingContext.parentId) {
+            let currentParentId: string | null | undefined = addingContext.parentId;
+            while (currentParentId) {
+                const parent = getComponentById(currentParentId);
+                if (parent?.responsible) {
+                    data.responsible = parent.responsible;
+                    break;
+                }
+                currentParentId = parent?.parentId;
+            }
+
+            // Hierarchical Code Generation
+            const immediateParent = getComponentById(addingContext.parentId);
+            if (immediateParent?.code && !data.code) {
+                const childrenCount = plan.components?.filter(c => c.parentId === immediateParent.id).length || 0;
+                data.code = `${immediateParent.code}.${childrenCount + 1}`;
             }
         }
         return Object.keys(data).length > 0 ? data as any : undefined;
@@ -208,6 +239,15 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                     onClose={() => setSelectedComponentForStatus(null)}
                 />
             )}
+
+            <ConfirmDialog 
+                isOpen={!!itemToDelete}
+                title="Excluir Componente"
+                message="Tem certeza que deseja excluir? Isso excluirá também todos os itens filhos (ações, metas) em cascata."
+                confirmText="Sim, Excluir em Cascata"
+                onConfirm={confirmDelete}
+                onCancel={() => setItemToDelete(null)}
+            />
         </div>
     );
 };

@@ -74,13 +74,13 @@ export const MODEL_FIELD_CONFIG: Record<string, LevelFieldConfig[]> = {
     { fields: [] },                                                         // Nível 1: Diretriz
     { fields: [] },                                                         // Nível 2: Objetivo
     { fields: ['indicator', 'annualization', 'baseline', 'responsible'] },   // Nível 3: Meta
-    { fields: ['indicator', 'responsible', 'budget'] },                     // Nível 4: Ação
+    { fields: ['indicator', 'budget'] },                                    // Nível 4: Ação (Herda responsável da Meta)
   ],
   // PPA — todos os níveis têm indicador + anualização
   'ppa': [
     { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 1: Objetivo Geral
-    { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 2: Objetivo Específico
-    { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 3: Entrega
+    { fields: ['indicator', 'annualization'] },                 // Nível 2: Objetivo Específico (Herda do OG)
+    { fields: ['indicator', 'annualization'] },                 // Nível 3: Entrega (Herda do OG/OE)
   ],
 };
 

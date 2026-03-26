@@ -44,7 +44,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
         // Custom Styles per Type
         if (component.type === 'Diretriz') {
             if (isEditing && renderEditForm) {
-                return <div className="p-4 bg-brand-teal/10 border-l-4 border-brand-teal">{renderEditForm(component)}</div>;
+                return <div className="mb-2">{renderEditForm(component)}</div>;
             }
             return (
                 <div
@@ -78,7 +78,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
         }
 
         if (component.type === 'Objetivo') {
-            if (isEditing && renderEditForm) return <div className="p-4 bg-gray-50">{renderEditForm(component)}</div>;
+            if (isEditing && renderEditForm) return <div className="mb-2">{renderEditForm(component)}</div>;
             return (
                 <div
                     onClick={toggle}
@@ -111,7 +111,22 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
         }
 
         if (component.type === 'Meta') {
-            if (isEditing && renderEditForm) return <div className="p-4 bg-brand-blue/5">{renderEditForm(component)}</div>;
+            if (isEditing && renderEditForm) return <div className="mb-2">{renderEditForm(component)}</div>;
+
+            // Rollup computation for total budget
+            const getBudgetTotal = () => {
+                const actions = plan.components?.filter(c => c.parentId === component.id && c.type === 'Ação');
+                if (!actions || actions.length === 0) return null;
+                const total = actions.reduce((sum, act) => {
+                    if (!act.budget) return sum;
+                    const val = parseFloat((act.budget || '0').replace(/\D/g, '')) / 100;
+                    return sum + (isNaN(val) ? 0 : val);
+                }, 0);
+                if (total === 0) return null;
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total);
+            };
+            const totalBudget = getBudgetTotal();
+
             return (
                 <div
                     onClick={toggle}
@@ -145,6 +160,12 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                                     <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-gray-600 bg-gray-50 px-2.5 py-1 rounded-full border border-gray-200">
                                         <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
                                         Prazo: <span className="text-gray-900 font-bold">{component.deadline}</span>
+                                    </span>
+                                )}
+                                {totalBudget && (
+                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                                        <PieChart className="w-3 h-3" />
+                                        Orçamento Previsto (Ações): <span className="font-bold">{totalBudget}</span>
                                     </span>
                                 )}
                             </div>
@@ -194,7 +215,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
         }
 
         if (component.type === 'Ação') {
-            if (isEditing && renderEditForm) return <div className="p-4 bg-sky-50">{renderEditForm(component)}</div>;
+            if (isEditing && renderEditForm) return <div className="mb-2">{renderEditForm(component)}</div>;
             return (
                 <div className="flex items-start gap-3 py-3 pr-4 pl-4 hover:bg-sky-50 transition-colors group/acao relative my-1 bg-slate-50/50 rounded-lg border border-gray-100 hover:border-sky-200 overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-sky-400" />

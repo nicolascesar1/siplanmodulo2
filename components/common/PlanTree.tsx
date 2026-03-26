@@ -185,7 +185,17 @@ export const PlanTree: React.FC<PlanTreeProps> = ({
             <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50/50">
                 <div className="flex items-center gap-2">
                     <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Estrutura do Plano</h3>
-                    <span className="text-xs text-gray-400 font-normal">({plan.components?.filter(c => c.type === 'Diretriz').length || 0} {plan.customNomenclature?.level1 ? plan.customNomenclature.level1 + 's' : 'Diretrizes'})</span>
+                    {(() => {
+                        const count = plan.components?.filter(c => c.type === 'Diretriz').length || 0;
+                        const label = plan.customNomenclature?.level1 || 'Diretriz';
+                        let displayLabel = label;
+                        if (count !== 1) {
+                            if (label === 'Objetivo Geral') displayLabel = 'Objetivos Gerais';
+                            else if (label === 'Diretriz') displayLabel = 'Diretrizes';
+                            else displayLabel = label + 's';
+                        }
+                        return <span className="text-xs text-gray-400 font-normal">({count} {displayLabel})</span>;
+                    })()}
                 </div>
                 <div className="flex gap-2">
                     <button onClick={expandAll} className="flex items-center text-xs font-medium text-gray-600 hover:text-brand-purple bg-white border border-gray-200 hover:border-brand-purple/30 px-3 py-1.5 rounded-lg transition-colors shadow-sm">

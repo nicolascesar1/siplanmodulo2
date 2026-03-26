@@ -62,14 +62,12 @@ export const useApplicationData = () => {
     };
 
     const deletePlan = async (id: string) => {
-        if (!confirm("Tem certeza que deseja excluir este plano?")) return;
         setPlans(prev => prev.filter(p => p.id !== id));
         await db.plans.delete(id);
         showToast('Plano excluído', 'success');
     };
 
     const deleteMonitoring = async (id: string) => {
-        if (!confirm("Tem certeza que deseja excluir este monitoramento?")) return;
         setMonitorings(prev => prev.filter(m => m.id !== id));
         await db.monitorings.delete(id);
         showToast('Monitoramento excluído', 'success');

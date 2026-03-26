@@ -159,23 +159,45 @@ export const ExecutionStatusModal: React.FC<ExecutionStatusModalProps> = ({ comp
                                         </div>
 
                                         <div>
-                                            <span className="block text-xs font-bold text-gray-400 uppercase mb-2">Status da Ação</span>
+                                            <span className="block text-xs font-bold text-gray-400 uppercase mb-2">Status do Componente</span>
                                             <div className="flex items-center gap-2">
-                                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                                <span className="font-semibold text-gray-800">Em Execução / Realizada</span>
-                                                {/* Note: The individual entry status isn't explicitly stored in MonitoringEntry in the current type def, defaulting to generic layout if missing */}
+                                                <CheckCircle2 className={`w-5 h-5 ${entry.status === 'CONCLUÍDA' ? 'text-emerald-500' : entry.status === 'PARALISADA' || entry.status === 'SUSPENSA' ? 'text-red-500' : 'text-blue-500'}`} />
+                                                <span className="font-semibold text-gray-800">{entry.status || "NÃO INICIADA"}</span>
                                             </div>
                                         </div>
 
                                         <div className="col-span-1 md:col-span-2">
                                             <span className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
-                                                <FileText className="w-3.5 h-3.5" /> Análise Qualitativa
+                                                <FileText className="w-3.5 h-3.5" /> {plan?.planType === 'ppa' ? 'Breve Descrição' : 'Análise Qualitativa'}
                                             </span>
                                             <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-sm text-gray-600 leading-relaxed italic relative">
                                                 <span className="absolute top-2 left-2 text-3xl text-gray-200 font-serif leading-none">“</span>
-                                                <span className="relative z-10">{entry.analysis || "Sem análise registrada."}</span>
+                                                <span className="relative z-10">{entry.analysis || "Sem análise/descrição registrada."}</span>
                                             </div>
                                         </div>
+                                        
+                                        {plan?.planType === 'ppa' && (
+                                            <>
+                                                <div className="col-span-1 md:col-span-2">
+                                                    <span className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
+                                                        <FileText className="w-3.5 h-3.5" /> Quando e Onde (Localização/Período)
+                                                    </span>
+                                                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-sm text-gray-600 leading-relaxed italic relative">
+                                                        <span className="absolute top-2 left-2 text-3xl text-gray-200 font-serif leading-none">“</span>
+                                                        <span className="relative z-10">{entry.location || "Sem localização registrada."}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="col-span-1 md:col-span-2">
+                                                    <span className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
+                                                        <FileText className="w-3.5 h-3.5" /> Impacto na População
+                                                    </span>
+                                                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-sm text-gray-600 leading-relaxed italic relative">
+                                                        <span className="absolute top-2 left-2 text-3xl text-gray-200 font-serif leading-none">“</span>
+                                                        <span className="relative z-10">{entry.impact || "Sem impacto registrado."}</span>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             ))}
