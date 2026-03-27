@@ -181,7 +181,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                     <p className="text-sm text-gray-500 mt-1">Gerencie hierarquicamente os componentes do planejamento</p>
                 </div>
                 <div className="flex gap-4">
-                    {!isAdding && !editingItemId && (
+                    {!isAdding && !editingItemId && plan.planType !== 'pas' && (
                         <button onClick={handleAddRoot} className="flex items-center px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-all shadow-md shadow-brand-purple/30 text-sm font-medium">
                             <Plus className="w-4 h-4 mr-2" />Adicionar Item ({plan.customNomenclature?.level1 || 'Diretriz'})
                         </button>

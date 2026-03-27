@@ -38,14 +38,20 @@ export const UNITS = [
 
 const AppContent: React.FC = () => {
   const [userRole, setUserRole] = useState<UserRole>('admin');
+  const [creatingInitialValues, setCreatingInitialValues] = useState<Partial<PESFormValues> | undefined>();
   const [isCreating, setIsCreating] = useState(false);
 
   // Use Custom Hook for Data Logic
   const { plans, monitorings, loading, createPlan, updatePlan, deletePlan, createMonitoring, updateMonitoring, deleteMonitoring } = useApplicationData();
 
+  const handleCreateClick = (initialValues?: Partial<PESFormValues>) => {
+    setCreatingInitialValues(initialValues);
+    setIsCreating(true);
+  };
+
   return (
     <HashRouter>
-      <MainLayout userRole={userRole} setUserRole={setUserRole}>
+      <MainLayout userRole={userRole} setUserRole={setUserRole} plans={plans}>
         {loading ? <LoadingScreen /> : (
           <Routes>
             <Route path="/" element={<Navigate to="/monitorings" />} />
@@ -59,12 +65,13 @@ const AppContent: React.FC = () => {
                     plans={plans}
                     models={MOCK_MODELS}
                     monitorings={monitorings}
-                    onCreateClick={() => setIsCreating(true)}
+                    onCreateClick={handleCreateClick}
                     onDeletePlan={deletePlan}
                   />
                 ) : <Navigate to="/monitorings" />
               }
             />
+            {/* ... other routes ... */}
             <Route
               path="/plan/:id"
               element={
@@ -115,8 +122,10 @@ const AppContent: React.FC = () => {
         <PlanForm
           title="Novo Plano"
           models={MOCK_MODELS}
-          onCancel={() => setIsCreating(false)}
-          onSubmit={createPlan}
+          plans={plans}
+          initialValues={creatingInitialValues as PESFormValues}
+          onCancel={() => { setIsCreating(false); setCreatingInitialValues(undefined); }}
+          onSubmit={(values) => { createPlan(values); setIsCreating(false); setCreatingInitialValues(undefined); }}
         />
       )}
     </HashRouter>

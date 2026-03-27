@@ -49,6 +49,10 @@ export interface PESComponent {
   subAction?: string; // Subação (ex: 124201...)
   expenseElement?: string; // Elemento de Despesa (ex: 44.90.52...)
   technicalObservations?: string; // Observações Técnicas
+
+  // UI State (Não persiste no DB, apenas controle de interface)
+  isReadOnly?: boolean;
+  planName?: string;
 }
 
 export interface PESInstance {
@@ -60,7 +64,9 @@ export interface PESInstance {
   modelId: string;
   status: PESStatus;
   components: PESComponent[]; // Array contendo todos os itens da hierarquia
-  planType?: 'pas' | 'ppa'; // Tipo do instrumento de planejamento
+  planType?: 'ppa' | 'pes' | 'pas'; // Tipo do instrumento de planejamento
+  basePlanId?: string; // ID do PES base (se for PAS)
+  referenceYear?: number; // Ano de referência (ex: 2025 para um PAS)
   customNomenclature?: {
     level1: string;
     level2: string;
@@ -78,7 +84,9 @@ export interface PESFormValues {
   description: string;
   modelId: string;
   status: PESStatus;
-  planType?: 'pas' | 'ppa';
+  planType?: 'ppa' | 'pes' | 'pas';
+  basePlanId?: string;
+  referenceYear?: number;
   customNomenclature?: {
     level1: string;
     level2: string;

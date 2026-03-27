@@ -1,7 +1,6 @@
-
-import React, { useRef } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Network, Download, Upload, AlertCircle } from 'lucide-react';
+import { Network, Coins, Users, UserPlus, Building2, Bell } from 'lucide-react';
 
 const AdminCard: React.FC<{
   title: string;
@@ -9,130 +8,81 @@ const AdminCard: React.FC<{
   icon: React.ElementType;
   colorClass: string;
   onClick?: () => void;
-  customAction?: React.ReactNode;
-}> = ({ title, description, icon: Icon, colorClass, onClick, customAction }) => {
+}> = ({ title, description, icon: Icon, colorClass, onClick }) => {
   return (
     <div 
       onClick={onClick}
-      className={`group bg-white border border-gray-200 rounded-xl p-6 flex flex-col gap-4 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden ${onClick ? 'hover:border-indigo-300' : ''}`}
+      className={`group bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 hover:shadow-md transition-all cursor-pointer shadow-sm ${onClick ? 'hover:border-brand-purple/30' : 'opacity-80'}`}
     >
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${colorClass}`}>
+      <div className={`w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center transition-transform group-hover:scale-105 shadow-inner ${colorClass}`}>
         <Icon className="w-6 h-6" />
       </div>
-      <div>
-        <h3 className="text-base font-bold text-gray-900 group-hover:text-indigo-700 transition-colors">{title}</h3>
-        <p className="text-sm text-gray-500 mt-1 leading-relaxed">{description}</p>
+      <div className="flex-1">
+        <h3 className="text-sm font-bold text-gray-900 group-hover:text-brand-purple transition-colors leading-tight">{title}</h3>
+        <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{description}</p>
       </div>
-      
-      {customAction && (
-          <div className="mt-auto pt-2">{customAction}</div>
-      )}
     </div>
   );
 };
 
 export const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- BACKUP ACTIONS ---
-  const handleExportBackup = () => {
-      const data = {
-          plans: JSON.parse(localStorage.getItem('pes_plans') || '[]'),
-          monitorings: JSON.parse(localStorage.getItem('pes_monitorings') || '[]'),
-          backupDate: new Date().toISOString()
-      };
-      
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `siplan_backup_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-  };
-
-  const handleImportBackup = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-          try {
-              const content = e.target?.result as string;
-              const data = JSON.parse(content);
-              
-              if (Array.isArray(data.plans)) {
-                  localStorage.setItem('pes_plans', JSON.stringify(data.plans));
-              }
-              if (Array.isArray(data.monitorings)) {
-                  localStorage.setItem('pes_monitorings', JSON.stringify(data.monitorings));
-              }
-
-              alert('Backup restaurado com sucesso! A página será recarregada.');
-              window.location.reload();
-          } catch (error) {
-              alert('Erro ao ler arquivo de backup. Verifique se o formato é válido.');
-              console.error(error);
-          }
-      };
-      reader.readAsText(file);
-  };
-
-  // Mantive apenas o que tem navegação real ou função crítica (Backup)
   const cards = [
     {
       title: "Planos e Instrumentos",
       description: "Configurar modelos, vigências e estruturas dos planos.",
       icon: Network, 
-      colorClass: "bg-indigo-50 text-indigo-600",
+      colorClass: "bg-brand-purple text-white",
       action: () => navigate('/plans')
+    },
+    {
+      title: "Informações Orçamentárias",
+      description: "Gerenciar Fontes, Subfunções, Subações e Elementos.",
+      icon: Coins, 
+      colorClass: "bg-amber-400 text-white",
+      action: undefined
+    },
+    {
+      title: "Usuários",
+      description: "Gerenciar usuários e permissões.",
+      icon: Users, 
+      colorClass: "bg-orange-500 text-white",
+      action: undefined
+    },
+    {
+        title: "Autocadastros",
+        description: "Gerenciar usuários pré-cadastrados.",
+        icon: UserPlus, 
+        colorClass: "bg-blue-600 text-white",
+        action: undefined
+    },
+    {
+        title: "Unidades",
+        description: "Gerenciar unidades do sistema.",
+        icon: Building2, 
+        colorClass: "bg-emerald-500 text-white",
+        action: undefined
+    },
+    {
+        title: "Avisos",
+        description: "Gerenciar avisos do sistema.",
+        icon: Bell, 
+        colorClass: "bg-sky-400 text-white",
+        action: undefined
     }
   ];
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-500">
       
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 min-h-[600px]">
-        <div className="mb-8 border-b border-gray-100 pb-4 flex justify-between items-center">
-          <div>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 min-h-[600px] flex flex-col">
+        <div className="mb-10 border-b border-gray-100 pb-5">
             <h2 className="text-xl font-bold text-gray-900">Painel Administrativo</h2>
-            <p className="text-sm text-gray-500 mt-1">Central de controle do sistema SIPLAN</p>
-          </div>
+            <p className="text-sm text-gray-500 mt-1">Central de controle e configurações do sistema SIPLAN</p>
         </div>
 
-        {/* BACKUP SECTION - Funcionalidade Crítica */}
-        <div className="mb-8 bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-             <div className="flex items-center gap-3">
-                 <div className="bg-white p-2 rounded-lg border border-gray-100 shadow-sm text-gray-600">
-                     <AlertCircle className="w-5 h-5"/>
-                 </div>
-                 <div>
-                     <h4 className="font-bold text-gray-800 text-sm">Backup e Segurança de Dados</h4>
-                     <p className="text-xs text-gray-500">Exporte seus dados regularmente para evitar perdas (armazenamento local).</p>
-                 </div>
-             </div>
-             <div className="flex gap-3">
-                 <button onClick={handleExportBackup} className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors shadow-sm">
-                     <Download className="w-4 h-4 mr-2" />
-                     Exportar Dados (JSON)
-                 </button>
-                 <button onClick={() => fileInputRef.current?.click()} className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm">
-                     <Upload className="w-4 h-4 mr-2" />
-                     Restaurar Backup
-                 </button>
-                 <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleImportBackup} 
-                    accept=".json" 
-                    className="hidden" 
-                 />
-             </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {cards.map((card, index) => (
             <AdminCard
               key={index}
@@ -143,12 +93,6 @@ export const AdminPanel: React.FC = () => {
               onClick={card.action}
             />
           ))}
-          
-          {/* Placeholder para indicar expansão futura sem poluir com botões falsos */}
-          <div className="border-2 border-dashed border-gray-100 rounded-xl p-6 flex flex-col items-center justify-center text-center gap-2 opacity-60">
-              <p className="text-sm font-bold text-gray-400">Novos Módulos</p>
-              <p className="text-xs text-gray-400">Funcionalidades de Orçamento e Usuários em breve.</p>
-          </div>
         </div>
       </div>
     </div>

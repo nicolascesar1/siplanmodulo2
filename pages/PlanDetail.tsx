@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
-import { Edit3, BarChart3, Network, Loader2, ArrowLeft, Download, FileText, ChevronDown, ChevronRight, BarChart2, Building2 } from 'lucide-react';
+import { Edit3, BarChart3, Network, Loader2, ArrowLeft, Download, FileText, ChevronDown, ChevronRight, BarChart2, Building2, PlayCircle } from 'lucide-react';
 import { PESInstance, PESModel, MonitoringInstance, PESFormValues, PESComponent } from '../types';
 import { PlanForm } from '../components/PlanForm';
 import { ComponentManager } from '../components/ComponentManager';
@@ -22,6 +22,7 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
     const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState(false);
     const { showToast } = useToast();
+    const [isConsolidated, setIsConsolidated] = useState(false);
 
     // Consolidated Results Filter
     const [selectedPeriod, setSelectedPeriod] = useState<string>('Todos');
@@ -30,6 +31,28 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
     const model = models.find(m => m.id === plan?.modelId);
 
     if (!plan) return <Navigate to="/" />;
+
+    const basePlan = plan.planType === 'pas' && plan.basePlanId ? plans.find(p => p.id === plan.basePlanId) : null;
+    
+    let displayComponents = [...(plan.components || [])];
+    
+    if (plan.planType === 'pas' && basePlan) {
+        const baseComponents = (basePlan.components || []).map(c => ({ ...c, isReadOnly: true }));
+        displayComponents = [...baseComponents, ...displayComponents];
+    } else if (plan.planType === 'pes' && isConsolidated) {
+        const pasPlans = plans.filter(p => p.planType === 'pas' && p.basePlanId === plan.id);
+        const pasActions = pasPlans.flatMap(p => 
+             (p.components || []).filter(c => c.type === 'Ação').map(a => ({ ...a, isReadOnly: true, planName: p.name }))
+        );
+        displayComponents = [...displayComponents, ...pasActions];
+    }
+    
+    const virtualPlan = { ...plan, components: displayComponents } as PESInstance;
+    
+    const handleComponentUpdate = async (updatedVirtualPlan: PESInstance) => {
+         const nativeComponents = (updatedVirtualPlan.components || []).filter(c => !c.isReadOnly);
+         await onUpdate({ ...plan, components: nativeComponents });
+    };
 
     const handleEditSubmit = async (values: PESFormValues) => {
         await onUpdate({
@@ -109,6 +132,15 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                             </div>
                         </div>
 
+                        {plan.planType === 'pes' && (
+                            <button
+                                onClick={() => setIsConsolidated(!isConsolidated)}
+                                className={`flex items-center justify-center px-4 py-2 border text-sm font-medium rounded-lg shadow-sm w-full transition-colors ${isConsolidated ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
+                            >
+                                <Network className="w-4 h-4 mr-2" />
+                                {isConsolidated ? 'Ocultar Ações (PAS)' : 'Visão Consolidada'}
+                            </button>
+                        )}
                         <button
                             onClick={() => setIsEditing(true)}
                             className="flex items-center justify-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:border-brand-purple/30 hover:text-brand-purple transition-colors text-sm font-medium shadow-sm w-full"
@@ -116,16 +148,26 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                             <Edit3 className="w-4 h-4 mr-2" />
                             Editar Info
                         </button>
+
+                        {(plan.planType === 'pas' || plan.planType === 'ppa') && (
+                            <button
+                                onClick={() => navigate('/monitorings', { state: { planId: plan.id } })}
+                                className="flex items-center justify-center px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-all text-sm font-bold shadow-md shadow-brand-purple/20 w-full mt-1 animate-pulse hover:animate-none"
+                            >
+                                <PlayCircle className="w-4 h-4 mr-2" />
+                                Monitorar Agora
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex-1 overflow-hidden">
                 <ComponentManager
-                    plan={plan}
+                    plan={virtualPlan}
                     monitorings={monitorings}
                     units={units}
-                    onUpdatePlan={async (p) => { await onUpdate(p); showToast('Estrutura atualizada', 'success'); }}
+                    onUpdatePlan={handleComponentUpdate}
                     selectedPeriod={selectedPeriod}
                 />
             </div>
@@ -135,6 +177,7 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                     title="Editar Plano"
                     initialValues={plan}
                     models={models}
+                    plans={plans}
                     onCancel={() => setIsEditing(false)}
                     onSubmit={handleEditSubmit}
                 />

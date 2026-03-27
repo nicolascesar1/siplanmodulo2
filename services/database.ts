@@ -12,32 +12,45 @@ const TABLES = {
 };
 
 // --- DADOS DO PDF (SEED) ---
-const SEED_PLAN: PESInstance = {
-  id: 'plan-pas-2025',
-  name: 'Programação Anual de Saúde (PAS) 2025',
+const SEED_PES: PESInstance = {
+  id: 'plan-pes-2024-2027',
+  name: 'Plano Estadual de Saúde (PES) 2024-2027',
   startYear: 2024,
   endYear: 2027,
-  description: 'Planejamento focado na Diretriz 09: Fortalecer a capacidade organizacional para apoiar a melhoria da qualidade no sistema de saúde no RN.',
+  description: 'Planejamento base Quadrienal da Saúde focado na Diretriz 09.',
   modelId: 'm1',
   status: 'Em andamento',
+  planType: 'pes',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   components: [
-    // DIRETRIZ
-    { id: 'dir-09', planId: 'plan-pas-2025', type: 'Diretriz', content: '09: FORTALECER A CAPACIDADE ORGANIZACIONAL PARA APOIAR A MELHORIA DA QUALIDADE NO SISTEMA DE SAÚDE NO RN', status: 'Em andamento' },
+    { id: 'dir-09', planId: 'plan-pes-2024-2027', type: 'Diretriz', content: '09: FORTALECER A CAPACIDADE ORGANIZACIONAL PARA APOIAR A MELHORIA DA QUALIDADE NO SISTEMA DE SAÚDE NO RN', status: 'Em andamento' },
+    { id: 'obj-22', planId: 'plan-pes-2024-2027', parentId: 'dir-09', type: 'Objetivo', content: '22: PROMOVER A IMPLANTAÇÃO DA SAÚDE DIGITAL E TELESSAÚDE NA REDE ESTADUAL DO SUS, POR MEIO DA MODERNIZAÇÃO DA REDE E DO FORTALECIMENTO E INTEGRAÇÃO DOS PRINCIPAIS SISTEMAS DE INFORMAÇÃO', status: 'Em andamento' },
+    { id: 'meta-oe22m1', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M1', content: 'Promover a modernização do parque tecnológico para o funcionamento da saúde digital.', indicator: 'Número de estações adquiridas por ano', baseline: '2446', targetValue: '300', measurementUnit: 'Número absoluto', targetYear1: '300', targetYear2: '300', targetYear3: '300', targetYear4: '300', responsible: 'Unidade de Gestão de Tecnologia', status: 'Em andamento' },
+    { id: 'meta-oe22m2', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M2', content: 'Promover a estruturação da rede lógica para a implantação da internet de alta velocidade.', indicator: 'Número de equipamentos adquiridos por ano', baseline: '308', targetValue: '130', measurementUnit: 'Número absoluto', responsible: 'Unidade de Gestão de Tecnologia', status: 'Em andamento' },
+    { id: 'meta-oe22m3', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M3', content: 'Desenvolver sistemas para a implantação da saúde digital e telessaúde no RN.', indicator: 'Número de sistemas', baseline: '9', targetValue: '3', responsible: 'Unidade de Gestão de Tecnologia', status: 'Em andamento' },
+    { id: 'meta-oe22m4', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M4', content: 'Definir um conjunto de instrumentos normativos para garantir a segurança da informação.', indicator: 'Número de instrumentos definidos', baseline: '1', targetValue: '1', responsible: 'Unidade de Gestão de Tecnologia', status: 'Em andamento' },
+    { id: 'meta-oe22m5', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M5', content: 'Implementar o Plano de Saúde Digital na SESAP', indicator: 'Número de metas concluídas', baseline: '0', targetValue: '2', status: 'Em andamento' },
+    { id: 'meta-oe22m8', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M8', content: 'Fortalecer a governança de dados e a transparência institucional no CIEGES', indicator: 'Número de gestores com acesso ao CIEGES', baseline: '2', targetValue: '5', status: 'Em andamento' }
+  ]
+};
 
-    // OBJETIVO
-    { id: 'obj-22', planId: 'plan-pas-2025', parentId: 'dir-09', type: 'Objetivo', content: '22: PROMOVER A IMPLANTAÇÃO DA SAÚDE DIGITAL E TELESSAÚDE NA REDE ESTADUAL DO SUS, POR MEIO DA MODERNIZAÇÃO DA REDE E DO FORTALECIMENTO E INTEGRAÇÃO DOS PRINCIPAIS SISTEMAS DE INFORMAÇÃO', status: 'Em andamento' },
 
-    // --- META OE22M1 ---
-    {
-      id: 'meta-oe22m1', planId: 'plan-pas-2025', parentId: 'obj-22', type: 'Meta', code: 'OE22M1',
-      content: 'Promover a modernização do parque tecnológico para o funcionamento da saúde digital.',
-      indicator: 'Número de estações adquiridas por ano', baseline: '2446', targetValue: '300', measurementUnit: 'Número absoluto',
-      targetYear1: '300', targetYear2: '300', targetYear3: '300', targetYear4: '300',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento'
-    },
-    // Ações M1
+const SEED_PLAN: PESInstance = {
+  id: 'plan-pas-2025',
+  name: 'Programação Anual de Saúde (PAS) 2025',
+  startYear: 2025,
+  endYear: 2025,
+  description: 'Ações operacionais para o ano de 2025 referentes ao PES 2024-2027.',
+  modelId: 'm1',
+  status: 'Em andamento',
+  planType: 'pas',
+  basePlanId: 'plan-pes-2024-2027',
+  referenceYear: 2025,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  components: [
+    // A PAS agora só contém AÇÕES. Diretrizes, Objetivos e Metas vêm do PES Base.
     {
       id: 'acao-m1-1', planId: 'plan-pas-2025', parentId: 'meta-oe22m1', type: 'Ação', content: 'Aquisição de 300 estações de trabalho',
       responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 1.500.000,00', resourceSource: '0.5.00 Recursos não vinculados',
@@ -53,15 +66,6 @@ const SEED_PLAN: PESInstance = {
       responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 512.553,61', resourceSource: '0.5.00 Recursos não vinculados',
       expenseElement: '33.90.39', indicator: 'Número de impressoras contratadas', status: 'Realizada'
     },
-
-    // --- META OE22M2 ---
-    {
-      id: 'meta-oe22m2', planId: 'plan-pas-2025', parentId: 'obj-22', type: 'Meta', code: 'OE22M2',
-      content: 'Promover a estruturação da rede lógica para a implantação da internet de alta velocidade.',
-      indicator: 'Número de equipamentos adquiridos por ano', baseline: '308', targetValue: '130', measurementUnit: 'Número absoluto',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento'
-    },
-    // Ações M2
     {
       id: 'acao-m2-1', planId: 'plan-pas-2025', parentId: 'meta-oe22m2', type: 'Ação', content: 'Aquisição de 130 equipamentos de rede',
       responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 335.000,00', status: 'Em andamento'
@@ -71,108 +75,16 @@ const SEED_PLAN: PESInstance = {
       responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 738.137,67', status: 'Realizada'
     },
     {
-      id: 'acao-m2-3', planId: 'plan-pas-2025', parentId: 'meta-oe22m2', type: 'Ação', content: 'Realizar 70 visitas para apoio técnico e treinamento de sistemas',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 29.400,00', resourceSource: '0.6.00 Transferências Fundo a Fundo', status: 'Em andamento'
-    },
-    {
-      id: 'acao-m2-4', planId: 'plan-pas-2025', parentId: 'meta-oe22m2', type: 'Ação', content: 'Fornecimento de rede fibra ótica em 26 unidades, mediante contratação de serviço',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 128.400,00', status: 'Em andamento'
-    },
-    {
-      id: 'acao-m2-5', planId: 'plan-pas-2025', parentId: 'meta-oe22m2', type: 'Ação', content: 'Fornecimento de rede IP multiserviços para redundância de serviço de rede',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 84.000,00', status: 'Realizada'
-    },
-    {
-      id: 'acao-m2-6', planId: 'plan-pas-2025', parentId: 'meta-oe22m2', type: 'Ação', content: 'Contratar 4.224 horas de mão de obra técnica especializada para manutenção de rede (Novo)',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 295.680,00', status: 'Em andamento'
-    },
-    {
-      id: 'acao-m2-7', planId: 'plan-pas-2025', parentId: 'meta-oe22m2', type: 'Ação', content: 'Contratação de serviço de telefonia móvel',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 214.200,00', status: 'Realizada'
-    },
-    {
-      id: 'acao-m2-8', planId: 'plan-pas-2025', parentId: 'meta-oe22m2', type: 'Ação', content: 'Contratação de serviço de telefonia fixa',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 935.126,88', status: 'Realizada'
-    },
-
-    // --- META OE22M3 ---
-    {
-      id: 'meta-oe22m3', planId: 'plan-pas-2025', parentId: 'obj-22', type: 'Meta', code: 'OE22M3',
-      content: 'Desenvolver sistemas para a implantação da saúde digital e telessaúde no Rio Grande do Norte.',
-      indicator: 'Número de sistemas desenvolvidos por ano', baseline: '9', targetValue: '3',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento'
-    },
-    {
       id: 'acao-m3-1', planId: 'plan-pas-2025', parentId: 'meta-oe22m3', type: 'Ação', content: 'Contratar 12.672 de mão de obra horas para desenvolvimento de 3 sistemas de saúde digital',
       responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 1.203.840,00', status: 'Em andamento'
-    },
-
-    // --- META OE22M4 ---
-    {
-      id: 'meta-oe22m4', planId: 'plan-pas-2025', parentId: 'obj-22', type: 'Meta', code: 'OE22M4',
-      content: 'Definir um conjunto de instrumentos normativos para garantir a segurança da informação.',
-      indicator: 'Número de instrumentos definidos', baseline: '1', targetValue: '1',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento'
     },
     {
       id: 'acao-m4-1', planId: 'plan-pas-2025', parentId: 'meta-oe22m4', type: 'Ação', content: 'Contratação de profissional analista de segurança da informação para implementação da PSI',
       responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 253.400,00', status: 'Em andamento'
     },
     {
-      id: 'acao-m4-2', planId: 'plan-pas-2025', parentId: 'meta-oe22m4', type: 'Ação', content: 'Aquisição de 01 DATA CENTER HCI',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 6.258.910,04', status: 'Em andamento'
-    },
-
-    // --- META OE22M5 ---
-    {
-      id: 'meta-oe22m5', planId: 'plan-pas-2025', parentId: 'obj-22', type: 'Meta', code: 'OE22M5',
-      content: 'Implementar o Plano de Saúde Digital na SESAP',
-      indicator: 'Número de metas do Plano concluídas', baseline: '0', targetValue: '2',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento'
-    },
-    {
       id: 'acao-m5-1', planId: 'plan-pas-2025', parentId: 'meta-oe22m5', type: 'Ação', content: 'Executar 2 ações do plano de saúde digital',
       responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 400.000,00', status: 'Em andamento'
-    },
-
-    // --- META OE22M6 (NOVO DO PDF) ---
-    {
-      id: 'meta-oe22m6', planId: 'plan-pas-2025', parentId: 'obj-22', type: 'Meta', code: 'OE22M6',
-      content: 'Implementar e monitorar o Plano Diretor de Tecnologia da Informação e Comunicação.',
-      indicator: 'Número de metas do PDTIC concluídas', baseline: '1', targetValue: '20',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento'
-    },
-    {
-      id: 'acao-m6-1', planId: 'plan-pas-2025', parentId: 'meta-oe22m6', type: 'Ação', content: 'Executar o plano de capacitação em TIC, realizando 12 capacitações para a equipe',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 180.000,00', status: 'Em andamento'
-    },
-
-    // --- META OE22M7 ---
-    {
-      id: 'meta-oe22m7', planId: 'plan-pas-2025', parentId: 'obj-22', type: 'Meta', code: 'OE22M7',
-      content: 'Aprimorar a informatização da gestão da SESAP.',
-      indicator: 'Número de sistemas gestores em uso', baseline: '17', targetValue: '2',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento'
-    },
-    {
-      id: 'acao-m7-1', planId: 'plan-pas-2025', parentId: 'meta-oe22m7', type: 'Ação', content: 'Contratar 9.878 horas de mão de obra para desenvolvimento de sistemas gestores',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 930.709,53', status: 'Realizada'
-    },
-    {
-      id: 'acao-m7-4', planId: 'plan-pas-2025', parentId: 'meta-oe22m7', type: 'Ação', content: 'Realizar 05 eventos de lançamento de softwares',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 25.000,00', status: 'Não realizada'
-    },
-
-    // --- META OE22M8 (NOVO DO PDF) ---
-    {
-      id: 'meta-oe22m8', planId: 'plan-pas-2025', parentId: 'obj-22', type: 'Meta', code: 'OE22M8',
-      content: 'Apoiar a tomada de decisão gestão por meio do aprimoramento do centro de inteligência estratégica para a gestão do SUS.',
-      indicator: 'Número de gestores com acesso ao CIEGES', baseline: '0', targetValue: '50',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento'
-    },
-    {
-      id: 'acao-m8-1', planId: 'plan-pas-2025', parentId: 'meta-oe22m8', type: 'Ação', content: 'Aprimoramento do CIEGES RN, por meio da contratação de profissional analista de dados',
-      responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 253.400,00', status: 'Em andamento'
     },
     {
       id: 'acao-m8-2', planId: 'plan-pas-2025', parentId: 'meta-oe22m8', type: 'Ação', content: 'Modernização da Sala de Situação da UGTIC, por meio da aquisição de 05 televisores',
@@ -358,27 +270,52 @@ export const db = {
   plans: {
     getAll: async (): Promise<PESInstance[]> => {
       const storedPlans = localStorage.getItem(TABLES.PLANS);
+      let data: PESInstance[] = [];
+
       if (!storedPlans) {
-        const seedData = [SEED_PLAN, SEED_PPA];
-        localStorage.setItem(TABLES.PLANS, JSON.stringify(seedData));
-        return SIMULATE_NETWORK(seedData) as Promise<PESInstance[]>;
+        data = [SEED_PES, SEED_PLAN, SEED_PPA];
+        localStorage.setItem(TABLES.PLANS, JSON.stringify(data));
       } else {
-        const data = JSON.parse(storedPlans) as PESInstance[];
-        // Auto-injetar o PPA se o usuário já tiver o PAS cacheado sem ele,
-        // OU forçar a atualização se ele tiver a versão antiga com o 'ppa-oe-829'
-        const existingPpaIndex = data.findIndex(p => p.id === SEED_PPA.id);
+        data = JSON.parse(storedPlans) as PESInstance[];
         
-        if (existingPpaIndex === -1) {
-          data.push(SEED_PPA);
-          localStorage.setItem(TABLES.PLANS, JSON.stringify(data));
-        } else if (data[existingPpaIndex].components.some(c => c.id === 'ppa-oe-829')) {
-          // Substitui a versão "quebrada" pela versão atual do SEED_PPA
-          data[existingPpaIndex] = SEED_PPA;
-          localStorage.setItem(TABLES.PLANS, JSON.stringify(data));
+        // MIGRATION / AUTO-INJECTION logic
+        let updated = false;
+
+        // 1. Garante que o PES real existe
+        if (!data.find(p => p.id === SEED_PES.id)) {
+          data.unshift(SEED_PES); // Adiciona no início
+          updated = true;
         }
 
-        return SIMULATE_NETWORK(data) as Promise<PESInstance[]>;
+        // 2. Corrige o PAS legado (que estava com anos de PES e sem basePlanId, ou com componentes duplicados)
+        const pasIndex = data.findIndex(p => p.id === 'plan-pas-2025');
+        if (pasIndex !== -1) {
+          const pas = data[pasIndex];
+          const hasRedundant = pas.components.some(c => c.type === 'Diretriz' || c.type === 'Objetivo' || c.type === 'Meta');
+          
+          // Se o PAS estiver com a vigência errada (2024-2027) ou contiver Diretrizes/Objetivos/Metas (que devem vir do PES)
+          if ((pas.startYear === 2024 && pas.endYear === 2027) || hasRedundant) {
+             data[pasIndex] = SEED_PLAN; // Substitui pelo SEED_PLAN limpo (apenas Ações)
+             updated = true;
+          }
+        }
+
+        // 3. Garante que o PPA existe e está atualizado
+        const existingPpaIndex = data.findIndex(p => p.id === SEED_PPA.id);
+        if (existingPpaIndex === -1) {
+          data.push(SEED_PPA);
+          updated = true;
+        } else if (data[existingPpaIndex].components.some(c => c.id === 'ppa-oe-829')) {
+          data[existingPpaIndex] = SEED_PPA;
+          updated = true;
+        }
+
+        if (updated) {
+          localStorage.setItem(TABLES.PLANS, JSON.stringify(data));
+        }
       }
+
+      return SIMULATE_NETWORK(data) as Promise<PESInstance[]>;
     },
     create: async (item: PESInstance): Promise<PESInstance> => {
       const items = getTable<PESInstance>(TABLES.PLANS);

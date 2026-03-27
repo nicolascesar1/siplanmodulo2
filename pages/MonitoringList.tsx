@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Calendar,
   ChevronDown,
@@ -54,6 +54,18 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
   const [filterUnit, setFilterUnit] = useState('');
   const [filterPeriod, setFilterPeriod] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  
+  const location = useLocation();
+
+  // Set filter from navigation state
+  React.useEffect(() => {
+    const s = location.state as { planId?: string } | null;
+    if (s?.planId) {
+      setFilterPlan(s.planId);
+      // Clean up state after use to avoid persistent filter on manual navigations later
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -561,7 +573,7 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
                       className="w-full p-2 bg-white text-gray-900 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none"
                     >
                       <option value="">Selecione...</option>
-                      {plans.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                      {plans.filter(p => p.planType !== 'pes').map(p => <option key={p.id} value={p.id}>{p.name} ({p.planType?.toUpperCase() || 'Padrão'})</option>)}
                     </select>
                   </div>
 
