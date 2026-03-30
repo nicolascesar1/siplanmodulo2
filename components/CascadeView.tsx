@@ -12,13 +12,12 @@ interface CascadeViewProps {
     searchTerm?: string;
     monitorings?: MonitoringInstance[];
     selectedPeriod?: string;
-    onShowStatus?: (component: PESComponent) => void;
     onAddChild?: (parentId: string, childType: 'Objetivo' | 'Meta' | 'Ação') => void;
 }
 
 export const CascadeView: React.FC<CascadeViewProps> = ({
     plan, onEdit, onDelete, editingId, renderEditForm, searchTerm = '',
-    onShowStatus, onAddChild
+    onAddChild
 }) => {
     const nomenclature = plan.customNomenclature || { level1: 'Diretriz', level2: 'Objetivo', level3: 'Meta' };
     const [actionYearMenuId, setActionYearMenuId] = useState<string | null>(null);
@@ -67,6 +66,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                             {component.isReadOnly && <span className="text-[9px] font-bold uppercase tracking-wide bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full border border-gray-200 shadow-sm ml-1 flex items-center gap-1">🔒 Herdado</span>}
                         </div>
                         <h3 className="text-base font-bold text-gray-900 leading-snug"><HighlightedText text={component.content} /></h3>
+                        {component.responsible && <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200 mt-1"><span className="w-1.5 h-1.5 rounded-full bg-brand-teal" />Resp: {component.responsible}</span>}
                     </div>
 
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white px-3 py-1.5 rounded-xl border border-gray-100 shadow-md transform translate-x-2 group-hover:translate-x-0 z-20">
@@ -101,6 +101,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                             {component.isReadOnly && <span className="text-[9px] font-bold uppercase tracking-wide bg-gray-50 text-gray-500 px-2 py-0.5 rounded-md border border-gray-100 ml-1">🔒 Herdado</span>}
                         </div>
                         <p className="text-sm font-medium text-gray-800 leading-relaxed"><HighlightedText text={component.content} /></p>
+                        {component.responsible && <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200 mt-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-purple" />Resp: {component.responsible}</span>}
                     </div>
 
                     <div className="flex items-center gap-1 opacity-0 group-hover/obj:opacity-100 transition-opacity bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm z-20">
@@ -177,7 +178,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
 
                     <div className="flex items-center gap-1 opacity-0 group-hover/meta:opacity-100 transition-opacity bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm z-20">
 
-                        {onAddChild && plan.planType !== 'ppa' && (
+                        {onAddChild && plan.planType === 'pas' && (
                             <div className="relative">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setActionYearMenuId(actionYearMenuId === component.id ? null : component.id); }}

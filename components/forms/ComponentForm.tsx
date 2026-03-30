@@ -274,6 +274,16 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                     </div>
                 )}
 
+                {/* Bloco Responsável Standalone (quando não há indicador nem orçamento) */}
+                {has.responsible && !showIndicatorBlock && !showBudgetBlock && (
+                    <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-200/60">
+                        <label className={labelClass}>Responsável / Coordenação</label>
+                        <select value={responsible} onChange={(e) => setResponsible(e.target.value)} className={inputClass}>
+                            <option value="">Selecione a unidade responsável...</option>
+                            {units.map(u => <option key={u} value={u}>{u}</option>)}
+                        </select>
+                    </div>
+                )}
                 {/* Bloco Orçamento (Ação) */}
                 {showBudgetBlock && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 bg-brand-purple/5 p-5 rounded-xl border border-brand-purple/20">

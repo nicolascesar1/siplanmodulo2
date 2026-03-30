@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { PESInstance, PESComponent, ComponentType, MonitoringInstance } from '../types';
 import { Plus, Search, ChevronRight } from 'lucide-react';
 import { CascadeView } from './CascadeView';
-import { ExecutionStatusModal } from './ExecutionStatusModal';
 import { ComponentForm } from './forms/ComponentForm';
 import { getFieldConfig } from '../utils/metaTypeConfig';
 import { ConfirmDialog } from './ui/ConfirmDialog';
@@ -20,7 +19,6 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
     const [searchTerm, setSearchTerm] = useState('');
 
     // Modal State
-    const [selectedComponentForStatus, setSelectedComponentForStatus] = useState<PESComponent | null>(null);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
     // Form State
@@ -225,20 +223,10 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                     searchTerm={searchTerm}
                     monitorings={monitorings}
                     selectedPeriod={selectedPeriod}
-                    onShowStatus={(comp) => setSelectedComponentForStatus(comp)}
                     onAddChild={handleAddChild}
                 />
             )}
 
-            {/* Execution Status Modal */}
-            {selectedComponentForStatus && (
-                <ExecutionStatusModal
-                    component={selectedComponentForStatus}
-                    monitorings={monitorings}
-                    plan={plan}
-                    onClose={() => setSelectedComponentForStatus(null)}
-                />
-            )}
 
             <ConfirmDialog 
                 isOpen={!!itemToDelete}

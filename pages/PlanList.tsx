@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, X, FileText, ChevronRight, BarChart2 as BarChart2Icon, ArrowDownUp, MoreHorizontal, Trash2, Eye, Layout } from 'lucide-react';
+import { Plus, Search, X, FileText, ChevronRight, ArrowDownUp, MoreHorizontal, Trash2, Eye, Layout } from 'lucide-react';
 import { PESInstance, PESModel, MonitoringInstance, PESFormValues } from '../types';
-import { ExecutionStatusModal } from '../components/ExecutionStatusModal';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 
 const ArrowLeftIcon = ({ className }: { className?: string }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7 7-7" /></svg>;
@@ -18,7 +17,7 @@ interface PlanListProps {
 export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, onCreateClick, onDeletePlan }) => {
     // ... skipping state ...
     const navigate = useNavigate();
-    const [selectedPlanForStatus, setSelectedPlanForStatus] = useState<PESInstance | null>(null);
+
     const [planToDelete, setPlanToDelete] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -200,13 +199,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                                                         CRIAR PAS
                                                     </button>
                                                 )}
-                                                <button 
-                                                    onClick={(e) => { e.stopPropagation(); setSelectedPlanForStatus(plan); }}
-                                                    className="p-1.5 text-gray-400 hover:text-brand-purple hover:bg-brand-purple/10 rounded-lg transition-all"
-                                                    title="Ver Resultados"
-                                                >
-                                                    <BarChart2Icon className="w-4.5 h-4.5" />
-                                                </button>
+
                                                 <button 
                                                     onClick={(e) => { e.stopPropagation(); navigate(`/plan/${plan.id}`); }}
                                                     className="p-1.5 text-gray-400 hover:text-brand-purple hover:bg-brand-purple/10 rounded-lg transition-all"
@@ -241,16 +234,6 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                 </div>
             </div>
 
-            {/* Plan Execution Status Modal */}
-            {selectedPlanForStatus && (
-                <ExecutionStatusModal
-                    component={{ id: 'root', type: 'Diretriz', content: selectedPlanForStatus.name, ...selectedPlanForStatus } as any}
-                    monitorings={monitorings}
-                    plan={selectedPlanForStatus}
-                    isPlanMode={true}
-                    onClose={() => setSelectedPlanForStatus(null)}
-                />
-            )}
 
             <ConfirmDialog 
                 isOpen={!!planToDelete}

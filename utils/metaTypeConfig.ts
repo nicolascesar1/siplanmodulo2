@@ -69,18 +69,18 @@ export interface LevelFieldConfig {
  * PPA: Obj. Geral (indicador) → Obj. Específico (indicador) → Entrega (indicador)
  */
 export const MODEL_FIELD_CONFIG: Record<string, LevelFieldConfig[]> = {
-  // PAS — comportamento atual
+  // PAS — Responsável em todos os níveis (coordenadoria, subcoordenadoria ou setor)
   'pas': [
-    { fields: [] },                                                         // Nível 1: Diretriz
-    { fields: [] },                                                         // Nível 2: Objetivo
+    { fields: ['responsible'] },                                            // Nível 1: Diretriz
+    { fields: ['responsible'] },                                            // Nível 2: Objetivo
     { fields: ['indicator', 'annualization', 'baseline', 'responsible'] },   // Nível 3: Meta
-    { fields: ['indicator', 'budget'] },                                    // Nível 4: Ação (Herda responsável da Meta)
+    { fields: ['indicator', 'responsible', 'budget'] },                     // Nível 4: Ação (pode ser subunidade da coordenadoria)
   ],
-  // PPA — todos os níveis têm indicador + anualização
+  // PPA — todos os níveis têm indicador + anualização + responsável
   'ppa': [
     { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 1: Objetivo Geral
-    { fields: ['indicator', 'annualization'] },                 // Nível 2: Objetivo Específico (Herda do OG)
-    { fields: ['indicator', 'annualization'] },                 // Nível 3: Entrega (Herda do OG/OE)
+    { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 2: Objetivo Específico
+    { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 3: Entrega
   ],
 };
 

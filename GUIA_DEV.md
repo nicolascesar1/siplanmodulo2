@@ -199,7 +199,6 @@ siplanmodulo2/
 │   ├── ComponentManager.tsx   ← CRUD de itens da hierarquia (Diretriz, Objetivo...)
 │   ├── PlanForm.tsx           ← Formulário de criar/editar plano
 │   ├── PlanCard.tsx           ← Card visual de cada plano na listagem
-│   ├── ExecutionStatusModal.tsx ← Modal de status de execução
 │   ├── MonitoringCascadeView.tsx ← Cascata específica para monitoramento
 │   ├── ReportEditor.tsx       ← Editor de relatórios (RDQA/RAG)
 │   ├── forms/                 ← Formulários específicos (ComponentForm, etc.)
