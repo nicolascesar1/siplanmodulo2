@@ -47,6 +47,27 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
     );
 
     const plan = plans.find(p => p.id === monitoring?.planId);
+    
+    // Heritage Logic: If the plan is a PAS, it inherits hierarchy from a PES
+    const fullPlan = useMemo(() => {
+        if (!plan) return plan;
+        if (!plan.basePlanId) return plan;
+        
+        const basePlan = plans.find(p => p.id === plan.basePlanId);
+        if (!basePlan) return plan;
+
+        // Merge components: Base Plan (Diretriz, Objetivo, Meta) + Current Plan (Ação)
+        const currentIds = new Set(plan.components.map(c => c.id));
+        const mergedComponents = [
+            ...basePlan.components.filter(c => !currentIds.has(c.id)),
+            ...plan.components
+        ];
+
+        return {
+            ...plan,
+            components: mergedComponents
+        };
+    }, [plan, plans]);
 
     const [entries, setEntries] = useState<Map<string, MonitoringEntry>>(new Map());
     const [errors, setErrors] = useState<Record<string, { result?: string; analysis?: string }>>({});
@@ -62,14 +83,14 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
             monitoring.entries.forEach(e => entryMap.set(e.componentId, e));
             setEntries(entryMap);
         }
-        if (plan) {
+        if (fullPlan) {
             const initialExpanded = new Set<string>();
             // Expand first diretriz by default
-            const firstDiretriz = plan.components.find(c => c.type === 'Diretriz');
+            const firstDiretriz = fullPlan.components.find(c => c.type === 'Diretriz');
             if (firstDiretriz) initialExpanded.add(firstDiretriz.id);
             setExpandedIds(initialExpanded);
         }
-    }, [monitoring, plan]);
+    }, [monitoring, fullPlan]);
 
     // Is Locked logic: 
     // - If finalized, locked for everyone
@@ -104,7 +125,7 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
         // Find all descendants
         let hasRelevant = false;
         const traverse = (pid: string) => {
-            plan?.components.forEach(c => {
+            fullPlan?.components.forEach(c => {
                 if (c.parentId === pid) {
                     if ((c.type === 'Meta' || c.type === 'Ação') && belongsToUnit(c)) {
                         hasRelevant = true;
@@ -117,7 +138,7 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
         return hasRelevant;
     };
 
-    if (!monitoring || !plan) {
+    if (!monitoring || !fullPlan) {
         return <div className="p-8 text-center text-gray-500">Monitoramento não encontrado.</div>;
     }
 
@@ -228,7 +249,7 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
         const periodMatch = monitoring.period.match(/[QT]\d\s+(\d{4})/);
         const monitoringYear = periodMatch ? parseInt(periodMatch[1]) : null;
 
-        const relevantItems = plan.components.filter(c => {
+        const relevantItems = fullPlan.components.filter(c => {
             if (c.type !== 'Meta' && c.type !== 'Ação') return false;
             // Filtrar ações pelo ano do monitoramento
             if (c.type === 'Ação' && monitoringYear) {
@@ -237,7 +258,7 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
             return c.responsible ? c.responsible === monitoring.unitName : true;
         });
 
-        const itemsToCount = relevantItems.length > 0 ? relevantItems : plan.components.filter(c => {
+        const itemsToCount = relevantItems.length > 0 ? relevantItems : fullPlan.components.filter(c => {
             if (c.type !== 'Meta' && c.type !== 'Ação') return false;
             if (c.type === 'Ação' && monitoringYear && c.actionYear && c.actionYear !== monitoringYear) return false;
             return true;
@@ -258,6 +279,10 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
         const isPPA = plan?.planType === 'ppa';
 
         entries.forEach((entry) => {
+            // Pular validação de componentes que não pertencem a esta unidade (ex: metas secundárias)
+            const component = fullPlan.components.find(c => c.id === entry.componentId);
+            if (component && component.responsible && component.responsible !== monitoring.unitName) return;
+
             const componentErrors: { result?: string; analysis?: string; location?: string; impact?: string } = {};
 
             if (isPPA) {
@@ -365,6 +390,9 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                             <div className="flex items-center text-xs text-gray-500 mt-1 gap-3">
                                 <span className="flex items-center bg-gray-100 px-2 py-0.5 rounded"><Clock className="w-3 h-3 mr-1" /> {monitoring.period}</span>
                                 <span className="flex items-center font-medium"><Target className="w-3 h-3 mr-1 text-brand-purple" /> {monitoring.unitName}</span>
+                                <span className="flex items-center font-bold text-brand-teal uppercase text-[9px] bg-brand-teal/5 px-1.5 py-0.5 rounded border border-brand-teal/20">
+                                    Instrumento: {fullPlan.planType?.toUpperCase()}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -373,10 +401,20 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                         <div className="text-right hidden sm:block">
                             <div className="flex items-center gap-2 justify-end mb-1">
                                 <span className="text-xs font-medium text-gray-500">Preenchimento</span>
-                                <span className="text-sm font-bold text-brand-purple">{calculateProgress()}%</span>
+                                <span className={`text-sm font-bold ${
+                                    calculateProgress() === 0 ? 'text-gray-400' :
+                                    calculateProgress() < 30 ? 'text-red-500' : 
+                                    calculateProgress() < 100 ? 'text-yellow-600' : 
+                                    'text-emerald-500'
+                                }`}>{calculateProgress()}%</span>
                             </div>
                             <div className="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-brand-purple/70 to-brand-purple rounded-full transition-all duration-700 ease-out" style={{ width: `${calculateProgress()}%` }}></div>
+                                <div className={`h-full transition-all duration-700 ease-out rounded-full ${
+                                    calculateProgress() === 0 ? 'bg-gray-200' :
+                                    calculateProgress() < 30 ? 'bg-red-500' : 
+                                    calculateProgress() < 100 ? 'bg-yellow-400' : 
+                                    'bg-emerald-500'
+                                }`} style={{ width: `${calculateProgress()}%` }}></div>
                             </div>
                         </div>
 
@@ -468,11 +506,11 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                     plan={(() => {
                         // Filtrar ações pelo ano do período do monitoramento
                         const periodMatch = monitoring.period.match(/[QT]\d\s+(\d{4})/);
-                        if (!periodMatch) return plan;
+                        if (!periodMatch) return fullPlan;
                         const monitoringYear = parseInt(periodMatch[1]);
                         return {
-                            ...plan,
-                            components: plan.components.filter(c => {
+                            ...fullPlan,
+                            components: fullPlan.components.filter(c => {
                                 // Manter tudo que não é Ação
                                 if (c.type !== 'Ação') return true;
                                 // Ações sem ano definido: manter (legado)
@@ -489,6 +527,7 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                     isLocked={isLocked}
                     showOnlyMyUnit={showOnlyMyUnit}
                     searchTerm={""}
+                    allMonitorings={initialMonitorings}
                 />
 
 

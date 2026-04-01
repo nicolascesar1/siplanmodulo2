@@ -119,7 +119,7 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
   const matchingItemsCount = selectedPlan ? (selectedPlan.components || []).filter(c =>
     (c.type === 'Ação' || c.type === 'Meta') &&
     c.responsible &&
-    c.responsible.includes(selectedUnit)
+    c.responsible === selectedUnit
   ).length : 0;
 
   // Filter Logic
@@ -232,9 +232,10 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percentage / 100) * circumference;
 
-    let strokeColor = "#e5e7eb";
-    if (percentage > 0) strokeColor = "#5D5FEF";
-    if (percentage === 100) strokeColor = "#10b981";
+    let strokeColor = "#f3f4f6"; // Gray for 0%
+    if (percentage > 0 && percentage < 30) strokeColor = "#ef4444"; // Red for low
+    else if (percentage >= 30 && percentage < 100) strokeColor = "#eab308"; // Clear Yellow for medium
+    else if (percentage === 100) strokeColor = "#10b981"; // Green for high
 
     return (
       <div className="relative w-9 h-9 flex items-center justify-center">

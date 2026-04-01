@@ -19,15 +19,6 @@ export const MEASUREMENT_UNITS = [
 
   // Acumulativas (anos se somam)
   { value: 'Número', label: 'Número absoluto', type: 'acumulativa' as const },
-  { value: 'Unidade', label: 'Unidade', type: 'acumulativa' as const },
-  { value: 'Quantidade', label: 'Quantidade', type: 'acumulativa' as const },
-  { value: 'Pessoas', label: 'Pessoas', type: 'acumulativa' as const },
-  { value: 'Equipes', label: 'Equipes', type: 'acumulativa' as const },
-  { value: 'Estabelecimentos', label: 'Estabelecimentos', type: 'acumulativa' as const },
-  { value: 'Leitos', label: 'Leitos', type: 'acumulativa' as const },
-  { value: 'Procedimentos', label: 'Procedimentos', type: 'acumulativa' as const },
-  { value: 'Doses', label: 'Doses', type: 'acumulativa' as const },
-  { value: 'R$', label: 'Reais (R$)', type: 'acumulativa' as const },
 ];
 
 // Lista derivada de unidades consideradas "patamar"

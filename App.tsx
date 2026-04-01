@@ -31,7 +31,9 @@ export const UNITS = [
   "Diretoria de Planejamento",
   "SUVIGE (Subcoordenadoria de Vigilância)",
   "DAPS (Diretoria de Atenção Primária)",
-  "Coordenação de RH / CPS"
+  "Coordenação de RH / CPS",
+  "COADI (Coordenadoria de Administração e Infraestrutura)",
+  "Gabinete / SESAP"
 ];
 
 

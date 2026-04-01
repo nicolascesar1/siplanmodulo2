@@ -195,12 +195,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                                 <label className={labelClass}>Unidade de Medida</label>
                                 <select value={measurementUnit} onChange={(e) => setMeasurementUnit(e.target.value)} className={inputClass}>
                                     <option value="">Selecione...</option>
-                                    <optgroup label="Patamar (nível por ano)">
-                                        {MEASUREMENT_UNITS.filter(u => u.type === 'patamar').map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
-                                    </optgroup>
-                                    <optgroup label="Acumulativa (soma dos anos)">
-                                        {MEASUREMENT_UNITS.filter(u => u.type === 'acumulativa').map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
-                                    </optgroup>
+                                    {MEASUREMENT_UNITS.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
                                 </select>
                             </div>
                             <div className="md:col-span-2"><label className={labelClass}>Método de Cálculo</label><input type="text" value={calculationMethod} onChange={(e) => setCalculationMethod(e.target.value)} className={inputClass} /></div>
@@ -221,7 +216,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                         {/* Anualização (se habilitado) */}
                         {has.annualization && (
                             <div className="mt-4 bg-white p-4 rounded-xl border border-teal-100 shadow-sm">
-                                <div className="flex items-center gap-2 mb-3"><CalendarDays className="w-4 h-4 text-teal-600" /><label className="text-xs font-bold text-teal-800 uppercase tracking-wide">Programação Anual</label></div>
+                                <div className="flex items-center gap-2 mb-3"><CalendarDays className="w-4 h-4 text-teal-600" /><label className="text-xs font-bold text-teal-800 uppercase tracking-wide">Anualização</label></div>
                                 <div className="grid grid-cols-4 gap-4">
                                     <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 1 ({baseYear})</label><input type="text" value={year1} onChange={(e) => setYear1(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>
                                     <div><label className="block text-[10px] text-gray-400 font-bold mb-1 text-center bg-gray-50 py-1 rounded-t">Ano 2 ({baseYear + 1})</label><input type="text" value={year2} onChange={(e) => setYear2(e.target.value)} className={`${inputClass} text-center font-semibold text-teal-700 !rounded-t-none`} placeholder="-" /></div>

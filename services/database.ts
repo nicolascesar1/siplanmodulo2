@@ -26,12 +26,18 @@ const SEED_PES: PESInstance = {
   components: [
     { id: 'dir-09', planId: 'plan-pes-2024-2027', type: 'Diretriz', content: '09: FORTALECER A CAPACIDADE ORGANIZACIONAL PARA APOIAR A MELHORIA DA QUALIDADE NO SISTEMA DE SAÚDE NO RN', status: 'Em andamento' },
     { id: 'obj-22', planId: 'plan-pes-2024-2027', parentId: 'dir-09', type: 'Objetivo', content: '22: PROMOVER A IMPLANTAÇÃO DA SAÚDE DIGITAL E TELESSAÚDE NA REDE ESTADUAL DO SUS, POR MEIO DA MODERNIZAÇÃO DA REDE E DO FORTALECIMENTO E INTEGRAÇÃO DOS PRINCIPAIS SISTEMAS DE INFORMAÇÃO', status: 'Em andamento' },
-    { id: 'meta-oe22m1', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M1', content: 'Promover a modernização do parque tecnológico para o funcionamento da saúde digital.', indicator: 'Número de estações adquiridas por ano', baseline: '2446', targetValue: '300', measurementUnit: 'Número absoluto', targetYear1: '300', targetYear2: '300', targetYear3: '300', targetYear4: '300', responsible: 'Unidade de Gestão de Tecnologia', status: 'Em andamento' },
-    { id: 'meta-oe22m2', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M2', content: 'Promover a estruturação da rede lógica para a implantação da internet de alta velocidade.', indicator: 'Número de equipamentos adquiridos por ano', baseline: '308', targetValue: '130', measurementUnit: 'Número absoluto', responsible: 'Unidade de Gestão de Tecnologia', status: 'Em andamento' },
-    { id: 'meta-oe22m3', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M3', content: 'Desenvolver sistemas para a implantação da saúde digital e telessaúde no RN.', indicator: 'Número de sistemas', baseline: '9', targetValue: '3', responsible: 'Unidade de Gestão de Tecnologia', status: 'Em andamento' },
-    { id: 'meta-oe22m4', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M4', content: 'Definir um conjunto de instrumentos normativos para garantir a segurança da informação.', indicator: 'Número de instrumentos definidos', baseline: '1', targetValue: '1', responsible: 'Unidade de Gestão de Tecnologia', status: 'Em andamento' },
-    { id: 'meta-oe22m5', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M5', content: 'Implementar o Plano de Saúde Digital na SESAP', indicator: 'Número de metas concluídas', baseline: '0', targetValue: '2', status: 'Em andamento' },
-    { id: 'meta-oe22m8', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M8', content: 'Fortalecer a governança de dados e a transparência institucional no CIEGES', indicator: 'Número de gestores com acesso ao CIEGES', baseline: '2', targetValue: '5', status: 'Em andamento' }
+    { id: 'meta-oe22m1', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M1', content: 'Promover a modernização do parque tecnológico para o funcionamento da saúde digital.', indicator: 'Número de estações adquiridas por ano', baseline: '2446', targetValue: '300', measurementUnit: 'Número absoluto', targetYear1: '300', targetYear2: '300', targetYear3: '300', targetYear4: '300', responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento' },
+    { id: 'meta-oe22m2', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M2', content: 'Promover a estruturação da rede lógica para a implantação da internet de alta velocidade.', indicator: 'Número de equipamentos adquiridos por ano', baseline: '308', targetValue: '130', measurementUnit: 'Número absoluto', responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento' },
+    { id: 'meta-oe22m3', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M3', content: 'Desenvolver sistemas para a implantação da saúde digital e telessaúde no RN.', indicator: 'Número de sistemas', baseline: '9', targetValue: '3', responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento' },
+    { id: 'meta-oe22m4', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M4', content: 'Definir um conjunto de instrumentos normativos para garantir a segurança da informação.', indicator: 'Número de instrumentos definidos', baseline: '1', targetValue: '1', responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento' },
+    { id: 'meta-oe22m8', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M8', content: 'Fortalecer a governança de dados e a transparência institucional no CIEGES', indicator: 'Número de gestores com acesso ao CIEGES', baseline: '2', targetValue: '5', responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento' },
+    
+    // Novo Objetivo para abrigar a Meta M5, pois Objetivos não podem misturar áreas donas de Metas
+    { id: 'obj-23', planId: 'plan-pes-2024-2027', parentId: 'dir-09', type: 'Objetivo', content: '23: IMPLEMENTAR AÇÕES INTEGRADAS DE PROMOÇÃO À SAÚDE NA REDE ASSISTENCIAL', status: 'Em andamento' },
+    { id: 'meta-oe22m5', planId: 'plan-pes-2024-2027', parentId: 'obj-23', type: 'Meta', code: 'OE 23.M5', content: 'Implementar o Plano de Saúde Digital na SESAP', indicator: 'Número de metas concluídas', baseline: '0', targetValue: '2', responsible: 'Coordenadoria de Promoção à Saúde', status: 'Em andamento' },
+    
+    { id: 'obj-infra', planId: 'plan-pes-2024-2027', parentId: 'dir-09', type: 'Objetivo', content: 'PROMOVER A MODERNIZAÇÃO E MANUTENÇÃO DA INFRAESTRUTURA FÍSICA E TECNOLÓGICA DA REDE ESTADUAL DE SAÚDE', status: 'Em andamento' },
+    { id: 'meta-infra-01', planId: 'plan-pes-2024-2027', parentId: 'obj-infra', type: 'Meta', code: 'OE 09.M1', content: 'Promover a melhoria da infraestrutura física e tecnológica das unidades de saúde estaduais.', indicator: 'Número de unidades reformadas', baseline: '10', targetValue: '5', measurementUnit: 'Unidade', responsible: 'Gabinete / SESAP', status: 'Em andamento' }
   ]
 };
 
@@ -89,6 +95,14 @@ const SEED_PLAN: PESInstance = {
     {
       id: 'acao-m8-2', planId: 'plan-pas-2025', parentId: 'meta-oe22m8', type: 'Ação', content: 'Modernização da Sala de Situação da UGTIC, por meio da aquisição de 05 televisores',
       responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', budget: 'R$ 8.000,00', status: 'Não realizada'
+    },
+    {
+      id: 'acao-coadi-01', planId: 'plan-pas-2025', parentId: 'meta-infra-01', type: 'Ação', content: 'Reforma e manutenção do Hospital Regional de São Paulo do Potengi',
+      responsible: 'COADI (Coordenadoria de Administração e Infraestrutura)', budget: 'R$ 850.000,00', status: 'Em andamento'
+    },
+    {
+      id: 'acao-coadi-02', planId: 'plan-pas-2025', parentId: 'meta-infra-01', type: 'Ação', content: 'Aquisição de transformadores para o Hospital Dr. João Machado',
+      responsible: 'COADI (Coordenadoria de Administração e Infraestrutura)', budget: 'R$ 312.000,00', status: 'Concluído'
     }
   ]
 };
@@ -148,6 +162,39 @@ const SEED_MONITORING: MonitoringInstance = {
     { componentId: 'meta-oe22m8', result: '5', status: 'EM ANDAMENTO', analysis: '5 gestores, entre coordenadores e subcoordenadores, com acesso ao CIEGES no quadrimestre.', updatedAt: new Date().toISOString() },
     { componentId: 'acao-m8-1', result: '0', status: 'EM ANDAMENTO', analysis: 'Tramitação para contratação de serviço técnico, incluindo analista de dados, através do processo sei nº 00610004.000352/2024-31', updatedAt: new Date().toISOString() },
     { componentId: 'acao-m8-2', result: '0', status: 'NÃO INICIADA', analysis: 'Ainda não houve início de tramitação de processo para aquisição de televisões.', updatedAt: new Date().toISOString() },
+  ]
+};
+
+const SEED_MONITORING_COADI: MonitoringInstance = {
+  id: 'mon-q1-2025-coadi',
+  planId: 'plan-pas-2025',
+  unitName: 'COADI (Coordenadoria de Administração e Infraestrutura)',
+  title: 'Monitoramento Q1 2025 - COADI',
+  period: '1º Quadrimestre',
+  status: 'Em Preenchimento',
+  progress: 50,
+  submissionStart: '2025-04-01',
+  submissionEnd: '2025-04-30',
+  createdAt: new Date().toISOString(),
+  entries: [
+    { componentId: 'acao-coadi-01', result: '0', status: 'EM ANDAMENTO', analysis: 'Processo de licitaçâo para reforma em fase de cotação de preços.', updatedAt: new Date().toISOString() },
+    { componentId: 'acao-coadi-02', result: '1', status: 'CONCLUÍDA', analysis: 'Transformadores entregues e em fase de instalação.', updatedAt: new Date().toISOString() }
+  ]
+};
+
+const SEED_MONITORING_GABINETE: MonitoringInstance = {
+  id: 'mon-q1-2025-gabinete',
+  planId: 'plan-pas-2025',
+  unitName: 'Gabinete / SESAP',
+  title: 'Monitoramento Q1 2025 - Gabinete',
+  period: '1º Quadrimestre',
+  status: 'Em Preenchimento',
+  progress: 10,
+  submissionStart: '2025-04-01',
+  submissionEnd: '2025-04-30',
+  createdAt: new Date().toISOString(),
+  entries: [
+    { componentId: 'meta-infra-01', result: '1', status: 'EM ANDAMENTO', analysis: 'Uma unidade (João Machado) com obra concluída. Outras em fase de projeto.', updatedAt: new Date().toISOString() }
   ]
 };
 
@@ -281,10 +328,18 @@ export const db = {
         // MIGRATION / AUTO-INJECTION logic
         let updated = false;
 
-        // 1. Garante que o PES real existe
-        if (!data.find(p => p.id === SEED_PES.id)) {
+        // 1. Garante que o PES real existe e está com a responsabilidade corrigida
+        const pesIndex = data.findIndex(p => p.id === SEED_PES.id);
+        if (pesIndex === -1) {
           data.unshift(SEED_PES); // Adiciona no início
           updated = true;
+        } else {
+            const hasOldResponsible = data[pesIndex].components.some(c => c.responsible === 'Unidade de Gestão de Tecnologia');
+            const hasObjInfra = data[pesIndex].components.some(c => c.id === 'obj-infra');
+            if (hasOldResponsible || !hasObjInfra) {
+                data[pesIndex] = SEED_PES; // Substitui pela versão corrigida e com nova hierarquia
+                updated = true;
+            }
         }
 
         // 2. Corrige o PAS legado (que estava com anos de PES e sem basePlanId, ou com componentes duplicados)
@@ -292,10 +347,11 @@ export const db = {
         if (pasIndex !== -1) {
           const pas = data[pasIndex];
           const hasRedundant = pas.components.some(c => c.type === 'Diretriz' || c.type === 'Objetivo' || c.type === 'Meta');
+          const hasCoadiAction = pas.components.some(c => c.id === 'acao-coadi-01');
           
-          // Se o PAS estiver com a vigência errada (2024-2027) ou contiver Diretrizes/Objetivos/Metas (que devem vir do PES)
-          if ((pas.startYear === 2024 && pas.endYear === 2027) || hasRedundant) {
-             data[pasIndex] = SEED_PLAN; // Substitui pelo SEED_PLAN limpo (apenas Ações)
+          // Se o PAS estiver com a vigência errada, duplicados ou faltando as novas ações da COADI
+          if ((pas.startYear === 2024 && pas.endYear === 2027) || hasRedundant || !hasCoadiAction) {
+             data[pasIndex] = SEED_PLAN; // Substitui pelo SEED_PLAN limpo (que agora tem COADI)
              updated = true;
           }
         }
@@ -340,23 +396,22 @@ export const db = {
   monitorings: {
     getAll: async (): Promise<MonitoringInstance[]> => {
       const storedMonitorings = localStorage.getItem(TABLES.MONITORINGS);
+      
+      // Migration / Integration for New Scenario
+      let data: MonitoringInstance[] = [];
       if (!storedMonitorings) {
-        const seedData = [SEED_MONITORING];
-        localStorage.setItem(TABLES.MONITORINGS, JSON.stringify(seedData));
-        return SIMULATE_NETWORK(seedData) as Promise<MonitoringInstance[]>;
+        data = [SEED_MONITORING, SEED_MONITORING_COADI, SEED_MONITORING_GABINETE];
+        localStorage.setItem(TABLES.MONITORINGS, JSON.stringify(data));
       } else {
-        const data = JSON.parse(storedMonitorings) as MonitoringInstance[];
-        const existingIdx = data.findIndex(m => m.id === SEED_MONITORING.id);
-        if (existingIdx === -1) {
-          data.push(SEED_MONITORING);
-          localStorage.setItem(TABLES.MONITORINGS, JSON.stringify(data));
-        } else if (data[existingIdx].period === 'Q1 2025') {
-          // Fix the period string if the user has the old cache
-          data[existingIdx] = SEED_MONITORING;
+        data = JSON.parse(storedMonitorings) as MonitoringInstance[];
+        const hasCoadi = data.some(m => m.unitName.includes('COADI'));
+        if (!hasCoadi) {
+          data.push(SEED_MONITORING_COADI);
+          data.push(SEED_MONITORING_GABINETE);
           localStorage.setItem(TABLES.MONITORINGS, JSON.stringify(data));
         }
-        return SIMULATE_NETWORK(data) as Promise<MonitoringInstance[]>;
       }
+      return SIMULATE_NETWORK(data) as Promise<MonitoringInstance[]>;
     },
     create: async (item: MonitoringInstance): Promise<MonitoringInstance> => {
       const items = getTable<MonitoringInstance>(TABLES.MONITORINGS);

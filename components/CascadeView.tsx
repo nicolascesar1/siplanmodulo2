@@ -172,6 +172,18 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                                         Orçamento Previsto (Ações): <span className="font-bold">{totalBudget}</span>
                                     </span>
                                 )}
+                                {(() => {
+                                    const childActions = plan.components.filter(c => c.parentId === component.id && c.type === 'Ação');
+                                    const uniqueUnits = [...new Set(childActions.map(a => a.responsible).filter(Boolean))];
+                                    if (uniqueUnits.length > 1) {
+                                        return (
+                                            <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200" title={uniqueUnits.join(', ')}>
+                                                🔗 {uniqueUnits.length} unidades envolvidas
+                                            </span>
+                                        );
+                                    }
+                                    return null;
+                                })()}
                             </div>
                         )}
                     </div>
