@@ -73,6 +73,13 @@ export const MODEL_FIELD_CONFIG: Record<string, LevelFieldConfig[]> = {
     { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 2: Objetivo Específico
     { fields: ['indicator', 'annualization', 'responsible'] },  // Nível 3: Entrega
   ],
+  // Custom — herda configuração do PAS como base padrão
+  'custom': [
+    { fields: ['responsible'] },                                            // Nível 1: Customizável
+    { fields: ['responsible'] },                                            // Nível 2: Customizável
+    { fields: ['indicator', 'annualization', 'baseline', 'responsible'] },   // Nível 3: Customizável
+    { fields: ['indicator', 'responsible', 'budget'] },                     // Nível 4: Customizável
+  ],
 };
 
 /**

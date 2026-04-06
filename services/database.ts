@@ -32,11 +32,14 @@ const SEED_PES: PESInstance = {
     { id: 'meta-oe22m4', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M4', content: 'Definir um conjunto de instrumentos normativos para garantir a segurança da informação.', indicator: 'Número de instrumentos definidos', baseline: '1', targetValue: '1', responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento' },
     { id: 'meta-oe22m8', planId: 'plan-pes-2024-2027', parentId: 'obj-22', type: 'Meta', code: 'OE 22.M8', content: 'Fortalecer a governança de dados e a transparência institucional no CIEGES', indicator: 'Número de gestores com acesso ao CIEGES', baseline: '2', targetValue: '5', responsible: 'Unidade de Gestão de Tecnologia e Sistemas de Informação', status: 'Em andamento' },
     
-    // Novo Objetivo para abrigar a Meta M5, pois Objetivos não podem misturar áreas donas de Metas
-    { id: 'obj-23', planId: 'plan-pes-2024-2027', parentId: 'dir-09', type: 'Objetivo', content: '23: IMPLEMENTAR AÇÕES INTEGRADAS DE PROMOÇÃO À SAÚDE NA REDE ASSISTENCIAL', status: 'Em andamento' },
+    // Novo Objetivo para abrigar a Meta M5, em sua Diretriz correta (Promoção à Saúde)
+    { id: 'dir-promsaude', planId: 'plan-pes-2024-2027', type: 'Diretriz', content: '05: PROMOVER A SAÚDE E A PREVENÇÃO DE AGRAVOS, FORTALECENDO AS AÇÕES DE VIGILÂNCIA EM SAÚDE', status: 'Em andamento' },
+    { id: 'obj-23', planId: 'plan-pes-2024-2027', parentId: 'dir-promsaude', type: 'Objetivo', content: '23: IMPLEMENTAR AÇÕES INTEGRADAS DE PROMOÇÃO À SAÚDE NA REDE ASSISTENCIAL', status: 'Em andamento' },
     { id: 'meta-oe22m5', planId: 'plan-pes-2024-2027', parentId: 'obj-23', type: 'Meta', code: 'OE 23.M5', content: 'Implementar o Plano de Saúde Digital na SESAP', indicator: 'Número de metas concluídas', baseline: '0', targetValue: '2', responsible: 'Coordenadoria de Promoção à Saúde', status: 'Em andamento' },
     
-    { id: 'obj-infra', planId: 'plan-pes-2024-2027', parentId: 'dir-09', type: 'Objetivo', content: 'PROMOVER A MODERNIZAÇÃO E MANUTENÇÃO DA INFRAESTRUTURA FÍSICA E TECNOLÓGICA DA REDE ESTADUAL DE SAÚDE', status: 'Em andamento' },
+    // Objetivo INFRA em sua Diretriz correta (Gestão e Infraestrutura)
+    { id: 'dir-infra', planId: 'plan-pes-2024-2027', type: 'Diretriz', content: '08: APRIMORAR A GESTÃO DO SUS, GARANTINDO INFRAESTRUTURA E RECURSOS ADEQUADOS', status: 'Em andamento' },
+    { id: 'obj-infra', planId: 'plan-pes-2024-2027', parentId: 'dir-infra', type: 'Objetivo', content: 'PROMOVER A MODERNIZAÇÃO E MANUTENÇÃO DA INFRAESTRUTURA FÍSICA E TECNOLÓGICA DA REDE ESTADUAL DE SAÚDE', status: 'Em andamento' },
     { id: 'meta-infra-01', planId: 'plan-pes-2024-2027', parentId: 'obj-infra', type: 'Meta', code: 'OE 09.M1', content: 'Promover a melhoria da infraestrutura física e tecnológica das unidades de saúde estaduais.', indicator: 'Número de unidades reformadas', baseline: '10', targetValue: '5', measurementUnit: 'Unidade', responsible: 'Gabinete / SESAP', status: 'Em andamento' }
   ]
 };
@@ -328,7 +331,7 @@ export const db = {
         // MIGRATION / AUTO-INJECTION logic
         let updated = false;
 
-        // 1. Garante que o PES real existe e está com a responsabilidade corrigida
+        // 1. Garante que o PES real existe e está com a hierarquia corrigida
         const pesIndex = data.findIndex(p => p.id === SEED_PES.id);
         if (pesIndex === -1) {
           data.unshift(SEED_PES); // Adiciona no início
@@ -336,8 +339,13 @@ export const db = {
         } else {
             const hasOldResponsible = data[pesIndex].components.some(c => c.responsible === 'Unidade de Gestão de Tecnologia');
             const hasObjInfra = data[pesIndex].components.some(c => c.id === 'obj-infra');
-            if (hasOldResponsible || !hasObjInfra) {
-                data[pesIndex] = SEED_PES; // Substitui pela versão corrigida e com nova hierarquia
+            // Verifica se obj-23 ainda está sob dir-09 (hierarquia errada)
+            const obj23UnderDir09 = data[pesIndex].components.some(c => c.id === 'obj-23' && c.parentId === 'dir-09');
+            // Verifica se as novas Diretrizes existem
+            const hasDirPromsaude = data[pesIndex].components.some(c => c.id === 'dir-promsaude');
+            const hasDirInfra = data[pesIndex].components.some(c => c.id === 'dir-infra');
+            if (hasOldResponsible || !hasObjInfra || obj23UnderDir09 || !hasDirPromsaude || !hasDirInfra) {
+                data[pesIndex] = SEED_PES; // Substitui pela versão corrigida com Diretrizes separadas
                 updated = true;
             }
         }

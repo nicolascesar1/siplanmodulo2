@@ -149,7 +149,7 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                             Editar Info
                         </button>
 
-                        {(plan.planType === 'pas' || plan.planType === 'ppa') && (
+                        {(plan.planType === 'pas' || plan.planType === 'ppa' || plan.planType === 'custom') && (
                             <button
                                 onClick={() => navigate('/monitorings', { state: { planId: plan.id } })}
                                 className="flex items-center justify-center px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-all text-sm font-bold shadow-md shadow-brand-purple/20 w-full mt-1 animate-pulse hover:animate-none"

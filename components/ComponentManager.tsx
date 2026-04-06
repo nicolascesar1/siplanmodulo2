@@ -152,7 +152,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
 
     // Render Helpers
     const renderEditForm = (item: PESComponent) => {
-        const customLabel = item.type === 'Diretriz' ? plan.customNomenclature?.level1 : item.type === 'Objetivo' ? plan.customNomenclature?.level2 : item.type === 'Meta' ? plan.customNomenclature?.level3 : undefined;
+        const customLabel = item.type === 'Diretriz' ? plan.customNomenclature?.level1 : item.type === 'Objetivo' ? plan.customNomenclature?.level2 : item.type === 'Meta' ? plan.customNomenclature?.level3 : item.type === 'Ação' ? plan.customNomenclature?.level4 : undefined;
         const levelIdx = getLevelIndex(item.type, item.parentId || null);
         const fieldCfg = getFieldConfig(plan.planType, levelIdx);
         return (
@@ -207,7 +207,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                     initialData={getInitialAddData()}
                     onSave={handleSaveNewItem}
                     onCancel={() => setIsAdding(false)}
-                    customLabel={addingContext.type === 'Diretriz' ? plan.customNomenclature?.level1 : addingContext.type === 'Objetivo' ? plan.customNomenclature?.level2 : addingContext.type === 'Meta' ? plan.customNomenclature?.level3 : undefined}
+                    customLabel={addingContext.type === 'Diretriz' ? plan.customNomenclature?.level1 : addingContext.type === 'Objetivo' ? plan.customNomenclature?.level2 : addingContext.type === 'Meta' ? plan.customNomenclature?.level3 : addingContext.type === 'Ação' ? plan.customNomenclature?.level4 : undefined}
                     fieldConfig={getFieldConfig(plan.planType, getLevelIndex(addingContext.type, addingContext.parentId))}
                 />
             )}

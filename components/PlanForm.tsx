@@ -25,12 +25,13 @@ const defaultValues: PESFormValues = {
 export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans = [], onSubmit, onCancel, title }) => {
   const [form, setForm] = useState<PESFormValues>(initialValues || defaultValues);
   
-  // Custom nomenclature happens only for PES and PPA
+  // Custom nomenclature happens for PES, PPA and Custom
   const isPas = form.planType === 'pas';
+  const isCustom = form.planType === 'custom';
   const hasCustomNomenclatureInitial = !!initialValues?.customNomenclature;
-  const [useCustomNomenclature, setUseCustomNomenclature] = useState<boolean>(!isPas && hasCustomNomenclatureInitial);
+  const [useCustomNomenclature, setUseCustomNomenclature] = useState<boolean>(isCustom || (!isPas && hasCustomNomenclatureInitial));
   const [customNomenclature, setCustomNomenclature] = useState(
-    initialValues?.customNomenclature || { level1: 'Objetivo Geral', level2: 'Objetivo Específico', level3: 'Entrega' }
+    initialValues?.customNomenclature || { level1: 'Objetivo Geral', level2: 'Objetivo Específico', level3: 'Entrega', level4: 'Ação' }
   );
 
   // Set default model if creating new and models exist
@@ -49,7 +50,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
   };
 
   const handlePlanTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-     const val = e.target.value as 'ppa' | 'pes' | 'pas';
+     const val = e.target.value as 'ppa' | 'pes' | 'pas' | 'custom';
      setForm(prev => {
         const changes: Partial<PESFormValues> = { planType: val };
         if (val === 'pas') {
@@ -63,6 +64,10 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
            changes.monitoringFrequency = 'Trimestral';
         } else if (val === 'pes') {
            changes.monitoringFrequency = 'Quadrimestral';
+        } else if (val === 'custom') {
+           changes.monitoringFrequency = 'Quadrimestral';
+           setUseCustomNomenclature(true);
+           setCustomNomenclature({ level1: 'Eixo', level2: 'Programa', level3: 'Meta', level4: 'Ação' });
         }
         return { ...prev, ...changes };
      });
@@ -83,7 +88,8 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
 
     const finalForm: PESFormValues = {
       ...form,
-      customNomenclature: (useCustomNomenclature && form.planType !== 'pas') ? customNomenclature : undefined
+      customNomenclature: (useCustomNomenclature && form.planType !== 'pas') ? customNomenclature : undefined,
+      planAcronym: form.planType === 'custom' ? form.planAcronym : undefined
     };
     
     // For PAS, force start and end year to reference year
@@ -101,6 +107,8 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
   };
 
   const isPpaOrPes = form.planType === 'ppa' || form.planType === 'pes';
+  const showYearFields = isPpaOrPes || form.planType === 'custom';
+  const showNomenclature = isPpaOrPes || form.planType === 'custom';
 
   return (
     <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-200">
@@ -129,6 +137,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                 <option value="pes">Plano Estadual de Saúde (PES) - Quadrienal Base</option>
                 <option value="pas">Programação Anual de Saúde (PAS) - Derivado Anual</option>
                 <option value="ppa">Plano Plurianual de Apoio (PPA) - Quadrienal Independente</option>
+                <option value="custom">📋 Plano Personalizado — Nomenclatura Livre</option>
               </select>
           </div>
 
@@ -146,6 +155,21 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                 autoFocus
               />
             </div>
+
+            {form.planType === 'custom' && (
+              <div className="col-span-2 md:col-span-1">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Sigla (para badge) <span className="text-gray-400 font-normal">Opcional</span></label>
+                <input
+                  type="text"
+                  name="planAcronym"
+                  value={form.planAcronym || ''}
+                  onChange={handleChange}
+                  placeholder="Ex: POA, PMS, PAE"
+                  maxLength={6}
+                  className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm uppercase tracking-wider font-bold placeholder:font-normal placeholder:normal-case placeholder:tracking-normal"
+                />
+              </div>
+            )}
             
             {form.planType === 'pas' && (
                <>
@@ -179,7 +203,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                </>
             )}
 
-            {isPpaOrPes && (
+            {showYearFields && (
                <>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Ano Início <span className="text-red-500">*</span></label>
@@ -239,8 +263,8 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
             </div>
           </div>
 
-          {/* Section: Custom Nomenclature (Only for PES / PPA) */}
-          {isPpaOrPes && (
+          {/* Section: Custom Nomenclature */}
+          {showNomenclature && (
              <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                <div className="flex items-center justify-between mb-2">
                  <div className="flex flex-col">
@@ -250,7 +274,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                        Personalizar Nomenclatura Hierárquica
                      </label>
                    </div>
-                   <p className="text-xs text-gray-400 mt-0.5 ml-6">Adequar os termos se for um PPA Diferenciado</p>
+                   <p className="text-xs text-gray-400 mt-0.5 ml-6">{form.planType === 'custom' ? 'Defina os nomes dos níveis hierárquicos do seu plano' : 'Adequar os termos se for um PPA Diferenciado'}</p>
                  </div>
                  <button
                    type="button"
@@ -262,7 +286,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                </div>
    
                {useCustomNomenclature && (
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 mt-2 border-t border-gray-100">
+                 <div className={`grid grid-cols-1 ${form.planType === 'custom' ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3'} gap-4 pt-4 mt-2 border-t border-gray-100`}>
                    <div>
                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 1 (Ex: Objetivo Geral)</label>
                      <input
@@ -296,6 +320,19 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                        required={useCustomNomenclature}
                      />
                    </div>
+                   {form.planType === 'custom' && (
+                     <div>
+                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nível 4 (Ex: Ação)</label>
+                       <input
+                         type="text"
+                         name="level4"
+                         value={customNomenclature.level4 || 'Ação'}
+                         onChange={handleCustomChange}
+                         className="w-full px-3 py-2 bg-gray-50 text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                         required
+                       />
+                     </div>
+                   )}
                  </div>
                )}
              </div>

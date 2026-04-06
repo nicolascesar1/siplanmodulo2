@@ -19,7 +19,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
     plan, onEdit, onDelete, editingId, renderEditForm, searchTerm = '',
     onAddChild
 }) => {
-    const nomenclature = plan.customNomenclature || { level1: 'Diretriz', level2: 'Objetivo', level3: 'Meta' };
+    const nomenclature = plan.customNomenclature || { level1: 'Diretriz', level2: 'Objetivo', level3: 'Meta', level4: 'Ação' };
     const [actionYearMenuId, setActionYearMenuId] = useState<string | null>(null);
     const baseYear = plan.startYear || new Date().getFullYear();
     const planYears = Array.from({ length: (plan.endYear || baseYear + 3) - baseYear + 1 }, (_, i) => baseYear + i);
@@ -190,7 +190,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
 
                     <div className="flex items-center gap-1 opacity-0 group-hover/meta:opacity-100 transition-opacity bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm z-20">
 
-                        {onAddChild && plan.planType === 'pas' && (
+                        {onAddChild && (plan.planType === 'pas' || plan.planType === 'custom') && (
                             <div className="relative">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setActionYearMenuId(actionYearMenuId === component.id ? null : component.id); }}
@@ -243,7 +243,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                         <div className="flex items-center gap-2 mb-0.5">
                             <span className="flex items-center gap-1.5 text-[10px] font-bold text-sky-700 uppercase tracking-wider bg-sky-100 px-2 py-0.5 rounded-full border border-sky-200">
                                 <Activity className="w-3 h-3" />
-                                Ação
+                                {nomenclature.level4 || 'Ação'}
                             </span>
                             {component.actionYear && <span className="text-[9px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200">{component.actionYear}</span>}
                             {component.code && <span className="text-[10px] font-bold text-gray-500 bg-white px-1.5 py-0.5 rounded border border-gray-100">{component.code}</span>}

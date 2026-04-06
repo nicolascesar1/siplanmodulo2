@@ -64,13 +64,15 @@ export interface PESInstance {
   modelId: string;
   status: PESStatus;
   components: PESComponent[]; // Array contendo todos os itens da hierarquia
-  planType?: 'ppa' | 'pes' | 'pas'; // Tipo do instrumento de planejamento
+  planType?: 'ppa' | 'pes' | 'pas' | 'custom'; // Tipo do instrumento de planejamento
+  planAcronym?: string; // Sigla curta para badge (ex: 'POA', 'PMS')
   basePlanId?: string; // ID do PES base (se for PAS)
   referenceYear?: number; // Ano de referência (ex: 2025 para um PAS)
   customNomenclature?: {
     level1: string;
     level2: string;
     level3: string;
+    level4?: string; // Nome do 4º nível (padrão: 'Ação')
   };
   monitoringFrequency?: 'Trimestral' | 'Quadrimestral';
   createdAt: string;
@@ -84,13 +86,15 @@ export interface PESFormValues {
   description: string;
   modelId: string;
   status: PESStatus;
-  planType?: 'ppa' | 'pes' | 'pas';
+  planType?: 'ppa' | 'pes' | 'pas' | 'custom';
+  planAcronym?: string;
   basePlanId?: string;
   referenceYear?: number;
   customNomenclature?: {
     level1: string;
     level2: string;
     level3: string;
+    level4?: string;
   };
   monitoringFrequency?: 'Trimestral' | 'Quadrimestral';
 }

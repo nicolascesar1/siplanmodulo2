@@ -31,19 +31,17 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
         );
     }, [plans, searchTerm]);
 
-    const getPlanTypeBadge = (type?: string) => {
-        // ... (existing badge logic)
+    const getPlanTypeBadge = (type?: string, acronym?: string) => {
         const styles = {
             'pes': 'bg-indigo-100 text-indigo-700 border-indigo-200',
             'pas': 'bg-teal-100 text-teal-700 border-teal-200',
             'ppa': 'bg-blue-100 text-blue-700 border-blue-200',
+            'custom': 'bg-amber-100 text-amber-700 border-amber-200',
         }[type || 'pes'] || 'bg-gray-100 text-gray-700 border-gray-200';
 
-        const label = {
-            'pes': 'PES',
-            'pas': 'PAS',
-            'ppa': 'PPA',
-        }[type || 'pes'] || type?.toUpperCase();
+        const label = type === 'custom'
+            ? (acronym || 'CUSTOM')
+            : ({'pes': 'PES', 'pas': 'PAS', 'ppa': 'PPA'}[type || 'pes'] || type?.toUpperCase());
 
         return (
             <span className={`px-2 py-0.5 rounded text-[10px] font-black tracking-wider border ${styles}`}>
@@ -172,7 +170,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                                             </div>
                                         </td>
                                         <td className="px-4 py-4">
-                                            {getPlanTypeBadge(plan.planType)}
+                                            {getPlanTypeBadge(plan.planType, plan.planAcronym)}
                                         </td>
                                         <td className="px-4 py-4">
                                             <div className="flex items-center text-xs font-bold text-gray-600 bg-gray-100/50 px-2 py-1 rounded inline-flex border border-gray-100">

@@ -29,7 +29,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
     allMonitorings = []
 }) => {
     // Helpers
-    const nomenclature = plan.customNomenclature || { level1: 'Diretriz', level2: 'Objetivo', level3: 'Meta' };
+    const nomenclature = plan.customNomenclature || { level1: 'Diretriz', level2: 'Objetivo', level3: 'Meta', level4: 'Ação' };
     const belongsToUnit = (component: PESComponent) => component.responsible === monitoring.unitName;
 
     // Verifica se a Meta possui Ações filhas pertencentes à unidade do monitoramento
@@ -607,26 +607,37 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
         if (component.type === 'Ação') {
             const acaoBelongs = belongsToUnit(component);
             return (
-                <div className={`relative my-1 rounded-lg border overflow-hidden group/acao transition-colors ${acaoBelongs ? 'bg-slate-50/50 border-gray-100 hover:border-sky-200' : 'bg-gray-50/30 border-gray-100 opacity-70'}`}>
-                    <div className="absolute top-0 left-0 w-1 h-full bg-sky-400" />
+                <div className={`relative my-1 rounded-lg border overflow-hidden group/acao transition-colors ${acaoBelongs ? 'bg-slate-50/50 border-gray-100 hover:border-sky-200' : 'bg-gray-50/30 border-dashed border-gray-300 grayscale opacity-75'}`}>
+                    <div className={`absolute top-0 left-0 w-1 h-full ${acaoBelongs ? 'bg-sky-400' : 'bg-gray-400'}`} />
                     
-                    <div className="flex items-start gap-3 py-3 pr-4 pl-4 hover:bg-sky-50 cursor-default">
+                    <div className={`flex items-start gap-3 py-3 pr-4 pl-4 cursor-default ${acaoBelongs ? 'hover:bg-sky-50' : 'hover:bg-gray-100'}`}>
                         <div className="mt-0.5 flex-shrink-0 z-10 text-sky-400 opacity-0 w-4">
                             {/* Spacer to align with siblings or keep blank */}
                         </div>
                         <div className="flex-1 min-w-0 z-10">
                             <div className="flex items-center gap-2 mb-0.5">
-                                <span className="flex items-center gap-1.5 text-[10px] font-bold text-sky-700 uppercase tracking-wider bg-sky-100 px-2 py-0.5 rounded-full border border-sky-200">
+                                <span className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${acaoBelongs ? 'text-sky-700 bg-sky-100 border-sky-200' : 'text-gray-500 bg-gray-100 border-gray-200'}`}>
                                     <Activity className="w-3 h-3" />
-                                    Ação
+                                    {nomenclature.level4 || 'Ação'}
                                 </span>
                                 {component.code && <span className="text-[10px] font-bold text-gray-500 bg-white px-1.5 py-0.5 rounded border border-gray-100">{component.code}</span>}
+                                {!acaoBelongs && (
+                                    <span className="flex items-center gap-1 text-[9px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
+                                        <Eye className="w-3 h-3" />
+                                        Visualização
+                                    </span>
+                                )}
                             </div>
-                            <p className="text-sm text-gray-600 leading-relaxed"><HighlightedText text={component.content} /></p>
+                            <p className={`text-sm leading-relaxed ${acaoBelongs ? 'text-gray-600' : 'text-gray-500'}`}><HighlightedText text={component.content} /></p>
+                            {!acaoBelongs && component.responsible && (
+                                <span className="inline-flex items-center gap-1 mt-1 text-[9px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
+                                    Resp.: {component.responsible}
+                                </span>
+                            )}
                         </div>
                     </div>
 
-                    <div className="border-t border-sky-200 bg-sky-50/50">
+                    <div className={`border-t ${acaoBelongs ? 'border-sky-200 bg-sky-50/50' : 'border-gray-200 bg-gray-50'}`}>
                         <RenderInputSection component={component} />
                     </div>
                 </div>
@@ -638,22 +649,30 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
 
     // Filter Logic
     const filterPredicate = (item: PESComponent) => {
-        // Regra absoluta para qualquer monitoramento: Só mostrar o que pertence à unidade
-        // O `PlanTree.tsx` já cuida de renderizar os pais (Objetivo, Diretriz) automaticamente 
-        // caso uma Meta ou Ação filha seja visível. 
+        // REGRA FUNDAMENTAL: Somente Ações podem pertencer a setores diferentes dentro de uma Meta.
+        // Todo o restante (Diretriz → Objetivo → Meta) segue o responsável da Meta.
+        //
+        // O PlanTree.isVisible() cuida recursivamente de esconder pais sem filhos visíveis.
+        // Aqui, filtramos apenas os elementos "folha" (Meta, Ação) e deixamos os containers
+        // (Diretriz, Objetivo) sempre candidatos — sua visibilidade depende dos filhos.
 
         if (item.type === 'Ação') {
-            return belongsToUnit(item);
+            // Mostrar se é minha OU se está dentro de uma Meta minha
+            // (para dar contexto completo ao dono da Meta)
+            if (belongsToUnit(item)) return true;
+            const parentMeta = plan.components.find(c => c.id === item.parentId);
+            return !!(parentMeta?.type === 'Meta' && belongsToUnit(parentMeta));
         }
 
         if (item.type === 'Meta') {
+            // Mostrar se é minha (primária) OU se tem ações minhas dentro (secundária)
             return belongsToUnit(item) || isSecondaryMeta(item);
         }
 
-        if (['Diretriz', 'Objetivo'].includes(item.type)) {
-            return belongsToUnit(item);
-        }
-
+        // Diretrizes e Objetivos: retornar false aqui.
+        // O PlanTree.isVisible() cuida de mostrá-los automaticamente via childrenMatch
+        // (se algum filho Meta/Ação for visível, o pai aparece).
+        // Retornar true causaria exibição mesmo sem filhos relevantes.
         return false;
     };
 
