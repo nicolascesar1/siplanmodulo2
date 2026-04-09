@@ -254,7 +254,7 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
             className="transition-all duration-500 ease-out"
           />
         </svg>
-        <span className="absolute text-[9px] font-bold text-gray-600">{percentage}%</span>
+        <span className="absolute text-[9px] font-bold text-black">{percentage}%</span>
       </div>
     );
   };
@@ -278,11 +278,11 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
     const endDate = new Date(end + 'T00:00:00');
 
     if (now >= startDate && now <= endDate) {
-      return <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">NO PRAZO</span>;
+      return <span className="text-[10px] font-bold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">NO PRAZO</span>;
     } else if (now > endDate) {
-      return <span className="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded border border-red-200">ENCERRADO</span>;
+      return <span className="text-[10px] font-bold text-red-900 bg-red-100 px-2 py-0.5 rounded border border-red-200">ENCERRADO</span>;
     } else {
-      return <span className="text-[10px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">AGUARDANDO</span>;
+      return <span className="text-[10px] font-bold text-black bg-gray-100 px-2 py-0.5 rounded border border-gray-200">AGUARDANDO</span>;
     }
   };
 
@@ -295,26 +295,34 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
       <div className="p-6 border-b border-gray-100">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Monitoramentos</h2>
+            <h2 className="text-xl font-bold text-black">Monitoramentos</h2>
             <p className="text-sm text-gray-500 mt-1">Acompanhe e preencha os relatórios periódicos da unidade.</p>
           </div>
 
           {userRole === 'admin' && (
-            <div className="flex gap-3">
+            <div className="flex gap-2.5">
               <button
                 onClick={() => setIsDeadlinesModalOpen(true)}
-                className="flex items-center px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors shadow-sm"
+                className="flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold rounded-lg transition-all shadow-md active:scale-95"
               >
-                <Settings className="w-4 h-4 mr-2 text-gray-500" />
-                Configurar Prazos
+                <Calendar className="w-4 h-4 mr-2" />
+                Configurar Disponibilização
+              </button>
+
+              <button
+                onClick={handleExportCSV}
+                className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-md active:scale-95"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Gerar Consolidado
               </button>
 
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center px-4 py-2 bg-brand-purple hover:bg-brand-purple/90 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-brand-purple/30"
+                className="flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold rounded-lg transition-all shadow-md active:scale-95"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Novo Monitoramento
+                Novo Relatório
               </button>
             </div>
           )}
@@ -333,7 +341,7 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
               placeholder="Buscar por título ou coordenação..."
-              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition-all placeholder:text-gray-400"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-black font-medium focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition-all placeholder:text-gray-400"
             />
           </div>
 
@@ -413,19 +421,10 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
 
         <div className="flex justify-between items-center px-1">
           <span className="text-xs font-medium text-gray-500">
-            <span className="text-gray-900 font-bold">{filteredMonitorings.length}</span> resultados encontrados
+            <span className="text-black font-bold">{filteredMonitorings.length}</span> resultados encontrados
           </span>
 
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleExportCSV}
-              className="flex items-center text-xs font-bold text-gray-600 hover:text-brand-purple transition-colors bg-gray-50 hover:bg-brand-purple/10 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-brand-purple/30"
-              title="Exportar dados filtrados para CSV"
-            >
-              <Download className="w-3.5 h-3.5 mr-1.5" />
-              Exportar CSV
-            </button>
-
+          <div className="flex items-center gap-4 h-8">
             {hasFilters && (
               <button onClick={clearFilters} className="flex items-center text-xs font-medium text-brand-purple hover:text-brand-purple/80 transition-colors">
                 <X className="w-3 h-3 mr-1" /> Limpar Filtros
@@ -465,31 +464,31 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
                   className="hover:bg-gray-50 transition-colors group cursor-pointer"
                   onClick={() => navigate(`/monitoring/${row.id}`)}
                 >
-                  <td className="px-6 py-4 text-gray-700 font-medium max-w-[280px]">
+                  <td className="px-6 py-4 text-black font-bold max-w-[280px]">
                     <div className="line-clamp-2" title={row.unitName}>{row.unitName}</div>
-                    <div className="text-[10px] text-gray-400 mt-1 truncate max-w-[250px]">
+                    <div className="text-[10px] text-gray-500 mt-1 truncate max-w-[250px] font-medium">
                       {plans.find(p => p.id === row.planId)?.name || 'Plano Desconhecido'}
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-gray-600">
+                  <td className="px-4 py-4 text-black font-medium text-xs">
                     {row.title}
                   </td>
-                  <td className="px-4 py-4 text-gray-600">
+                  <td className="px-4 py-4 text-black font-bold text-xs uppercase">
                     {row.period}
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
                       {renderProgressCircle(row.progress)}
                       <div className="flex flex-col">
-                        <span className="text-xs font-medium text-gray-700">{row.status}</span>
-                        <div className={`h-1 w-full rounded-full mt-1 ${getStatusColor(row.status)} opacity-20`}></div>
+                        <span className="text-xs font-bold text-black">{row.status}</span>
+                        <div className={`h-1 w-full rounded-full mt-1 ${getStatusColor(row.status)} opacity-40`}></div>
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-4">
                     {row.submissionStart && row.submissionEnd ? (
                       <div className="flex flex-col items-start gap-1">
-                        <div className="flex items-center text-xs text-gray-600">
+                        <div className="flex items-center text-xs text-black font-bold">
                           <Clock className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
                           {formatDate(row.submissionStart)} - {formatDate(row.submissionEnd)}
                         </div>
@@ -539,7 +538,7 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
           <button className="w-9 h-9 flex items-center justify-center bg-white text-gray-400 hover:bg-gray-50 disabled:opacity-50 border-r border-gray-200" disabled>
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <button className="w-9 h-9 flex items-center justify-center bg-brand-purple/10 text-brand-purple font-medium text-sm">
+          <button className="w-9 h-9 flex items-center justify-center bg-brand-purple/20 text-black font-bold text-sm">
             1
           </button>
           <button className="w-9 h-9 flex items-center justify-center bg-white text-gray-600 hover:bg-gray-50">
@@ -639,10 +638,10 @@ export const MonitoringList: React.FC<MonitoringListProps> = ({ plans, units, us
                     </div>
                   )}
 
-                  <button
+                    <button
                     onClick={handleCreate}
                     disabled={!selectedPlanId || !selectedUnit}
-                    className="w-full py-2 bg-brand-purple text-white rounded-lg font-medium hover:bg-brand-purple/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                    className="w-full py-2 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
                   >
                     Gerar Monitoramento
                   </button>

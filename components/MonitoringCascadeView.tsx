@@ -130,7 +130,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
     };
     
     const getProgressBgColor = (pct: number, isSecondary: boolean) => {
-        if (isSecondary) return 'bg-gray-400';
+        if (isSecondary) return 'bg-gray-200';
         if (pct === 0) return 'bg-gray-300';
         if (pct < 34) return 'bg-red-400';
         if (pct < 67) return 'bg-yellow-400';
@@ -139,7 +139,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
     };
     
     const getProgressTextColor = (pct: number, isSecondary: boolean) => {
-        if (isSecondary) return 'text-gray-500';
+        if (isSecondary) return 'text-gray-400';
         if (pct === 0) return 'text-gray-400';
         if (pct < 34) return 'text-red-500';
         if (pct < 67) return 'text-yellow-600';
@@ -381,26 +381,26 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
         if (component.type === 'Diretriz') {
             const isSecondary = isSecondaryContext(component);
             return (
-                <div className={`group ${isCollapsed ? 'mb-2' : 'bg-gray-50/30 border-b border-gray-100'} relative overflow-hidden rounded-lg border border-gray-100 transition-all ${isSecondary ? 'grayscale opacity-75' : ''}`}>
+                <div className={`group ${isCollapsed ? 'mb-2' : 'bg-gray-50/30 border-b border-gray-100'} relative overflow-hidden rounded-lg border border-gray-100 transition-all ${isSecondary ? 'opacity-80' : ''}`}>
                 <div
                     onClick={toggle}
                     className={`flex items-center gap-4 p-5 transition-all cursor-pointer ${isSecondary ? 'hover:bg-gray-100' : 'hover:bg-gray-50'}`}
                 >
-                    <div className={`absolute top-0 left-0 w-1 h-full ${isSecondary ? 'bg-gray-400' : 'bg-brand-teal'}`} />
+                    <div className={`absolute top-0 left-0 w-1 h-full ${isSecondary ? 'bg-gray-200' : 'bg-brand-teal'}`} />
 
-                    <div className={`p-1.5 rounded-full shadow-sm border transition-colors z-10 ${hasChildren ? (isSecondary ? 'bg-gray-400 text-white border-gray-400' : 'bg-brand-teal text-white border-brand-teal') : 'bg-white text-gray-400 border-gray-200 group-hover:text-brand-teal'}`}>
+                    <div className={`p-1.5 rounded-full shadow-sm border transition-colors z-10 ${hasChildren ? (isSecondary ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-brand-teal text-white border-brand-teal') : 'bg-white text-gray-400 border-gray-200 group-hover:text-brand-teal'}`}>
                         {hasChildren ? (isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />) : <ChevronRight className="w-5 h-5" />}
                     </div>
 
                     <div className="flex-1 z-10">
                         <div className="flex items-center gap-3 mb-1.5">
-                            <span className={`flex items-center gap-1.5 text-[11px] font-bold text-white uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm ${isSecondary ? 'bg-gray-400' : 'bg-brand-teal'}`}>
+                            <span className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm ${isSecondary ? 'bg-gray-100 text-gray-500' : 'bg-brand-teal text-black'}`}>
                                 <Layers className="w-3 h-3" />
                                 {nomenclature.level1}
                             </span>
                             {component.code && <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${isSecondary ? 'text-gray-500 bg-gray-100 border-gray-200' : 'text-brand-teal bg-brand-teal/10 border-brand-teal/20'}`}>{component.code}</span>}
                         </div>
-                        <h3 className={`text-base font-bold leading-snug ${isSecondary ? 'text-gray-600' : 'text-gray-900'}`}><HighlightedText text={component.content} /></h3>
+                        <h3 className="text-base font-bold leading-snug text-black"><HighlightedText text={component.content} /></h3>
                         {isSecondary && (() => {
                             const resp = component.responsible || getResponsibleForNode(component.id);
                             return resp ? (
@@ -425,14 +425,14 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
         if (component.type === 'Objetivo') {
             const isSecondary = isSecondaryContext(component);
             return (
-                <div className={`border border-gray-100 bg-white my-2 shadow-sm rounded-lg relative overflow-hidden group/obj transition-all ${isSecondary ? 'grayscale opacity-75' : ''}`}>
+                <div className={`border border-gray-100 bg-white my-2 shadow-sm rounded-lg relative overflow-hidden group/obj transition-all ${isSecondary ? 'opacity-80' : ''}`}>
                 <div
                     onClick={toggle}
                     className={`flex items-center gap-4 py-4 pr-4 pl-4 transition-all cursor-pointer ${isSecondary ? 'hover:bg-gray-100' : 'hover:bg-brand-purple/10'}`}
                 >
-                    <div className={`absolute top-0 left-0 w-1 h-full ${isSecondary ? 'bg-gray-400' : 'bg-brand-purple'}`} />
+                    <div className={`absolute top-0 left-0 w-1 h-full ${isSecondary ? 'bg-gray-200' : 'bg-brand-purple'}`} />
 
-                    <div className={`p-1 rounded-full shadow-sm border transition-colors z-10 ${hasChildren ? (isSecondary ? 'bg-gray-400 text-white border-gray-400' : 'bg-brand-purple text-white border-brand-purple') : 'bg-white text-gray-400 border-gray-200 group-hover/obj:text-brand-purple'}`}>
+                    <div className={`p-1 rounded-full shadow-sm border transition-colors z-10 ${hasChildren ? (isSecondary ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-brand-purple text-black border-brand-purple') : 'bg-white text-gray-400 border-gray-200 group-hover/obj:text-brand-purple'}`}>
                         {hasChildren ? (isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />) : <ChevronRight className="w-4 h-4" />}
                     </div>
 
@@ -444,7 +444,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                             </span>
                             {component.code && <span className="text-[10px] font-bold text-gray-500 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-100">{component.code}</span>}
                         </div>
-                        <p className={`text-sm font-medium leading-relaxed ${isSecondary ? 'text-gray-500' : 'text-gray-800'}`}><HighlightedText text={component.content} /></p>
+                        <p className="text-sm font-bold leading-relaxed text-black"><HighlightedText text={component.content} /></p>
                         {isSecondary && (() => {
                             const resp = component.responsible || getResponsibleForNode(component.id);
                             return resp ? (
@@ -473,18 +473,18 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
             const showAsGrey = !metaBelongs;
             
             return (
-                <div className={`border my-2 shadow-sm rounded-lg relative overflow-hidden group/meta transition-all ${metaBelongs ? 'bg-white border-gray-100' : showAsGrey ? 'bg-gray-50/50 border-dashed border-gray-300 grayscale opacity-75' : 'bg-gray-50/50 border-gray-100'}`}>
+                <div className={`border my-2 shadow-sm rounded-lg relative overflow-hidden group/meta transition-all ${metaBelongs ? 'bg-white border-gray-100' : showAsGrey ? 'bg-white border-dashed border-gray-200 opacity-80' : 'bg-gray-50/50 border-gray-100'}`}>
                     <div
                         onClick={toggle}
                         className={`flex items-start gap-3 py-3 pr-4 pl-4 transition-all cursor-pointer ${showAsGrey ? 'hover:bg-gray-100' : 'hover:bg-brand-blue/10'}`}
                     >
                         {/* Colored Bar */}
-                        <div className={`absolute top-0 left-0 w-1 h-full ${showAsGrey ? 'bg-gray-400' : 'bg-brand-blue'}`} />
+                        <div className={`absolute top-0 left-0 w-1 h-full ${showAsGrey ? 'bg-gray-200' : 'bg-brand-blue'}`} />
 
                         <div className={`p-1 rounded-full shadow-sm border transition-colors mt-0.5 z-10 ${
                             showAsGrey 
-                                ? (hasChildren ? 'bg-gray-400 text-white border-gray-400' : 'bg-white text-gray-400 border-gray-200 group-hover/meta:text-gray-500')
-                                : (hasChildren ? 'bg-brand-blue text-white border-brand-blue' : 'bg-white text-gray-400 border-gray-200 group-hover/meta:text-brand-blue')
+                                ? (hasChildren ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-white text-gray-400 border-gray-200 group-hover/meta:text-gray-500')
+                                : (hasChildren ? 'bg-brand-blue text-black border-brand-blue' : 'bg-white text-gray-400 border-gray-200 group-hover/meta:text-brand-blue')
                         }`}>
                             {hasChildren ? (isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />) : <ChevronRight className="w-3.5 h-3.5" />}
                         </div>
@@ -507,7 +507,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                                 </span>
                             )}
                         </div>
-                        <p className="text-sm text-gray-700 leading-relaxed font-medium"><HighlightedText text={component.content} /></p>
+                        <p className="text-sm text-black leading-relaxed font-bold"><HighlightedText text={component.content} /></p>
                         {showAsGrey && component.responsible && (
                             <span className="inline-flex items-center gap-1 mt-1 text-[9px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
                                 Resp.: {component.responsible}
@@ -543,7 +543,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                                         {yearlyTarget && (
                                             <div className={`inline-flex items-center gap-2 text-[10px] font-medium pr-2.5 rounded-full border ${isSecondary ? 'bg-white border-gray-200' : 'bg-gray-50/80 border-gray-200'}`}>
                                                 <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border-r ${isSecondary ? 'border-gray-200 bg-gray-50' : 'border-gray-200 bg-white shadow-sm'}`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${isSecondary ? 'bg-gray-400' : 'bg-brand-purple'}`} />
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${isSecondary ? 'bg-gray-200' : 'bg-brand-purple'}`} />
                                                     <span className="text-gray-500">Ano:</span>
                                                     <span className={`${isSecondary ? 'text-gray-600' : 'text-gray-900'} font-bold`}>{yearlyTarget}</span>
                                                     {component.measurementUnit && <span className="text-gray-400">({component.measurementUnit})</span>}
@@ -586,7 +586,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                             
                             {component.deadline && (
                                 <span className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1.5 rounded-full border ${isSecondaryMeta(component) ? 'text-gray-500 bg-white border-gray-200' : 'text-gray-600 bg-white shadow-sm border-gray-200'}`}>
-                                    <span className={`w-1.5 h-1.5 rounded-full ${isSecondaryMeta(component) ? 'bg-gray-400' : 'bg-brand-blue'}`} />
+                                    <span className={`w-1.5 h-1.5 rounded-full ${isSecondaryMeta(component) ? 'bg-gray-200' : 'bg-brand-blue'}`} />
                                     Prazo: <span className={`${isSecondaryMeta(component) ? 'text-gray-600' : 'text-gray-900'} font-bold`}>{component.deadline}</span>
                                 </span>
                             )}
@@ -607,8 +607,8 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
         if (component.type === 'Ação') {
             const acaoBelongs = belongsToUnit(component);
             return (
-                <div className={`relative my-1 rounded-lg border overflow-hidden group/acao transition-colors ${acaoBelongs ? 'bg-slate-50/50 border-gray-100 hover:border-sky-200' : 'bg-gray-50/30 border-dashed border-gray-300 grayscale opacity-75'}`}>
-                    <div className={`absolute top-0 left-0 w-1 h-full ${acaoBelongs ? 'bg-sky-400' : 'bg-gray-400'}`} />
+                <div className={`relative my-1 rounded-lg border overflow-hidden group/acao transition-colors ${acaoBelongs ? 'bg-slate-50/50 border-gray-100 hover:border-sky-200' : 'bg-white border-dashed border-gray-200 opacity-80'}`}>
+                    <div className={`absolute top-0 left-0 w-1 h-full ${acaoBelongs ? 'bg-sky-400' : 'bg-gray-200'}`} />
                     
                     <div className={`flex items-start gap-3 py-3 pr-4 pl-4 cursor-default ${acaoBelongs ? 'hover:bg-sky-50' : 'hover:bg-gray-100'}`}>
                         <div className="mt-0.5 flex-shrink-0 z-10 text-sky-400 opacity-0 w-4">
@@ -628,7 +628,7 @@ export const MonitoringCascadeView: React.FC<MonitoringCascadeViewProps> = ({
                                     </span>
                                 )}
                             </div>
-                            <p className={`text-sm leading-relaxed ${acaoBelongs ? 'text-gray-600' : 'text-gray-500'}`}><HighlightedText text={component.content} /></p>
+                            <p className="text-sm text-black leading-relaxed font-bold"><HighlightedText text={component.content} /></p>
                             {!acaoBelongs && component.responsible && (
                                 <span className="inline-flex items-center gap-1 mt-1 text-[9px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
                                     Resp.: {component.responsible}

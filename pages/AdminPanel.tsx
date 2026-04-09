@@ -18,8 +18,8 @@ const AdminCard: React.FC<{
         <Icon className="w-6 h-6" />
       </div>
       <div className="flex-1">
-        <h3 className="text-sm font-bold text-gray-900 group-hover:text-brand-purple transition-colors leading-tight">{title}</h3>
-        <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{description}</p>
+        <h3 className="text-sm font-bold text-black group-hover:text-brand-purple transition-colors leading-tight">{title}</h3>
+        <p className="text-[11px] text-gray-500 mt-0.5 leading-snug font-medium">{description}</p>
       </div>
     </div>
   );
@@ -33,42 +33,42 @@ export const AdminPanel: React.FC = () => {
       title: "Planos e Instrumentos",
       description: "Configurar modelos, vigências e estruturas dos planos.",
       icon: Network, 
-      colorClass: "bg-brand-purple text-white",
+      colorClass: "bg-purple-600 text-white font-bold",
       action: () => navigate('/plans')
     },
     {
       title: "Informações Orçamentárias",
       description: "Gerenciar Fontes, Subfunções, Subações e Elementos.",
       icon: Coins, 
-      colorClass: "bg-amber-400 text-white",
+      colorClass: "bg-amber-100 text-amber-900 font-bold",
       action: undefined
     },
     {
       title: "Usuários",
       description: "Gerenciar usuários e permissões.",
       icon: Users, 
-      colorClass: "bg-orange-500 text-white",
+      colorClass: "bg-orange-100 text-orange-900 font-bold",
       action: undefined
     },
     {
         title: "Autocadastros",
         description: "Gerenciar usuários pré-cadastrados.",
         icon: UserPlus, 
-        colorClass: "bg-blue-600 text-white",
+        colorClass: "bg-blue-100 text-blue-900 font-bold",
         action: undefined
     },
     {
         title: "Unidades",
         description: "Gerenciar unidades do sistema.",
         icon: Building2, 
-        colorClass: "bg-emerald-500 text-white",
+        colorClass: "bg-emerald-100 text-emerald-900 font-bold",
         action: undefined
     },
     {
         title: "Avisos",
         description: "Gerenciar avisos do sistema.",
         icon: Bell, 
-        colorClass: "bg-sky-400 text-white",
+        colorClass: "bg-sky-100 text-sky-900 font-bold",
         action: undefined
     }
   ];
@@ -78,7 +78,7 @@ export const AdminPanel: React.FC = () => {
       
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 min-h-[600px] flex flex-col">
         <div className="mb-10 border-b border-gray-100 pb-5">
-            <h2 className="text-xl font-bold text-gray-900">Painel Administrativo</h2>
+            <h2 className="text-xl font-bold text-black">Painel Administrativo</h2>
             <p className="text-sm text-gray-500 mt-1">Central de controle e configurações do sistema SIPLAN</p>
         </div>
 

@@ -18,12 +18,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
     const linkClass = (path: string) => `
     flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group
     ${isActive(path)
-            ? 'bg-brand-purple/10 text-brand-purple shadow-sm border border-brand-purple/20'
-            : 'text-gray-600 hover:bg-white hover:text-gray-900 hover:shadow-sm hover:border-gray-100 border border-transparent'}
+            ? 'bg-brand-purple/20 text-black font-bold shadow-sm border border-brand-purple/30'
+            : 'text-gray-600 hover:bg-white hover:text-black hover:font-bold hover:shadow-sm hover:border-gray-100 border border-transparent'}
   `;
 
     return (
-        <aside className="w-72 bg-gray-50/50 flex-shrink-0 hidden md:flex flex-col border-r border-gray-200 z-20 backdrop-blur-xl">
+        <aside className="w-64 bg-gray-50/50 flex-shrink-0 hidden md:flex flex-col border-r border-gray-200 z-20 backdrop-blur-xl">
             <div className="h-20 flex flex-col items-center justify-center border-b border-gray-100 p-4 bg-white/50">
                 <SiplanLogo />
             </div>
@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
                         <Database className="w-4 h-4" />
                     </div>
                     <div>
-                        <p className="text-xs font-bold text-gray-800">Banco de Dados</p>
+                        <p className="text-xs font-bold text-black">Banco de Dados</p>
                         <p className="text-[10px] text-gray-500 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                             Conectado (Mock)

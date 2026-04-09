@@ -114,7 +114,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
     <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-          <h2 className="text-lg font-bold text-gray-800">
+          <h2 className="text-lg font-bold text-black">
             {title}
           </h2>
           <button type="button" onClick={onCancel} className="text-gray-400 hover:text-gray-600 hover:bg-gray-200 p-1 rounded-full transition-all">
@@ -131,7 +131,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                 name="planType"
                 value={form.planType || 'pes'}
                 onChange={handlePlanTypeChange}
-                className="w-full px-4 py-2.5 bg-white text-indigo-900 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm font-medium"
+                className="w-full px-4 py-2.5 bg-white text-black font-bold border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all shadow-sm"
                 required
               >
                 <option value="pes">Plano Estadual de Saúde (PES) - Quadrienal Base</option>
@@ -150,7 +150,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                 value={form.name}
                 onChange={handleChange}
                 placeholder={form.planType === 'pas' ? "Ex: PAS 2025" : "Ex: Plano Estratégico 2024-2027"}
-                className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all placeholder:text-gray-300 text-sm"
+                className="w-full px-4 py-2 bg-white text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all placeholder:text-gray-300 text-sm"
                 required
                 autoFocus
               />
@@ -166,7 +166,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                   onChange={handleChange}
                   placeholder="Ex: POA, PMS, PAE"
                   maxLength={6}
-                  className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm uppercase tracking-wider font-bold placeholder:font-normal placeholder:normal-case placeholder:tracking-normal"
+                  className="w-full px-4 py-2 bg-white text-black border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm uppercase tracking-wider font-bold placeholder:font-normal placeholder:normal-case placeholder:tracking-normal"
                 />
               </div>
             )}
@@ -180,7 +180,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                      name="referenceYear"
                      value={form.referenceYear || new Date().getFullYear()}
                      onChange={handleChange}
-                     className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                     className="w-full px-4 py-2 bg-white text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                      required
                    />
                  </div>
@@ -190,7 +190,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                      name="basePlanId"
                      value={form.basePlanId || ''}
                      onChange={handleChange}
-                     className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                     className="w-full px-4 py-2 bg-white text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                      required={form.planType === 'pas'}
                    >
                      <option value="">Selecione um PES aprovado...</option>
@@ -212,7 +212,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                       name="startYear"
                       value={form.startYear}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                      className="w-full px-4 py-2 bg-white text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                       required
                     />
                   </div>
@@ -224,7 +224,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                       name="endYear"
                       value={form.endYear}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                      className="w-full px-4 py-2 bg-white text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                       required
                     />
                   </div>
@@ -240,7 +240,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                className="w-full px-4 py-2 bg-white text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                 required
               >
                 <option value="Não iniciado">Não iniciado</option>
@@ -255,7 +255,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                 name="monitoringFrequency"
                 value={form.monitoringFrequency || 'Quadrimestral'}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                className="w-full px-4 py-2 bg-white text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
               >
                 <option value="Quadrimestral">Quadrimestral (3x ao ano - Padrão Sec. Saúde)</option>
                 <option value="Trimestral">Trimestral (4x ao ano - Padrão Plan.)</option>
@@ -294,7 +294,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                        name="level1"
                        value={customNomenclature.level1}
                        onChange={handleCustomChange}
-                       className="w-full px-3 py-2 bg-gray-50 text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                       className="w-full px-3 py-2 bg-gray-50 text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                        required={useCustomNomenclature}
                      />
                    </div>
@@ -305,7 +305,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                        name="level2"
                        value={customNomenclature.level2}
                        onChange={handleCustomChange}
-                       className="w-full px-3 py-2 bg-gray-50 text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                       className="w-full px-3 py-2 bg-gray-50 text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                        required={useCustomNomenclature}
                      />
                    </div>
@@ -316,7 +316,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                        name="level3"
                        value={customNomenclature.level3}
                        onChange={handleCustomChange}
-                       className="w-full px-3 py-2 bg-gray-50 text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                       className="w-full px-3 py-2 bg-gray-50 text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                        required={useCustomNomenclature}
                      />
                    </div>
@@ -328,7 +328,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
                          name="level4"
                          value={customNomenclature.level4 || 'Ação'}
                          onChange={handleCustomChange}
-                         className="w-full px-3 py-2 bg-gray-50 text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
+                         className="w-full px-3 py-2 bg-gray-50 text-black font-bold border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all text-sm"
                          required
                        />
                      </div>
@@ -349,7 +349,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
               onChange={handleChange}
               rows={3}
               placeholder="Descreva a finalidade..."
-              className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none resize-none transition-all text-sm shadow-sm"
+              className="w-full px-4 py-3 bg-white text-black border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none resize-none transition-all text-sm shadow-sm font-medium"
             />
           </div>
 
@@ -363,7 +363,7 @@ export const PlanForm: React.FC<PlanFormProps> = ({ initialValues, models, plans
             </button>
             <button
               type="submit"
-              className="flex items-center px-6 py-2.5 text-sm font-bold text-white bg-brand-purple rounded-lg hover:bg-brand-purple/90 active:bg-brand-purple/80 transition-all shadow-md"
+              className="flex items-center px-6 py-2.5 text-sm font-bold text-white bg-purple-600 rounded-lg hover:bg-purple-700 active:scale-95 transition-all shadow-md"
             >
               <Save className="w-4 h-4 mr-2" />
               Salvar Instrumento

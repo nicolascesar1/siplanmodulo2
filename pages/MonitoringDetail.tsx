@@ -139,7 +139,7 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
     };
 
     if (!monitoring || !fullPlan) {
-        return <div className="p-8 text-center text-gray-500">Monitoramento não encontrado.</div>;
+        return <div className="p-8 text-center text-black font-medium">Monitoramento não encontrado.</div>;
     }
 
     // --- LOGICA DE IMPORTAÇÃO DE DADOS ANTERIORES ---
@@ -379,19 +379,18 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300 pb-20 print:pb-0">
 
             {/* Header */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 print:border-none print:shadow-none print:p-0">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-2.5 px-4 print:border-none print:shadow-none print:p-0">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 print:flex-row">
                     <div className="flex items-center gap-4 w-full md:w-auto">
                         <button onClick={() => navigate('/monitorings')} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 group print:hidden">
                             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         </button>
                         <div>
-                            <h1 className="text-lg font-bold text-gray-900 leading-tight print:text-xl">{monitoring.title}</h1>
-                            <div className="flex items-center text-xs text-gray-500 mt-1 gap-3">
-                                <span className="flex items-center bg-gray-100 px-2 py-0.5 rounded"><Clock className="w-3 h-3 mr-1" /> {monitoring.period}</span>
-                                <span className="flex items-center font-medium"><Target className="w-3 h-3 mr-1 text-brand-purple" /> {monitoring.unitName}</span>
-                                <span className="flex items-center font-bold text-brand-teal uppercase text-[9px] bg-brand-teal/5 px-1.5 py-0.5 rounded border border-brand-teal/20">
-                                    Instrumento: {fullPlan.planType?.toUpperCase()}
+                            <h1 className="text-lg font-bold text-black leading-tight print:text-xl">{monitoring.title}</h1>
+                            <div className="flex items-center text-[10px] text-gray-500 mt-1 gap-3">
+                                <span className="flex items-center font-bold text-black"><Target className="w-3 h-3 mr-1 text-brand-purple" /> {monitoring.unitName}</span>
+                                <span className="flex items-center font-bold text-black uppercase bg-brand-teal/5 px-1.5 py-0.5 rounded border border-brand-teal/20">
+                                    {fullPlan.planType?.toUpperCase()}
                                 </span>
                             </div>
                         </div>
@@ -399,16 +398,16 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
 
                     <div className="flex items-center gap-6 w-full md:w-auto justify-end">
                         <div className="text-right hidden sm:block">
-                            <div className="flex items-center gap-2 justify-end mb-1">
-                                <span className="text-xs font-medium text-gray-500">Preenchimento</span>
-                                <span className={`text-sm font-bold ${
+                            <div className="flex items-center gap-2 justify-end mb-0.5">
+                                <span className="text-[10px] font-bold text-gray-500 uppercase">Preenchimento</span>
+                                <span className={`text-xs font-black ${
                                     calculateProgress() === 0 ? 'text-gray-400' :
                                     calculateProgress() < 30 ? 'text-red-500' : 
                                     calculateProgress() < 100 ? 'text-yellow-600' : 
                                     'text-emerald-500'
                                 }`}>{calculateProgress()}%</span>
                             </div>
-                            <div className="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="w-24 h-1 bg-gray-100 rounded-full overflow-hidden">
                                 <div className={`h-full transition-all duration-700 ease-out rounded-full ${
                                     calculateProgress() === 0 ? 'bg-gray-200' :
                                     calculateProgress() < 30 ? 'bg-red-500' : 
@@ -419,41 +418,57 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                         </div>
 
                         {/* ACTION BUTTONS BASED ON ROLE */}
-                        <div className="flex gap-2 print:hidden">
+                        <div className="flex gap-1.5 print:hidden items-center">
+                            {/* Smart Filter Toggle */}
+                            <button
+                                onClick={() => setShowOnlyMyUnit(!showOnlyMyUnit)}
+                                className={`flex items-center justify-center gap-1.5 h-9 w-36 rounded-lg border transition-all text-[10px] font-black uppercase shadow-md active:scale-95 ${showOnlyMyUnit
+                                    ? 'bg-purple-600 text-white border-purple-600'
+                                    : 'bg-white text-black border-gray-200 hover:border-gray-300'
+                                    }`}
+                                title={showOnlyMyUnit ? "Mostrar todo o plano" : "Filtrar por minhas ações pendentes"}
+                            >
+                                {showOnlyMyUnit ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                                <span>Pendências</span>
+                            </button>
+
+                            <div className="w-px h-6 bg-gray-200 mx-1" />
+
                             <button
                                 onClick={() => window.print()}
-                                className="flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:border-brand-purple/30 hover:text-brand-purple transition-colors text-sm font-medium shadow-sm"
+                                className="flex items-center justify-center h-9 w-24 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-[10px] font-black uppercase shadow-md active:scale-95"
                                 title="Exportar Relatório para PDF"
                             >
-                                <FileText className="w-4 h-4 mr-2" />
-                                Exportar PDF
+                                <FileText className="w-3.5 h-3.5 mr-1.5" />
+                                PDF
                             </button>
+                            
                             {/* Botão de Importar Anterior */}
                             {!isLocked && previousMonitoring && (
                                 <button
                                     onClick={handleImportPrevious}
-                                    className="flex items-center px-4 py-2 bg-brand-purple/5 border border-brand-purple/20 text-brand-purple rounded-lg hover:bg-brand-purple/10 transition-colors text-sm font-medium shadow-sm"
+                                    className="flex items-center px-3 py-1.5 bg-brand-purple/5 border border-brand-purple/20 text-black rounded-lg hover:bg-brand-purple/10 transition-colors text-xs font-bold shadow-sm"
                                     title={`Importar dados de ${previousMonitoring.period}`}
                                 >
-                                    <Copy className="w-4 h-4 mr-2" />
-                                    Importar Anterior
+                                    <Copy className="w-3.5 h-3.5 mr-1.5" />
+                                    Importar
                                 </button>
                             )}
 
                             {isLocked ? (
-                                <div className="flex items-center px-4 py-2 bg-gray-100 text-gray-500 rounded-lg text-sm font-medium">
-                                    <Lock className="w-4 h-4 mr-2" />
-                                    {monitoring.status === 'Submetido' ? 'Em Análise pelo Admin' : (monitoring.submissionEnd && new Date() > new Date(monitoring.submissionEnd) ? 'Prazo Encerrado' : 'Finalizado')}
+                                <div className="flex items-center px-3 py-1.5 bg-gray-100 text-gray-500 rounded-lg text-xs font-bold">
+                                    <Lock className="w-3.5 h-3.5 mr-1.5" />
+                                    {monitoring.status === 'Submetido' ? 'Em Análise' : 'Finalizado'}
                                 </div>
                             ) : (
                                 <>
                                     <button
                                         onClick={handleSaveDraft}
                                         disabled={isSaving}
-                                        className="flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:border-brand-purple/30 hover:text-brand-purple transition-colors text-sm font-medium shadow-sm disabled:opacity-70"
+                                        className="flex items-center justify-center h-9 w-24 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all text-[10px] font-black uppercase shadow-md active:scale-95 disabled:opacity-70"
                                     >
-                                        {isSaving ? <Activity className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                                        Salvar Rascunho
+                                        {isSaving ? <Activity className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Save className="w-3.5 h-3.5 mr-1.5" />}
+                                        Salvar
                                     </button>
 
                                     {/* Botão de Envio (Apenas Gestor ou Admin) */}
@@ -461,13 +476,13 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                                         <button
                                             onClick={() => handleSubmit(userRole === 'admin' ? 'Finalizado' : 'Submetido')}
                                             disabled={isSaving}
-                                            className={`flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium shadow-sm transition-all disabled:opacity-70 ${userRole === 'admin'
-                                                ? 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800'
-                                                : 'bg-brand-purple hover:bg-brand-purple/90 active:bg-brand-purple/80'
+                                            className={`flex items-center justify-center h-9 w-28 rounded-lg text-white text-[10px] font-black uppercase shadow-md transition-all active:scale-95 disabled:opacity-70 ${userRole === 'admin'
+                                                ? 'bg-emerald-600 hover:bg-emerald-700'
+                                                : 'bg-purple-600 hover:bg-purple-700'
                                                 }`}
                                         >
-                                            {isSaving ? <Activity className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-                                            {userRole === 'admin' ? 'Homologar/Finalizar' : 'Submeter ao Admin'}
+                                            {isSaving ? <Activity className="w-4 h-4 mr-2 animate-spin" /> : (userRole === 'admin' ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Send className="w-4 h-4 mr-2" />)}
+                                            {userRole === 'admin' ? 'Finalizar' : 'Submeter'}
                                         </button>
                                     )}
                                 </>
@@ -477,30 +492,7 @@ export const MonitoringDetail: React.FC<MonitoringDetailProps> = ({ plans, monit
                 </div>
             </div>
 
-            <div className="max-w-5xl mx-auto w-full print:max-w-none">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 print:hidden">
-                    <div className="flex items-start gap-3 p-4 bg-blue-50/50 text-blue-900 rounded-xl border border-blue-100 text-sm shadow-sm flex-1">
-                        <AlertCircle className="w-5 h-5 flex-shrink-0 text-blue-500 mt-0.5" />
-                        <div>
-                            <p className="font-semibold mb-1">Guia de Preenchimento</p>
-                            <p className="text-blue-800/80 leading-relaxed">
-                                Preencha o <strong>Resultado Alcançado</strong> com dados quantitativos e utilize a <strong>Análise Crítica</strong> para justificar o desempenho.
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Smart Filter Toggle - Hidden for Tech/Gestor as they already default to it, but can untoggle if they want context */}
-                    <button
-                        onClick={() => setShowOnlyMyUnit(!showOnlyMyUnit)}
-                        className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-all shadow-sm flex-shrink-0 ${showOnlyMyUnit
-                            ? 'bg-brand-purple text-white border-brand-purple shadow-brand-purple/20'
-                            : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-                            }`}
-                    >
-                        {showOnlyMyUnit ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                        <span className="text-sm font-bold">Minhas Pendências</span>
-                    </button>
-                </div>
+            <div className="mx-auto w-full print:max-w-none">
 
                 <MonitoringCascadeView
                     plan={(() => {

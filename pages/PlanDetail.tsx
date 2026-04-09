@@ -66,10 +66,10 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
 
     const getStatusBadge = (status: string) => {
         const styles = {
-            'Realizada': 'bg-teal-100 text-teal-700 border-teal-200',
-            'Em andamento': 'bg-brand-purple/10 text-brand-purple border-brand-purple/20',
-            'Não realizada': 'bg-gray-100 text-gray-600 border-gray-200',
-        }[status] || 'bg-gray-100 text-gray-600 border-gray-200';
+            'Realizada': 'bg-teal-100 text-teal-900 border-teal-200 font-bold',
+            'Em andamento': 'bg-brand-purple/20 text-black border-brand-purple/30 font-bold',
+            'Não realizada': 'bg-gray-100 text-black border-gray-200 font-bold',
+        }[status] || 'bg-gray-100 text-black border-gray-200 font-bold';
 
         return <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase border ${styles}`}>{status}</span>;
     };
@@ -86,19 +86,19 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                             <button onClick={() => navigate('/plans')} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-500 group">
                                 <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                             </button>
-                            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{plan.name}</h1>
+                            <h1 className="text-2xl font-bold text-black tracking-tight">{plan.name}</h1>
                             {getStatusBadge(plan.status)}
                         </div>
-                        <div className="text-gray-500 text-sm font-medium flex gap-4 ml-10 mt-2">
-                            <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded text-xs border border-gray-100"><BarChart3 className="w-3.5 h-3.5 text-brand-purple" /> {plan.startYear} - {plan.endYear}</span>
+                        <div className="text-black text-sm font-bold flex gap-4 ml-10 mt-2">
+                            <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded text-xs border border-gray-100 text-black"><BarChart3 className="w-3.5 h-3.5 text-brand-purple" /> {plan.startYear} - {plan.endYear}</span>
                             {plan.monitoringFrequency && (
-                                <span className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs border font-bold ${plan.monitoringFrequency === 'Trimestral' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-teal-50 text-teal-600 border-teal-100'}`}>
+                                <span className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs border font-bold ${plan.monitoringFrequency === 'Trimestral' ? 'bg-blue-50 text-blue-900 border-blue-100' : 'bg-teal-50 text-teal-900 border-teal-100'}`}>
                                     {plan.monitoringFrequency}
                                 </span>
                             )}
                         </div>
                         {plan.description && (
-                            <p className="mt-4 ml-10 text-gray-600 text-sm max-w-4xl leading-relaxed bg-gray-50/80 p-4 rounded-lg border border-gray-100">
+                            <p className="mt-4 ml-10 text-black text-sm font-medium max-w-4xl leading-relaxed bg-gray-50/80 p-4 rounded-lg border border-gray-100">
                                 {plan.description}
                             </p>
                         )}
@@ -111,7 +111,7 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                                 <select
                                     value={selectedPeriod}
                                     onChange={(e) => setSelectedPeriod(e.target.value)}
-                                    className="bg-white border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-brand-purple focus:border-brand-purple block p-2 w-full shadow-sm"
+                                    className="bg-white border border-gray-200 text-black font-bold text-xs rounded-lg focus:ring-brand-purple focus:border-brand-purple block p-2 w-full shadow-sm"
                                 >
                                     <option value="Todos">Todos os Períodos</option>
                                     {plan.monitoringFrequency === 'Trimestral' ? (
@@ -135,7 +135,7 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                         {plan.planType === 'pes' && (
                             <button
                                 onClick={() => setIsConsolidated(!isConsolidated)}
-                                className={`flex items-center justify-center px-4 py-2 border text-sm font-medium rounded-lg shadow-sm w-full transition-colors ${isConsolidated ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
+                                className={`flex items-center justify-center px-4 py-2 border text-sm font-bold rounded-lg shadow-sm w-full transition-colors ${isConsolidated ? 'bg-indigo-50 border-indigo-200 text-indigo-900 shadow-indigo-100/50' : 'bg-white border-gray-200 text-black hover:border-gray-300'}`}
                             >
                                 <Network className="w-4 h-4 mr-2" />
                                 {isConsolidated ? 'Ocultar Ações (PAS)' : 'Visão Consolidada'}
@@ -143,7 +143,7 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                         )}
                         <button
                             onClick={() => setIsEditing(true)}
-                            className="flex items-center justify-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:border-brand-purple/30 hover:text-brand-purple transition-colors text-sm font-medium shadow-sm w-full"
+                            className="flex items-center justify-center px-4 py-2 bg-white border border-gray-200 text-black rounded-lg hover:border-brand-purple/30 hover:bg-gray-50 transition-colors text-sm font-bold shadow-sm w-full"
                         >
                             <Edit3 className="w-4 h-4 mr-2" />
                             Editar Info
@@ -152,7 +152,7 @@ export const PlanDetail: React.FC<PlanDetailProps> = ({ plans, models, monitorin
                         {(plan.planType === 'pas' || plan.planType === 'ppa' || plan.planType === 'custom') && (
                             <button
                                 onClick={() => navigate('/monitorings', { state: { planId: plan.id } })}
-                                className="flex items-center justify-center px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-all text-sm font-bold shadow-md shadow-brand-purple/20 w-full mt-1 animate-pulse hover:animate-none"
+                                className="flex items-center justify-center px-4 py-2 bg-brand-purple text-black rounded-lg hover:bg-brand-purple/90 transition-all text-sm font-black shadow-md shadow-brand-purple/20 w-full mt-1"
                             >
                                 <PlayCircle className="w-4 h-4 mr-2" />
                                 Monitorar Agora

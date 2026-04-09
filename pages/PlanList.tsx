@@ -33,11 +33,11 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
 
     const getPlanTypeBadge = (type?: string, acronym?: string) => {
         const styles = {
-            'pes': 'bg-indigo-100 text-indigo-700 border-indigo-200',
-            'pas': 'bg-teal-100 text-teal-700 border-teal-200',
-            'ppa': 'bg-blue-100 text-blue-700 border-blue-200',
-            'custom': 'bg-amber-100 text-amber-700 border-amber-200',
-        }[type || 'pes'] || 'bg-gray-100 text-gray-700 border-gray-200';
+            'pes': 'bg-indigo-100 text-indigo-900 border-indigo-200 font-bold',
+            'pas': 'bg-teal-100 text-teal-900 border-teal-200 font-bold',
+            'ppa': 'bg-blue-100 text-blue-900 border-blue-200 font-bold',
+            'custom': 'bg-amber-100 text-amber-900 border-amber-200 font-bold',
+        }[type || 'pes'] || 'bg-gray-100 text-black border-gray-200 font-bold';
 
         const label = type === 'custom'
             ? (acronym || 'CUSTOM')
@@ -52,11 +52,11 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
 
     const getStatusBadge = (status: string) => {
         const styles = {
-            'Realizada': 'bg-teal-50 text-teal-600 border-teal-100',
-            'Em andamento': 'bg-brand-purple/5 text-brand-purple border-brand-purple/10',
-            'Não iniciada': 'bg-gray-50 text-gray-500 border-gray-100',
-            'Pendente': 'bg-amber-50 text-amber-600 border-amber-100',
-        }[status] || 'bg-gray-50 text-gray-500 border-gray-100';
+            'Realizada': 'bg-teal-50 text-teal-900 border-teal-100 font-bold',
+            'Em andamento': 'bg-brand-purple/10 text-black border-brand-purple/20 font-bold',
+            'Não iniciada': 'bg-gray-50 text-gray-500 border-gray-100 font-bold',
+            'Pendente': 'bg-amber-50 text-amber-900 border-amber-100 font-bold',
+        }[status] || 'bg-gray-50 text-gray-500 border-gray-100 font-bold';
 
         return (
             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${styles}`}>
@@ -75,16 +75,16 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                             <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         </button>
                         <div>
-                            <h2 className="text-xl font-bold text-gray-900 leading-tight">Planos e Instrumentos</h2>
+                            <h2 className="text-xl font-bold text-black leading-tight">Planos e Instrumentos</h2>
                             <p className="text-sm text-gray-500 mt-0.5">Gerencie os planos e cronogramas estratégicos da unidade</p>
                         </div>
                     </div>
 
                     <button
                         onClick={() => onCreateClick()}
-                        className="flex items-center justify-center bg-brand-purple text-white px-5 py-2.5 rounded-lg hover:bg-brand-purple/90 active:bg-brand-purple/80 transition-all shadow-md shadow-brand-purple/20 font-bold text-sm"
+                        className="flex items-center justify-center bg-purple-600 text-white px-5 py-2.5 rounded-lg hover:bg-purple-700 active:scale-95 transition-all shadow-md font-bold text-sm"
                     >
-                        <Plus className="w-4.5 h-4.5 mr-2" />
+                        <Plus className="w-5 h-5 mr-2" />
                         Novo Instrumento
                     </button>
                 </div>
@@ -100,7 +100,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                             placeholder="Buscar por nome, ano ou descrição..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple/10 focus:border-brand-purple transition-all shadow-sm placeholder:text-gray-400"
+                            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-black font-medium focus:outline-none focus:ring-2 focus:ring-brand-purple/10 focus:border-brand-purple transition-all shadow-sm placeholder:text-gray-400"
                         />
                     </div>
                     {searchTerm && (
@@ -141,7 +141,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                                         <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-100">
                                             <FileText className="w-8 h-8 text-gray-200" />
                                         </div>
-                                        <h3 className="text-base font-bold text-gray-800">Nenhum instrumento encontrado</h3>
+                                        <h3 className="text-base font-bold text-black">Nenhum instrumento encontrado</h3>
                                         <p className="text-xs text-gray-500 mt-1 max-w-xs mx-auto">Tente ajustar sua busca ou crie um novo planejamento para começar.</p>
                                     </div>
                                 </td>
@@ -154,7 +154,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                                     <tr key={plan.id} className="hover:bg-gray-50/80 transition-all group cursor-pointer" onClick={() => navigate(`/plan/${plan.id}`)}>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-gray-900 group-hover:text-brand-purple transition-colors">
+                                                <span className="text-sm font-bold text-black group-hover:text-brand-purple transition-colors">
                                                     {plan.name}
                                                 </span>
                                                 {basePlan && (
@@ -173,7 +173,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                                             {getPlanTypeBadge(plan.planType, plan.planAcronym)}
                                         </td>
                                         <td className="px-4 py-4">
-                                            <div className="flex items-center text-xs font-bold text-gray-600 bg-gray-100/50 px-2 py-1 rounded inline-flex border border-gray-100">
+                                            <div className="flex items-center text-xs font-bold text-black bg-gray-100 px-2 py-1 rounded inline-flex border border-gray-200 shadow-sm">
                                                 {plan.startYear} — {plan.endYear}
                                             </div>
                                         </td>
@@ -190,7 +190,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                                                                 referenceYear: new Date().getFullYear() + 1
                                                             }); 
                                                         }}
-                                                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-teal-50 text-teal-700 hover:bg-teal-100 rounded-lg text-[10px] font-black tracking-tight border border-teal-200 transition-all"
+                                                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-teal-50 text-teal-900 hover:bg-teal-100 rounded-lg text-[10px] font-black tracking-tight border border-teal-200 transition-all"
                                                         title="Criar Programação Anual (PAS)"
                                                     >
                                                         <Plus className="w-3.5 h-3.5" />
@@ -227,7 +227,7 @@ export const PlanList: React.FC<PlanListProps> = ({ plans, models, monitorings, 
                 <span className="text-xs text-gray-500 font-medium ml-2">Página 1 de 1</span>
                 <div className="flex items-center bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                     <button className="p-2 text-gray-400 hover:bg-gray-50 border-r border-gray-100" disabled><ChevronRight className="w-4 h-4 rotate-180" /></button>
-                    <button className="px-3 py-1 text-xs font-bold bg-brand-purple/10 text-brand-purple">1</button>
+                    <button className="px-3 py-1 text-xs font-bold bg-brand-purple/20 text-black">1</button>
                     <button className="p-2 text-gray-400 hover:bg-gray-50 border-l border-gray-100" disabled><ChevronRight className="w-4 h-4" /></button>
                 </div>
             </div>

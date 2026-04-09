@@ -175,12 +175,12 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-gray-200/60 gap-4">
                 <div>
-                    <h2 className="text-xl font-bold text-gray-900">Estrutura do Plano</h2>
+                    <h2 className="text-xl font-bold text-black">Estrutura do Plano</h2>
                     <p className="text-sm text-gray-500 mt-1">Gerencie hierarquicamente os componentes do planejamento</p>
                 </div>
                 <div className="flex gap-4">
                     {!isAdding && !editingItemId && plan.planType !== 'pas' && (
-                        <button onClick={handleAddRoot} className="flex items-center px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-all shadow-md shadow-brand-purple/30 text-sm font-medium">
+                        <button onClick={handleAddRoot} className="flex items-center px-4 py-2 bg-brand-purple text-black rounded-lg hover:bg-brand-purple/90 transition-all shadow-md shadow-brand-purple/10 text-sm font-bold">
                             <Plus className="w-4 h-4 mr-2" />Adicionar Item ({plan.customNomenclature?.level1 || 'Diretriz'})
                         </button>
                     )}
@@ -191,7 +191,7 @@ export const ComponentManager: React.FC<ComponentManagerProps> = ({ plan, monito
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Buscar componente..."
-                            className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-brand-purple/20 outline-none w-64 shadow-sm"
+                            className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 text-sm text-black font-medium focus:ring-2 focus:ring-brand-purple/20 outline-none w-64 shadow-sm"
                         />
                     </div>
                 </div>

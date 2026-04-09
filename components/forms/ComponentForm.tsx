@@ -16,8 +16,8 @@ interface ComponentFormProps {
     fieldConfig?: LevelFieldConfig; // NEW: configuração de campos dinâmicos
 }
 
-const inputClass = "w-full p-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all";
-const labelClass = "block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5";
+const inputClass = "w-full p-2.5 bg-white border border-gray-200 rounded-lg text-sm text-black font-bold shadow-sm focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple outline-none transition-all";
+const labelClass = "block text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-1.5";
 
 const formatCurrency = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
@@ -152,7 +152,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
     return (
         <div className={`rounded-lg shadow-sm border border-gray-200/60 p-6 animate-in zoom-in-95 duration-200 mb-6 border-l-[6px] ${getThemeClass()}`}>
             <div className={`flex justify-between items-center mb-6 pb-2 border-b border-gray-200/50`}>
-                <h3 className={`font-bold text-base ${type === 'Diretriz' ? 'text-brand-teal' : type === 'Objetivo' ? 'text-brand-purple' : type === 'Meta' ? 'text-brand-blue' : type === 'Ação' ? 'text-sky-700' : 'text-gray-800'}`}>
+                <h3 className={`font-bold text-base ${type === 'Diretriz' ? 'text-brand-teal' : type === 'Objetivo' ? 'text-brand-purple' : type === 'Meta' ? 'text-brand-blue' : type === 'Ação' ? 'text-sky-900' : 'text-black'}`}>
                     {isAdding ? `Novo Registro (${customLabel || type})` : `Editar ${customLabel || type}`}
                 </h3>
             </div>
@@ -231,7 +231,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                                     const diff = target - sum;
                                     return (
                                         <div className="mt-3 flex items-center justify-between bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200">
-                                            <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                                            <div className="flex items-center gap-2 text-xs font-bold text-black">
                                                 <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
                                                 <span>Soma dos anos: <span className="text-teal-700 text-sm">{sum.toLocaleString('pt-BR')}</span></span>
                                             </div>
@@ -260,7 +260,7 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
                                             <label className="block text-[10px] font-bold text-teal-800 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
                                                 TOTAL ({baseYear}/{baseYear + 3}) <span className="text-gray-400 font-normal lowercase">(conforme método de cálculo)</span>
                                             </label>
-                                            <input type="text" value={targetValue} onChange={(e) => setTargetValue(e.target.value)} className={`${inputClass} border-teal-200 bg-teal-50/30 text-teal-900 focus:border-teal-400 focus:ring-teal-400/20`} placeholder="Ex: 20" />
+                                            <input type="text" value={targetValue} onChange={(e) => setTargetValue(e.target.value)} className={`${inputClass} border-teal-200 bg-teal-50/30 text-teal-900 font-black focus:border-teal-400 focus:ring-teal-400/20`} placeholder="Ex: 20" />
                                         </div>
                                     </div>
                                 )}
@@ -346,8 +346,8 @@ export const ComponentForm: React.FC<ComponentFormProps> = ({ type, parentId, un
             </div>
 
             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
-                <button onClick={onCancel} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg font-medium transition-colors">Cancelar</button>
-                <button onClick={handleSubmit} className="px-6 py-2 text-sm text-white bg-brand-purple rounded-lg hover:bg-brand-purple/90 flex items-center font-medium shadow-sm transition-all active:scale-95">
+                <button onClick={onCancel} className="px-4 py-2 text-sm text-black hover:bg-gray-100 rounded-lg font-bold transition-colors">Cancelar</button>
+                <button onClick={handleSubmit} className="px-6 py-2 text-sm text-black bg-brand-purple rounded-lg hover:bg-brand-purple/90 flex items-center font-bold shadow-md shadow-brand-purple/10 transition-all active:scale-95">
                     <Save className="w-4 h-4 mr-2" /> Salvar Registro
                 </button>
             </div>

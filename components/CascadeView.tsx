@@ -52,20 +52,20 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                 >
                     <div className="absolute top-0 left-0 w-1 h-full bg-brand-teal" />
 
-                    <div className={`p-1.5 rounded-full shadow-sm border transition-colors z-10 ${hasChildren ? 'bg-brand-teal text-white border-brand-teal' : 'bg-white text-gray-400 border-gray-200 group-hover:text-brand-teal'}`}>
+                    <div className={`p-1.5 rounded-full shadow-sm border transition-colors z-10 ${hasChildren ? 'bg-brand-teal text-black border-brand-teal' : 'bg-white text-gray-400 border-gray-200 group-hover:text-brand-teal'}`}>
                         {hasChildren ? (isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />) : <ChevronRight className="w-5 h-5" />}
                     </div>
 
                     <div className="flex-1 z-10">
                         <div className="flex items-center gap-3 mb-1.5">
-                            <span className="flex items-center gap-1.5 text-[11px] font-bold text-white uppercase tracking-wider bg-brand-teal px-2 py-0.5 rounded-full shadow-sm">
+                            <span className="flex items-center gap-1.5 text-[11px] font-bold text-black uppercase tracking-wider bg-brand-teal px-2 py-0.5 rounded-full shadow-sm">
                                 <Layers className="w-3 h-3" />
                                 {nomenclature.level1}
                             </span>
                             {component.code && <span className="text-[11px] font-bold text-brand-teal bg-brand-teal/10 px-2 py-0.5 rounded-full border border-brand-teal/20">{component.code}</span>}
                             {component.isReadOnly && <span className="text-[9px] font-bold uppercase tracking-wide bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full border border-gray-200 shadow-sm ml-1 flex items-center gap-1">🔒 Herdado</span>}
                         </div>
-                        <h3 className="text-base font-bold text-gray-900 leading-snug"><HighlightedText text={component.content} /></h3>
+                        <h3 className="text-base font-bold text-black leading-snug"><HighlightedText text={component.content} /></h3>
                         {component.responsible && <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200 mt-1"><span className="w-1.5 h-1.5 rounded-full bg-brand-teal" />Resp: {component.responsible}</span>}
                     </div>
 
@@ -87,7 +87,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                 >
                     <div className="absolute top-0 left-0 w-1 h-full bg-brand-purple" />
 
-                    <div className={`p-1 rounded-full shadow-sm border transition-colors z-10 ${hasChildren ? 'bg-brand-purple text-white border-brand-purple' : 'bg-white text-gray-400 border-gray-200 group-hover/obj:text-brand-purple'}`}>
+                    <div className={`p-1 rounded-full shadow-sm border transition-colors z-10 ${hasChildren ? 'bg-brand-purple text-black border-brand-purple' : 'bg-white text-gray-400 border-gray-200 group-hover/obj:text-brand-purple'}`}>
                         {hasChildren ? (isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />) : <ChevronRight className="w-4 h-4" />}
                     </div>
 
@@ -100,7 +100,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                             {component.code && <span className="text-[10px] font-bold text-gray-500 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-100">{component.code}</span>}
                             {component.isReadOnly && <span className="text-[9px] font-bold uppercase tracking-wide bg-gray-50 text-gray-500 px-2 py-0.5 rounded-md border border-gray-100 ml-1">🔒 Herdado</span>}
                         </div>
-                        <p className="text-sm font-medium text-gray-800 leading-relaxed"><HighlightedText text={component.content} /></p>
+                        <p className="text-sm font-bold text-black leading-relaxed"><HighlightedText text={component.content} /></p>
                         {component.responsible && <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200 mt-1.5"><span className="w-1.5 h-1.5 rounded-full bg-brand-purple" />Resp: {component.responsible}</span>}
                     </div>
 
@@ -137,7 +137,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                 >
                     <div className="absolute top-0 left-0 w-1 h-full bg-brand-blue" />
 
-                    <div className={`p-1 rounded-full shadow-sm border transition-colors mt-0.5 z-10 ${hasChildren ? 'bg-brand-blue text-white border-brand-blue' : 'bg-white text-gray-400 border-gray-200 group-hover/meta:text-brand-blue'}`}>
+                    <div className={`p-1 rounded-full shadow-sm border transition-colors mt-0.5 z-10 ${hasChildren ? 'bg-brand-blue text-black border-brand-blue' : 'bg-white text-gray-400 border-gray-200 group-hover/meta:text-brand-blue'}`}>
                         {hasChildren ? (isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />) : <ChevronRight className="w-3.5 h-3.5" />}
                     </div>
 
@@ -150,7 +150,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                             {component.code && <span className="text-[10px] font-bold text-gray-500 bg-white border border-gray-200 px-1.5 py-0.5 rounded">{component.code}</span>}
                             {component.isReadOnly && <span className="text-[9px] font-bold uppercase tracking-wide bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200 ml-1">🔒 Herdado do PES</span>}
                         </div>
-                        <p className="text-sm text-gray-700 leading-relaxed font-medium"><HighlightedText text={component.content} /></p>
+                        <p className="text-sm text-black leading-relaxed font-bold"><HighlightedText text={component.content} /></p>
 
                         {(component.targetValue || component.deadline) && (
                             <div className="flex flex-wrap gap-2 mt-2.5">
@@ -250,7 +250,7 @@ export const CascadeView: React.FC<CascadeViewProps> = ({
                             {component.status && <span className={`text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded border ${component.status === 'Realizada' ? 'bg-brand-teal/10 text-brand-teal border-brand-teal/20' : 'bg-brand-blue/10 text-brand-blue border-brand-blue/20'}`}>{component.status}</span>}
                             {component.planName && <span className="text-[9px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-200 ml-1">{component.planName}</span>}
                         </div>
-                        <p className="text-sm text-gray-600 leading-relaxed"><HighlightedText text={component.content} /></p>
+                        <p className="text-sm text-black leading-relaxed font-bold"><HighlightedText text={component.content} /></p>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover/acao:opacity-100 transition-opacity bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm z-20">
 

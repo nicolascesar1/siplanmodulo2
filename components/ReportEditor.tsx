@@ -66,13 +66,13 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ reports, onUpdateRep
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div>
-                        <h1 className="text-lg font-bold text-gray-900">{report.type} {report.year}</h1>
-                        <p className="text-xs text-gray-500">{report.period} • {report.unitName}</p>
+                        <h1 className="text-lg font-bold text-black">{report.type} {report.year}</h1>
+                        <p className="text-xs text-black font-medium">{report.period} • {report.unitName}</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 text-xs font-bold rounded border mr-2 ${report.status === 'Concluído' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-gray-50 text-gray-600 border-gray-100'
+                    <span className={`px-2 py-1 text-xs font-bold rounded border mr-2 ${report.status === 'Concluído' ? 'bg-emerald-50 text-emerald-900 border-emerald-100' : 'bg-gray-100 text-black border-gray-200'
                         }`}>
                         {report.status}
                     </span>
@@ -80,7 +80,7 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ reports, onUpdateRep
                     <button
                         onClick={() => handleSave('Em Andamento')}
                         disabled={isSaving || report.status === 'Concluído'}
-                        className="flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:border-brand-purple/30 hover:text-brand-purple transition-colors text-sm font-medium shadow-sm disabled:opacity-50"
+                        className="flex items-center px-4 py-2 bg-white border border-gray-200 text-black rounded-lg hover:border-brand-purple/30 hover:bg-gray-50 transition-colors text-sm font-bold shadow-sm disabled:opacity-50"
                     >
                         <Save className="w-4 h-4 mr-2" />
                         Salvar Rascunho
@@ -89,7 +89,7 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ reports, onUpdateRep
                     <button
                         onClick={() => handleSave('Concluído')}
                         disabled={isSaving || report.status === 'Concluído'}
-                        className="flex items-center px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-colors text-sm font-medium shadow-sm disabled:opacity-50"
+                        className="flex items-center px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 active:scale-95 transition-all text-sm font-bold shadow-md shadow-brand-purple/20 disabled:opacity-50"
                     >
                         <Send className="w-4 h-4 mr-2" />
                         Finalizar
@@ -105,8 +105,8 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ reports, onUpdateRep
                     <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 flex gap-3 text-blue-800 text-sm">
                         <AlertCircle className="w-5 h-5 flex-shrink-0 text-blue-500" />
                         <div>
-                            <p className="font-bold mb-1">Instruções de Preenchimento</p>
-                            <p className="opacity-90 leading-relaxed">
+                            <p className="font-black mb-1">Instruções de Preenchimento</p>
+                            <p className="font-bold leading-relaxed">
                                 Insira a análise qualitativa referente ao período. Destaque os principais avanços, desafios enfrentados e medidas corretivas adotadas. Este texto será consolidado no relatório final da Secretaria.
                             </p>
                         </div>
@@ -124,7 +124,7 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ reports, onUpdateRep
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             disabled={report.status === 'Concluído'}
-                            className="flex-1 p-4 w-full h-full resize-none outline-none text-sm text-gray-800 leading-relaxed"
+                            className="flex-1 p-4 w-full h-full resize-none outline-none text-sm text-black font-medium leading-relaxed"
                             placeholder="Escreva seu relatório aqui..."
                         />
                     </div>
@@ -139,18 +139,18 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ reports, onUpdateRep
 
                         <div className="space-y-3">
                             <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                <span className="text-[10px] text-gray-400 font-bold block uppercase">Meta Anual</span>
-                                <span className="text-sm font-semibold text-gray-800">90% de Execução</span>
+                                <span className="text-[10px] text-gray-500 font-bold block uppercase">Meta Anual</span>
+                                <span className="text-sm font-bold text-black font-black">90% de Execução</span>
                             </div>
                             <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                <span className="text-[10px] text-gray-400 font-bold block uppercase">Executado (Q1)</span>
-                                <span className="text-sm font-semibold text-brand-purple">85%</span>
+                                <span className="text-[10px] text-gray-500 font-bold block uppercase">Executado (Q1)</span>
+                                <span className="text-sm font-bold text-black font-black">85%</span>
                             </div>
                         </div>
 
                         <button
                             onClick={handleImportPrevious}
-                            className="mt-4 w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-brand-purple bg-brand-purple/5 hover:bg-brand-purple/10 rounded-lg transition-colors border border-brand-purple/20"
+                            className="mt-4 w-full flex items-center justify-center px-3 py-2 text-xs font-bold text-black bg-brand-purple/20 hover:bg-brand-purple/30 rounded-lg transition-colors border border-brand-purple/30 shadow-sm"
                         >
                             <Copy className="w-3 h-3 mr-1.5" />
                             Importar Modelo Anterior
